@@ -20,6 +20,8 @@ import jwt_decode from 'jwt-decode';
 
 import { AuthConsumer, AuthContext } from '../auth-context';
 
+import APIClient from '../apiClient';
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -66,6 +68,8 @@ function MenuAppBar() {
     const classes = useStyles();
 
     const user = useContext(AuthContext)
+
+    const apiClient = new APIClient();
 
     // Set auth status for Testing
     // const [auth, setAuth] = React.useState(false);
@@ -116,6 +120,10 @@ function MenuAppBar() {
         // setAuth(false);
     }
 
+    function downloadTemplate() {
+        apiClient.downloadTemplate();
+    }
+
     return (
         <div className={classes.root}>
             <FormGroup>
@@ -138,6 +146,8 @@ function MenuAppBar() {
                     </AuthConsumer> */}
 
                     <div className={classes.grow} />
+                    <Button onClick={downloadTemplate} className={classes.downloadButton} style={{ float: 'right' }}>Download Template</Button>
+
                     <AuthConsumer>
                         {value => value.isAuthenticated && (<div>
                             {/* Authentication is TRUE */}
