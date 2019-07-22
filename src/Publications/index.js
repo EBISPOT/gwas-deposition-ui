@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
-import APIClient from '../apiClient'
+import APIClient from '../apiClient';
 import Container from '@material-ui/core/Container';
 
 // import SubmissionDetails from '../SubmissionDetails';
@@ -135,7 +135,7 @@ class Publications extends React.Component {
                         <TableBody>
                             {repos._embedded.publications.map(row => (
                                 // <StyledTableRow key={row.id} data-item={row.id} onClick={this.showSubmissionDetails}>
-                                <StyledTableRow key={row.id} data-item={row.publicationId} >
+                                <StyledTableRow key={row.publicationId} data-item={row.publicationId} >
                                     <StyledTableBodyCell component="th" scope="row">
                                         <Link to={`/submission/${row.publicationId}`} style={{ textDecoration: 'none' }}>{row.publicationId}</Link>
                                     </StyledTableBodyCell>
