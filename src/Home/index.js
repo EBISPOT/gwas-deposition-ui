@@ -4,6 +4,8 @@ import Container from '@material-ui/core/Container';
 import { UserConsumer } from '../user-context';
 import { AuthConsumer } from '../auth-context';
 
+import PublicationsMatTable from '../PublicationsMatTable';
+
 
 class Home extends Component {
     render() {
@@ -20,6 +22,8 @@ class Home extends Component {
                 <AuthConsumer>
                     {({ isAuthenticated }) => <h4> Login State: {isAuthenticated.toString()}</h4>}
                 </AuthConsumer>
+
+                <PublicationsMatTable />
             </Container>
         )
     }
