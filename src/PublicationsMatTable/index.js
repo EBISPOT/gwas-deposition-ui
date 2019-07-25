@@ -87,6 +87,7 @@ class PublicatinsMatTable extends React.Component {
                                 }).catch(error => {
                                 })
                         }
+                        // Display all results
                         else {
                             url += '?size=' + query.pageSize
                             url += '&page=' + (query.page)
