@@ -50,7 +50,7 @@ class APIClient {
      * API call to backend app to create a submission
      *  @param {String} pmid PubMedId
      */
-    createSubmission(pmid) {
+    createSubmission(pmid, JWTToken) {
         console.log("** Trying to create a submission...")
         axios.post(BASE_URI + 'submissions',
             {
@@ -59,7 +59,8 @@ class APIClient {
                 {
                     'Accept': "application/json",
                     'Content-Type': 'application/json',
-                    "Access-Control-Allow-Origin": "*"
+                    'Access-Control-Allow-Origin': "*",
+                    'Authorization': `Bearer ${JWTToken}`
                 },
             }).then((response) => { console.log("** Response: ", response) })
             .catch((error) => console.log(error));

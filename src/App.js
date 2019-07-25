@@ -7,9 +7,6 @@ import { Route } from "react-router-dom";
 
 import { withRouter } from "react-router";
 
-import DemoMUITable from "./DemoMUITable";
-import DemoMUITable_RemoteData from "./DemoMUITable_RemoteData";
-
 import {
   CssBaseline,
   withStyles,

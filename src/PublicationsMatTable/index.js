@@ -54,7 +54,14 @@ class PublicatinsMatTable extends React.Component {
 
     createSubmission(pmid) {
         console.log("** PMID: ", pmid);
-        this.API_CLIENT.createSubmission(pmid);
+        // Get token from local storage
+        if (localStorage.getItem('id_token')) {
+            let JWTToken = localStorage.getItem('id_token')
+            this.API_CLIENT.createSubmission(pmid, JWTToken);
+        }
+        else {
+            alert("Please login to create a submission")
+        }
     }
 
     render() {
