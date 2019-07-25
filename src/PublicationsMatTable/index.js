@@ -1,5 +1,6 @@
 import React from 'react';
 import MaterialTable from 'material-table';
+import Button from '@material-ui/core/Button';
 
 
 import { forwardRef } from 'react';
@@ -114,6 +115,26 @@ class PublicatinsMatTable extends React.Component {
                 }
                 options={{
                     search: true
+                }}
+                actions={[
+                    {
+                        icon: 'save',
+                        tooltip: 'Create submission',
+                        onClick: (event, rowData) => alert("Create submission for: " + rowData.pmid)
+                    }
+                ]}
+                components={{
+                    Action: props => (
+                        <Button
+                            onClick={(event) => props.action.onClick(event, props.data)}
+                            color="inherit"
+                            variant="contained"
+                            style={{ textTransform: 'none' }}
+                            size="small"
+                        >
+                            My Button
+                        </Button>
+                    ),
                 }}
             />
         )
