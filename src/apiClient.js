@@ -14,6 +14,10 @@ class APIClient {
         this.accessToken = accessToken;
     }
 
+    /**
+     * API call to template services app to download template
+     * @return {File} Metadata template file
+     */
     downloadTemplate() {
         axios.post(DOWNLOAD_TEMPLATE_URL, { data: null },
             {
@@ -35,9 +39,32 @@ class APIClient {
             .catch((error) => console.log(error));
     }
 
+    /**
+     * API call to backend app to get publications
+     */
     getPublications() {
         return this.perform('get', '/publications');
     }
+
+    /**
+     * API call to backend app to create a submission
+     *  @param {String} pmid PubMedId
+     */
+    createSubmission(pmid) {
+        console.log("** Trying to create a submission...")
+        axios.post(BASE_URI + 'submissions',
+            {
+                data: { 'publication': { 'pmid': 'Ts9ZuSWVFA' } },
+                headers:
+                {
+                    'Accept': "application/json",
+                    'Content-Type': 'application/json',
+                    "Access-Control-Allow-Origin": "*"
+                },
+            }).then((response) => { console.log("** Response: ", response) })
+            .catch((error) => console.log(error));
+    }
+
 
     async perform(method, resource, data) {
         return client({

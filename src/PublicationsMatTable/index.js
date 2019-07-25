@@ -1,6 +1,7 @@
 import React from 'react';
 import MaterialTable from 'material-table';
 import Button from '@material-ui/core/Button';
+import API_CLIENT from '../apiClient';
 
 
 import { forwardRef } from 'react';
@@ -45,6 +46,16 @@ const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + '/publicatio
 
 
 class PublicatinsMatTable extends React.Component {
+    constructor(props) {
+        super(props);
+        this.API_CLIENT = new API_CLIENT();
+        this.createSubmission = this.createSubmission.bind(this);
+    }
+
+    createSubmission(pmid) {
+        console.log("** PMID: ", pmid);
+        this.API_CLIENT.createSubmission(pmid);
+    }
 
     render() {
         return (
@@ -120,7 +131,8 @@ class PublicatinsMatTable extends React.Component {
                     {
                         icon: 'save',
                         tooltip: 'Create submission',
-                        onClick: (event, rowData) => alert("Create submission for: " + rowData.pmid)
+                        // onClick: (event, rowData) => alert("Create submission for: " + rowData.pmid)
+                        onClick: (event, rowData) => this.createSubmission(rowData.pmid)
                     }
                 ]}
                 components={{
