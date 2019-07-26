@@ -2,6 +2,7 @@ import React from 'react';
 import MaterialTable from 'material-table';
 import Button from '@material-ui/core/Button';
 import API_CLIENT from '../apiClient';
+import history from "../history";
 
 
 import { forwardRef } from 'react';
@@ -61,6 +62,7 @@ class PublicatinsMatTable extends React.Component {
         }
         else {
             alert("Please login to create a submission")
+            history.push('/login');
         }
     }
 
