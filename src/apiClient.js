@@ -49,20 +49,22 @@ class APIClient {
     /**
      * API call to backend app to create a submission
      *  @param {String} pmid PubMedId
+     *  @param {String} JWTToken Authorization token
      */
+    // TODO: Add JWTToken to Authorization header
     createSubmission(pmid, JWTToken) {
         console.log("** Trying to create a submission...")
-        axios.post(BASE_URI + 'submissions',
-            {
-                data: { 'publication': { 'pmid': 'Ts9ZuSWVFA' } },
-                headers:
-                {
-                    'Accept': "application/json",
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': "*",
-                    'Authorization': `Bearer ${JWTToken}`
-                },
-            }).then((response) => { console.log("** Response: ", response) })
+        let pmid_data = { publication: { pmid: pmid } };
+        console.log("** Data: ", pmid_data);
+
+        axios.post(BASE_URI + 'submissions', pmid_data
+            // {
+            //     headers:
+            //     {
+            //         'Authorization': `Bearer ${JWTToken}`
+            //     },
+            // }
+        ).then((response) => { console.log(response) })
             .catch((error) => console.log(error));
     }
 
