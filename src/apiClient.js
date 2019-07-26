@@ -19,7 +19,7 @@ class APIClient {
      * @return {File} Metadata template file
      */
     downloadTemplate() {
-        axios.post(DOWNLOAD_TEMPLATE_URL, { data: null },
+        axios.post(DOWNLOAD_TEMPLATE_URL, null,
             {
                 headers:
                 {
