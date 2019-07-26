@@ -86,7 +86,7 @@ class PublicatinsMatTable extends React.Component {
                     //     title: 'Publication ID', field: 'publicationId',
                     //     render: rowData => (<a href={`/submission/${rowData.publicationId}`} >{rowData.publicationId}</a>)
                     // },
-                    { title: 'Publication ID', field: 'publicationId' },
+                    // { title: 'Publication ID', field: 'publicationId' },
                     { title: 'PMID', field: 'pmid' },
                     { title: 'First author', field: 'firstAuthor' },
                     { title: 'Publication', field: 'title' },
@@ -138,7 +138,9 @@ class PublicatinsMatTable extends React.Component {
                     })
                 }
                 options={{
-                    search: true
+                    search: true,
+                    pageSize: 10
+
                 }}
                 actions={[
                     {
