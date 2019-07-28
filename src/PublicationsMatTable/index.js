@@ -4,6 +4,8 @@ import Button from '@material-ui/core/Button';
 import API_CLIENT from '../apiClient';
 import history from "../history";
 
+import { Link } from 'react-router-dom'
+
 
 import { forwardRef } from 'react';
 
@@ -46,7 +48,7 @@ const tableIcons = {
 const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + '/publications/';
 
 
-class PublicatinsMatTable extends React.Component {
+class PublicationsMatTable extends React.Component {
     constructor(props) {
         super(props);
         this.API_CLIENT = new API_CLIENT();
@@ -87,7 +89,13 @@ class PublicatinsMatTable extends React.Component {
                     //     render: rowData => (<a href={`/submission/${rowData.publicationId}`} >{rowData.publicationId}</a>)
                     // },
                     // { title: 'Publication ID', field: 'publicationId' },
-                    { title: 'PMID', field: 'pmid' },
+                    // <Link to={`/submission/${row.id}`} style={{ textDecoration: 'none' }}>{row.publication_id}</Link>
+                    {
+                        title: 'PMID', field: 'pmid',
+                        // render: rowData => (<a href={`/publication/${rowData.pmid}`} >{rowData.pmid}</a>)
+                        render: rowData => (<Link to={{ pathname: `/publication/${rowData.pmid}`, state: { pmid: rowData.pmid } }}
+                            style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
+                    },
                     { title: 'First author', field: 'firstAuthor' },
                     { title: 'Publication', field: 'title' },
                     { title: 'Journal', field: 'journal' },
@@ -168,4 +176,4 @@ class PublicatinsMatTable extends React.Component {
     }
 }
 
-export default (PublicatinsMatTable);
+export default (PublicationsMatTable);
