@@ -19,7 +19,8 @@ class APIClient {
      * @return {File} Metadata template file
      */
     downloadTemplate() {
-        axios.post(DOWNLOAD_TEMPLATE_URL, null,
+        // TODO: Handle download template parameters dynamically
+        axios.post(DOWNLOAD_TEMPLATE_URL + '?curator=true', null,
             {
                 headers:
                 {
