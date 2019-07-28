@@ -14,8 +14,12 @@ class APIClient {
         this.accessToken = accessToken;
     }
 
+    /**
+     * API call to template services app to download template
+     * @return {File} Metadata template file
+     */
     downloadTemplate() {
-        axios.post(DOWNLOAD_TEMPLATE_URL, { data: null },
+        axios.post(DOWNLOAD_TEMPLATE_URL, null,
             {
                 headers:
                 {
@@ -35,9 +39,51 @@ class APIClient {
             .catch((error) => console.log(error));
     }
 
+    /**
+     * API call to backend app to get all publications
+     */
     getPublications() {
         return this.perform('get', '/publications');
     }
+
+    /**
+     * Get details for Publication by PMID
+     * @param {*} pmid PubMedId
+     * @param {*} JWTToken Authorization token
+     */
+    // TODO: Add JWTToken to Authorization header
+    getPublication(pmid) {
+        return this.perform('get', '/publications/' + pmid + '?pmid=true');
+    }
+
+
+    /**
+     * API call to backend app to create a submission
+     *  @param {String} pmid PubMedId
+     *  @param {String} JWTToken Authorization token
+     */
+    // TODO: Add JWTToken to Authorization header
+    createSubmission(pmid, JWTToken) {
+        console.log("** Trying to create a submission...")
+        let pmid_data = { publication: { pmid: pmid } };
+        console.log("** Pub Data: ", pmid_data);
+
+        return axios.post(BASE_URI + 'submissions', pmid_data
+            // {
+            //     headers:
+            //     {
+            //         'Authorization': `Bearer ${JWTToken}`
+            //     },
+            // }
+        )
+        // WORKS - BUT CATCH ERROR IN COMPONENT TO PROVIDE ALERT DIALOG
+        // .then((response) => { console.log(response) })
+        //     .catch((error) => {
+        //         console.log(error)
+        //         return error
+        //     });
+    }
+
 
     async perform(method, resource, data) {
         return client({

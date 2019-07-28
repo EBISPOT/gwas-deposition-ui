@@ -7,13 +7,11 @@ import { Route } from "react-router-dom";
 
 import { withRouter } from "react-router";
 
-import DemoMUITable from "./DemoMUITable";
-import DemoMUITable_RemoteData from "./DemoMUITable_RemoteData";
-
 import {
   CssBaseline,
   withStyles,
 } from '@material-ui/core';
+import PublicationDetails from './PublicationDetails';
 
 
 const styles = theme => ({
@@ -32,6 +30,8 @@ const App = ({ classes }) => (
     <main className={classes.main}>
       <Route path="/" exact component={Home} />
       <Route path="/login" component={Login}></Route>
+      {/* <Route path="/publication/:pmid" render={({ match }) => <PublicationDetails />} /> */}
+      <Route path="/publication/:pmid" exact render={props => <PublicationDetails {...props} />} />
     </main>
   </Fragment>
 );
