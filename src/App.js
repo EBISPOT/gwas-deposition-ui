@@ -3,6 +3,8 @@ import './App.css';
 import Login from './Login';
 import MenuAppBar from './MenuAppBar';
 import Home from './Home';
+import Submissions from './Submissions';
+
 import { Route } from "react-router-dom";
 
 import { withRouter } from "react-router";
@@ -32,6 +34,7 @@ const App = ({ classes }) => (
       <Route path="/login" component={Login}></Route>
       {/* <Route path="/publication/:pmid" render={({ match }) => <PublicationDetails />} /> */}
       <Route path="/publication/:pmid" exact render={props => <PublicationDetails {...props} />} />
+      <Route path="/submissions" component={Submissions} />
     </main>
   </Fragment>
 );
