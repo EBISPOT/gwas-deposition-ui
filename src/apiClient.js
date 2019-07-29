@@ -59,6 +59,19 @@ class APIClient {
 
 
     /**
+     * Get Submission by Id
+     * @param {} submissionId
+     * @param {*} JWTToken 
+     */
+    // TODO: Add JWTToken to Authorization header
+    getSubmission(submissionId) {
+        return this.perform('get', '/submissions/' + submissionId);
+    }
+
+
+
+
+    /**
      * API call to backend app to create a submission
      *  @param {String} pmid PubMedId
      *  @param {String} JWTToken Authorization token
