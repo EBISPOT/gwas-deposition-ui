@@ -82,8 +82,7 @@ class PublicationDetails extends Component {
             this.API_CLIENT.createSubmission(pmid, JWTToken).then(response => {
                 this.setState(() => ({ error: false }));
 
-                // TODO: Add redirect to "My Submissions page"
-                history.push('/');
+                history.push('/submissions');
             })
                 .catch(error => {
                     this.setState(() => ({ error: true }));

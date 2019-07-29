@@ -99,6 +99,11 @@ function MenuAppBar() {
         setAnchorEl(null);
     }
 
+    function showMySubmissions() {
+        history.push("/submissions");
+        handleMenuClose();
+    }
+
     function handleLogout() {
         handleMenuClose();
 
@@ -175,7 +180,7 @@ function MenuAppBar() {
                                     open={open}
                                     onClose={handleMenuClose}
                                 >
-                                    <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+                                    <MenuItem onClick={showMySubmissions}>My Submissions</MenuItem>
                                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                                 </Menu>
                             </div>
