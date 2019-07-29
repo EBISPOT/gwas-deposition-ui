@@ -101,6 +101,7 @@ function MenuAppBar() {
 
     function showMySubmissions() {
         history.push("/submissions");
+        handleMenuClose();
     }
 
     function handleLogout() {

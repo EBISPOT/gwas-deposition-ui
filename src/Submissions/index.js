@@ -6,6 +6,8 @@ import history from "../history";
 
 import { Link } from 'react-router-dom'
 
+import Container from '@material-ui/core/Container';
+
 
 import { forwardRef } from 'react';
 
@@ -52,116 +54,81 @@ class Submissions extends React.Component {
     constructor(props) {
         super(props);
         this.API_CLIENT = new API_CLIENT();
-        // this.createSubmission = this.createSubmission.bind(this);
     }
-
-    // createSubmission(pmid) {
-    //     console.log("** PMID: ", pmid);
-    //     // Get token from local storage
-    //     if (localStorage.getItem('id_token')) {
-    //         let JWTToken = localStorage.getItem('id_token')
-    //         this.API_CLIENT.createSubmission(pmid, JWTToken);
-    //     }
-    //     else {
-    //         alert("Please login to create a submission")
-    //         history.push('/login');
-    //     }
-    // }
 
     render() {
         return (
-            <MaterialTable
-                icons={tableIcons}
-                title="My Submissions"
-                columns={[
-                    // {
-                    //     title: 'Publication ID', field: 'publicationId',
-                    //     render: rowData => (<a href={`/submission/${rowData.publicationId}`} >{rowData.publicationId}</a>)
-                    // },
-                    // { title: 'Publication ID', field: 'publicationId' },
-                    // <Link to={`/submission/${row.id}`} style={{ textDecoration: 'none' }}>{row.publication_id}</Link>
-                    {
-                        title: 'Submission Id', field: 'submissionId',
-                        // render: rowData => (<a href={`/publication/${rowData.pmid}`} >{rowData.pmid}</a>)
-                        // render: rowData => (<Link to={{ pathname: `/publication/${rowData.pmid}`, state: { pmid: rowData.pmid } }}
-                        //     style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
-                    },
-                    // { title: 'First author', field: 'firstAuthor' },
-                    // { title: 'Publication', field: 'title' },
-                    // { title: 'Journal', field: 'journal' },
-                    { title: 'Status', field: 'status' },
-                ]}
-                data={query =>
-                    new Promise((resolve, reject) => {
+            <Container>
+                <MaterialTable
+                    icons={tableIcons}
+                    title="My Submissions"
+                    columns={[
+                        {
+                            title: 'Submission Id', field: 'submissionId',
+                            render: rowData => (<Link to={{
+                                pathname: `/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
+                            }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
+                        },
+                        { title: 'PMID', field: 'publication.pmid' },
+                        { title: 'First author', field: 'publication.firstAuthor' },
+                        { title: 'Submission Status', field: 'status' },
+                        { title: 'Metadata Status', field: 'status' },
+                        { title: 'Summary statistics Status', field: 'status' },
+                        { title: 'Submission Status', field: 'status' },
+                        { title: 'Date submission started', field: '' },
+                        { title: 'Date submitted', field: 'created.timestamp' },
+                    ]}
+                    data={query =>
+                        new Promise((resolve, reject) => {
 
-                        let url = GET_SUBMISSIONS_URL
+                            let url = GET_SUBMISSIONS_URL
 
-                        // Handle display of search results
-                        if (query.search) {
-                            url += query.search
-                            fetch(url)
-                                .then(response => response.json())
-                                .then(result => {
-                                    resolve({
-                                        data: [result],
-                                        page: 0,
-                                        totalCount: 1,
+                            // Handle display of search results
+                            if (query.search) {
+                                url += query.search
+                                fetch(url)
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        resolve({
+                                            data: [result],
+                                            page: 0,
+                                            totalCount: 1,
+                                        })
+                                    }).catch(error => {
                                     })
-                                }).catch(error => {
-                                })
-                        }
-                        // Display all results
-                        else {
-                            url += '?size=' + query.pageSize
-                            url += '&page=' + (query.page)
+                            }
+                            // Display all results
+                            else {
+                                url += '?size=' + query.pageSize
+                                url += '&page=' + (query.page)
 
-                            fetch(url)
-                                .then(response => response.json())
-                                .then(result => {
-                                    resolve({
-                                        data: result._embedded.submissions,
-                                        page: result.page.number,
-                                        totalCount: result.page.totalElements,
+                                fetch(url)
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        resolve({
+                                            data: result._embedded.submissions,
+                                            page: result.page.number,
+                                            totalCount: result.page.totalElements,
+                                        })
+                                    }).catch(error => {
                                     })
-                                }).catch(error => {
-                                })
-                        }
-                        setTimeout(() => {
-                            resolve({
-                                data: [],
-                                page: 0,
-                                totalCount: 0,
-                            });
-                        }, 250);
-                    })
-                }
-                options={{
-                    search: true,
-                    pageSize: 10
+                            }
+                            setTimeout(() => {
+                                resolve({
+                                    data: [],
+                                    page: 0,
+                                    totalCount: 0,
+                                });
+                            }, 250);
+                        })
+                    }
+                    options={{
+                        search: true,
+                        pageSize: 10
 
-                }}
-            // actions={[
-            //     {
-            //         icon: 'save',
-            //         tooltip: 'Create submission',
-            //         // onClick: (event, rowData) => alert("Create submission for: " + rowData.pmid)
-            //         onClick: (event, rowData) => this.createSubmission(rowData.pmid)
-            //     }
-            // ]}
-            // components={{
-            //     Action: props => (
-            //         <Button
-            //             onClick={(event) => props.action.onClick(event, props.data)}
-            //             color="inherit"
-            //             variant="contained"
-            //             style={{ textTransform: 'none' }}
-            //             size="small"
-            //         >
-            //             My Button
-            //         </Button>
-            //     ),
-            // }}
-            />
+                    }}
+                />
+            </Container>
         )
     }
 }
