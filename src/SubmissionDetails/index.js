@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Container from '@material-ui/core/Container';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -55,6 +55,7 @@ class SubmissionDetails extends Component {
             file_upload_error: null,
             isNotValid: true,
             submission_error: null,
+            overallStatusStarted: 'STARTED',
         })
         // this.uploadDataFile = this.uploadDataFile.bind(this);
         this.submitData = this.submitData.bind(this);
@@ -142,6 +143,29 @@ class SubmissionDetails extends Component {
         const { classes } = this.props;
         const { error } = this.state;
         const { submission_error } = this.state;
+        const bull = <span className={classes.bullet}>•</span>;
+
+        const { overallStatusStarted } = this.state;
+        const isFileUploaded = this.state.submission_data.submission_status;
+        let submission_stats;
+
+        if (isFileUploaded !== overallStatusStarted) {
+            submission_stats =
+                <Fragment>
+                    <Typography gutterBottom variant="body1">
+                        Submission Stats
+                </Typography>
+                    <Typography gutterBottom>
+                        {bull} {this.state.submission_data.study_count} studies
+                </Typography>
+                    <Typography gutterBottom>
+                        {bull} {this.state.submission_data.association_count} total associations
+                </Typography>
+                    <Typography gutterBottom>
+                        {bull} {this.state.submission_data.sample_count} sample groups
+                </Typography>
+                </Fragment>
+        }
 
         return (
             <div className={classes.root}>
@@ -178,6 +202,9 @@ class SubmissionDetails extends Component {
                                             </Button>
                                         </Grid>
                                     </Grid>
+
+                                    {submission_stats}
+
                                 </Grid>
                             </Grid>
 
@@ -191,7 +218,7 @@ class SubmissionDetails extends Component {
                         </Grid>
                     </Grid>
                 </Paper>
-            </div>
+            </div >
 
 
         )
