@@ -4,6 +4,7 @@ import Container from '@material-ui/core/Container';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
+import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -19,10 +20,18 @@ const styles = theme => ({
     root: {
         padding: theme.spacing(3, 2),
     },
+    // root: {
+    //     flexGrow: 1,
+    // },
+    paper: {
+        padding: theme.spacing(2),
+        margin: 'auto',
+        maxWidth: 800,
+    },
     button: {
         margin: theme.spacing(1),
         color: 'white',
-        textTransform: 'none',
+        // textTransform: 'none',
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -107,57 +116,49 @@ class SubmissionDetails extends Component {
         const { error } = this.state;
 
         return (
-            <Container>
+            <div className={classes.root}>
+                <Paper className={classes.paper}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm container>
 
-                <div>
-                    <Paper className={classes.root}>
-                        {/* <Typography variant="h5" component="h3">
-                            Submission ID: <i>{this.state.submission_data.submissionId}</i>
-                        </Typography> */}
+                            <Grid item xs container direction="column" spacing={4}>
+                                <Grid item xs>
+                                    <Typography gutterBottom variant="h5">
+                                        Submission details for PMID: <i>{this.state.publication_obj.pmid}</i>
+                                    </Typography>
 
-                        <Typography variant="h5" component="h3">
-                            Submission Details details for PMID: <i>{this.state.publication_obj.pmid}</i>
-                        </Typography>
+                                    <Typography variant="body1" gutterBottom>
+                                        {this.state.publication_obj.firstAuthor}, {this.state.publication_obj.publicationDate}, {this.state.publication_obj.journal}
+                                    </Typography>
 
+                                    <Grid item xs container direction="row" spacing={2}>
+                                        <Grid item xs={6}>
+                                            <Typography variant="body1" gutterBottom>
+                                                Submission status: {this.state.submission_data.submission_status}
+                                            </Typography>
+                                        </Grid>
 
-                        <Typography component="h4">
-                            <div>
-                                {this.state.publication_obj.title}
-                            </div>
+                                        <Grid item xs={4}>
+                                            <Button variant="contained" color="secondary" size="small" className={classes.button}>
+                                                Select Upload Files
+                                            </Button>
+                                        </Grid>
 
-                            <div>
-                                {this.state.publication_obj.firstAuthor}, {this.state.publication_obj.publicationDate}, {this.state.publication_obj.journal}
-                            </div>
-                        </Typography>
+                                        <Grid item xs={2}>
+                                            <Button variant="contained" color="secondary" size="small" className={classes.button}>
+                                                Submit
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
 
-                        <Typography>
-                            Submission status: {this.state.submission_data.status}
-                        </Typography>
-
-
-                        {/* Display button only for submission with status VALID */}
-                        <Button onClick={this.submitData} variant="contained" color="secondary" size="small"
-                            disabled={this.state.isNotValid} className={classes.button}>
-                            Submit
-                        </Button>
-
-
-                        {/* <Typography>
-                            {error ? "There was an error creating the submission. Please try again." : null}
-                        </Typography> */}
-
-                    </Paper>
-                </div>
+                        </Grid>
+                    </Grid>
+                </Paper>
+            </div>
 
 
-                {/* <h4> JWTToken: {this.props.token}</h4> */}
-
-                {/* Alternative option to get info from Context with just "export default Home"
-                {/* <AuthConsumer>
-                {({ isAuthenticated }) => <h4> Login State: {isAuthenticated.toString()}</h4>}
-            </AuthConsumer> */}
-
-            </Container>
         )
     }
 }
