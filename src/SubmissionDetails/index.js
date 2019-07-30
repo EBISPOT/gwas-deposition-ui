@@ -52,10 +52,12 @@ class SubmissionDetails extends Component {
         this.state = ({
             submission_data: [],
             publication_obj: [],
-            error: null,
+            file_upload_error: null,
             isNotValid: true,
+            submission_error: null,
         })
-        // this.createSubmission = this.createSubmission.bind(this);
+        // this.uploadDataFile = this.uploadDataFile.bind(this);
+        this.submitData = this.submitData.bind(this);
     }
 
     /**
@@ -70,7 +72,7 @@ class SubmissionDetails extends Component {
             if (data.status === 'VALID_METADATA') {
                 this.setState({ ...this.state, isNotValid: false });
             }
-            console.log("** Data: ", data);
+            console.log("** Get Submission Data: ", data);
         }).catch(error => {
             console.log("** Error: ", error);
         });
@@ -84,36 +86,62 @@ class SubmissionDetails extends Component {
     //     }
     // }
 
+
+    /**
+     * Upload metadata file --> This needs to use the Dropzone component
+     */
+    // uploadDataFile() {
+    //     console.log("** Clicked on uploadDataFile method...");
+    //     let submissionId = this.SUBMISSION_ID;
+
+    //     if (localStorage.getItem('id_token')) {
+    //         let JWTToken = localStorage.getItem('id_token')
+
+    //         this.API_CLIENT.createFileUpload(submissionId, JWTToken).then(response => {
+    //             this.setState(() => ({ file_upload_error: false }));
+    //         })
+    //             .catch(error => {
+    //                 this.setState(() => ({ file_upload_error: true }));
+    //                 alert("There was an error creating the submission")
+    //             })
+    //     }
+    //     else {
+    //         alert("Please login to create a submission")
+    //         history.push('/login');
+    //     }
+    // }
+
+
+
     /**
      * Submit data 
      */
     submitData() {
         console.log("** Button click called submitData method...");
-        //     let pmid = this.PUBMED_ID;
+        let submissionId = this.SUBMISSION_ID;
 
-        //     // Check if user is logged in, Get token from local storage
-        //     if (localStorage.getItem('id_token')) {
-        //         let JWTToken = localStorage.getItem('id_token')
-        //         this.API_CLIENT.createSubmission(pmid, JWTToken).then(response => {
-        //             this.setState(() => ({ error: false }));
-
-        //             // history.push('/submissions');
-        //         })
-        //             .catch(error => {
-        //                 this.setState(() => ({ error: true }));
-        //                 alert("There was an error creating the submission")
-        //             })
-        //     }
-        //     else {
-        //         alert("Please login to create a submission")
-        //         history.push('/login');
-        //     }
+        // Check if user is logged in, Get token from local storage
+        if (localStorage.getItem('id_token')) {
+            let JWTToken = localStorage.getItem('id_token')
+            this.API_CLIENT.submitSubmission(submissionId, JWTToken).then(response => {
+                this.setState(() => ({ submission_error: false }));
+            })
+                .catch(error => {
+                    this.setState(() => ({ submission_error: true }));
+                    alert("There was an error creating the submission")
+                })
+        }
+        else {
+            alert("Please login to create a submission")
+            history.push('/login');
+        }
     }
 
 
     render() {
         const { classes } = this.props;
         const { error } = this.state;
+        const { submission_error } = this.state;
 
         return (
             <div className={classes.root}>
@@ -128,7 +156,7 @@ class SubmissionDetails extends Component {
                                     </Typography>
 
                                     <Typography variant="body1" gutterBottom>
-                                        {this.state.publication_obj.firstAuthor}, {this.state.publication_obj.publicationDate}, {this.state.publication_obj.journal}
+                                        {this.state.publication_obj.firstAuthor} et al., {this.state.publication_obj.publicationDate}, {this.state.publication_obj.journal}
                                     </Typography>
 
                                     <Grid item xs container direction="row" spacing={2}>
@@ -145,7 +173,7 @@ class SubmissionDetails extends Component {
                                         </Grid>
 
                                         <Grid item xs={2}>
-                                            <Button variant="contained" color="secondary" size="small" className={classes.button}>
+                                            <Button onClick={this.submitData} variant="contained" color="secondary" size="small" className={classes.button}>
                                                 Submit
                                             </Button>
                                         </Grid>
@@ -153,6 +181,13 @@ class SubmissionDetails extends Component {
                                 </Grid>
                             </Grid>
 
+                            <Grid item container direction="column" spacing={4}>
+                                <Grid item xs>
+                                    <Typography>
+                                        {submission_error ? "There was an error creating the submission. Please try again." : null}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Paper>
