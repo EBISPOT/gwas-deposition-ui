@@ -71,12 +71,12 @@ class Submissions extends React.Component {
                         },
                         { title: 'PMID', field: 'publication.pmid' },
                         { title: 'First author', field: 'publication.firstAuthor' },
-                        { title: 'Submission Status', field: 'status' },
-                        { title: 'Metadata Status', field: 'status' },
-                        { title: 'Summary statistics Status', field: 'status' },
-                        { title: 'Submission Status', field: 'status' },
-                        { title: 'Date submission started', field: '' },
-                        { title: 'Date submitted', field: 'created.timestamp' },
+                        { title: 'Submission Status', field: 'submission_status' },
+                        { title: 'Metadata Status', field: 'metadata_status' },
+                        { title: 'Summary statistics Status', field: 'summary_statistics_status' },
+                        // { title: 'Submission Status', field: 'status' },
+                        { title: 'Date submission started', field: 'created.timestamp' },
+                        { title: 'Date submitted', field: 'date_submitted' },
                     ]}
                     data={query =>
                         new Promise((resolve, reject) => {
