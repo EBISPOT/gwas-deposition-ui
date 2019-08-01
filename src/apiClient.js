@@ -59,6 +59,17 @@ class APIClient {
 
 
     /**
+     * Get Submission by Id
+     * @param {} submissionId
+     * @param {*} JWTToken 
+     */
+    // TODO: Add JWTToken to Authorization header
+    getSubmission(submissionId) {
+        return this.perform('get', '/submissions/' + submissionId);
+    }
+
+
+    /**
      * API call to backend app to create a submission
      *  @param {String} pmid PubMedId
      *  @param {String} JWTToken Authorization token
@@ -84,6 +95,35 @@ class APIClient {
         //         return error
         //     });
     }
+
+    /**
+     *
+     * @param {*} PUT
+     * @param {*} submissionId
+     * @param {*} JWTToken
+     */
+    submitSubmission(submissionId) {
+        console.log("** Trying to submit a submission...");
+        return axios.put(BASE_URI + '/submissions/' + submissionId + '/submit');
+    }
+
+
+
+
+    /**
+     * Create file upload
+     * @param {*} POST
+     * @param {*} submissionId
+     * @param {*} JWTToken
+     * @param {*} File
+     */
+    // createFileUpload(submissionId) {
+    //     console.log("** Trying to upload file...");
+
+    //     return axios.post(BASE_URI + 'submissions/' + submissionId + '/uploads')
+    // }
+
+
 
 
     async perform(method, resource, data) {

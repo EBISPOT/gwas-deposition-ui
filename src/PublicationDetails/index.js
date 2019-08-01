@@ -118,7 +118,7 @@ class PublicationDetails extends Component {
                             </div>
 
                             <div>
-                                {this.state.publication.firstAuthor}, {this.state.publication.publicationDate}, {this.state.publication.journal}
+                                {this.state.publication.firstAuthor} et al., {this.state.publication.publicationDate}, {this.state.publication.journal}
                             </div>
                         </Typography>
 

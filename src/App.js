@@ -4,6 +4,7 @@ import Login from './Login';
 import MenuAppBar from './MenuAppBar';
 import Home from './Home';
 import Submissions from './Submissions';
+import SubmissionDetails from './SubmissionDetails';
 
 import { Route } from "react-router-dom";
 
@@ -35,6 +36,7 @@ const App = ({ classes }) => (
       {/* <Route path="/publication/:pmid" render={({ match }) => <PublicationDetails />} /> */}
       <Route path="/publication/:pmid" exact render={props => <PublicationDetails {...props} />} />
       <Route path="/submissions" component={Submissions} />
+      <Route path="/submission/:submission_id" exact render={props => <SubmissionDetails {...props} />} />
     </main>
   </Fragment>
 );
