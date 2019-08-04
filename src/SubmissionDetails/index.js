@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 // import Container from '@material-ui/core/Container';
 
+import Upload from "../Upload";
+
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
@@ -39,6 +41,9 @@ const styles = theme => ({
     iconSmall: {
         fontSize: 20,
     },
+    action: {
+        marginTop: '20px',
+    },
 });
 
 
@@ -54,13 +59,14 @@ class SubmissionDetails extends Component {
             publication_obj: [],
             file_upload_error: null,
             isNotValid: true,
-            submission_error: null,
-            publication_status: null,
-            // overallStatusStarted: 'STARTED',
+            submissionError: null,
+            publicationStatus: null,
+            showComponent: false,
         })
         this.downloadSummaryStatsTemplate = this.downloadSummaryStatsTemplate.bind(this);
         this.uploadDataFile = this.uploadDataFile.bind(this);
         this.submitData = this.submitData.bind(this);
+        this.displayUploadComponent = this.displayUploadComponent.bind(this);
     }
 
     /**
@@ -72,7 +78,7 @@ class SubmissionDetails extends Component {
         this.API_CLIENT.getSubmission(this.SUBMISSION_ID).then((data) => {
             this.setState({ ...this.state, submission_data: data });
             this.setState({ ...this.state, publication_obj: data.publication });
-            this.setState({ ...this.state, publication_status: data.publication.status });
+            this.setState({ ...this.state, publicationStatus: data.publication.status });
             if (data.status === 'VALID_METADATA') {
                 this.setState({ ...this.state, isNotValid: false });
             }
@@ -94,11 +100,19 @@ class SubmissionDetails extends Component {
 
 
     /**
+     * Manage state to show/hide Upload component
+     */
+    displayUploadComponent() {
+        this.setState({ showComponent: true })
+    }
+
+
+    /**
      * Upload metadata file --> This needs to use the Dropzone component
      */
     uploadDataFile() {
         console.log("** Clicked on uploadDataFile method...");
-        //     let submissionId = this.SUBMISSION_ID;
+        let submissionId = this.SUBMISSION_ID;
 
         //     if (localStorage.getItem('id_token')) {
         //         let JWTToken = localStorage.getItem('id_token')
@@ -130,10 +144,10 @@ class SubmissionDetails extends Component {
         if (localStorage.getItem('id_token')) {
             let JWTToken = localStorage.getItem('id_token')
             this.API_CLIENT.submitSubmission(submissionId, JWTToken).then(response => {
-                this.setState(() => ({ submission_error: false }));
+                this.setState(() => ({ submissionError: false }));
             })
                 .catch(error => {
-                    this.setState(() => ({ submission_error: true }));
+                    this.setState(() => ({ submissionError: true }));
                     alert("There was an error creating the submission")
                 })
         }
@@ -147,13 +161,13 @@ class SubmissionDetails extends Component {
     render() {
         const { classes } = this.props;
         const { error } = this.state;
-        const { submission_error } = this.state;
+        const { submissionError } = this.state;
         const bull = <span className={classes.bullet}>•</span>;
 
         const OVERALL_STATUS_STARTED = 'STARTED';
         // const { overallStatusStarted } = this.state;
 
-        const { publication_status } = this.state;
+        const { publicationStatus } = this.state;
         const submission_status = this.state.submission_data.submission_status;
         let submission_stats_section;
         let download_summary_stats_button;
@@ -185,9 +199,9 @@ class SubmissionDetails extends Component {
          * Manage display of "Download SS Template" button
          */
         // TODO: Change status once updated data is returned from endpoint
-        if (publication_status === 'PUBLISHED') {
+        if (publicationStatus === 'PUBLISHED') {
             if (submission_status === 'STARTED') {
-                // if (publication_status === 'UNDER_SUMMARY_STATISTICS_SUBMISSION') {
+                // if (publicationStatus === 'UNDER_SUMMARY_STATISTICS_SUBMISSION') {
                 download_summary_stats_button =
                     <Fragment>
                         <Grid item xs={3}>
@@ -223,9 +237,18 @@ class SubmissionDetails extends Component {
         } else {
             select_upload_files_button = <Fragment>
                 <Grid item xs={3}>
-                    <Button variant="contained" color="secondary" size="small" className={classes.button}>
+                    <Button onClick={this.displayUploadComponent} variant="contained" color="secondary" size="small" className={classes.button}>
                         Select Upload Files
-                        </Button>
+                    </Button>
+
+                    {this.state.showComponent ? <Upload sub_id={this.props.submissionID} /> : null}
+
+                    {this.state.showComponent ?
+                        <Button variant="contained" color="secondary" size="small" className={classes.button}
+                            onClick={() => this.setState({ showComponent: false })}>
+                            Close Window
+                        </Button> : null
+                    }
                 </Grid>
             </Fragment>
         }
@@ -283,12 +306,6 @@ class SubmissionDetails extends Component {
 
                                         {select_upload_files_button}
 
-                                        {/* <Grid item xs={3}>
-                                            <Button variant="contained" color="secondary" size="small" className={classes.button}>
-                                                Select Upload Files
-                                            </Button>
-                                        </Grid> */}
-
                                         {submit_data_button}
 
                                     </Grid>
@@ -301,7 +318,7 @@ class SubmissionDetails extends Component {
                             <Grid item container direction="column" spacing={4}>
                                 <Grid item xs>
                                     <Typography>
-                                        {submission_error ? "There was an error creating the submission. Please try again." : null}
+                                        {submissionError ? "There was an error creating the submission. Please try again." : null}
                                     </Typography>
                                 </Grid>
                             </Grid>
