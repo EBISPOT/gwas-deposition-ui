@@ -62,6 +62,7 @@ class SubmissionDetails extends Component {
             submissionError: null,
             publicationStatus: null,
             showComponent: false,
+            showButtonVisibility: 'visible',
         })
         this.downloadSummaryStatsTemplate = this.downloadSummaryStatsTemplate.bind(this);
         this.uploadDataFile = this.uploadDataFile.bind(this);
@@ -100,10 +101,12 @@ class SubmissionDetails extends Component {
 
 
     /**
-     * Manage state to show/hide Upload component
+     * Manage state to show/hide Upload component 
+     * and "Select Upload Files" button
      */
     displayUploadComponent() {
-        this.setState({ showComponent: true })
+        this.setState({ showComponent: true });
+        this.setState({ showButtonVisibility: 'hidden' });
     }
 
 
@@ -235,22 +238,24 @@ class SubmissionDetails extends Component {
                     </Grid>
                 </Fragment>
         } else {
-            select_upload_files_button = <Fragment>
-                <Grid item xs={3}>
-                    <Button onClick={this.displayUploadComponent} variant="contained" color="secondary" size="small" className={classes.button}>
-                        Select Upload Files
-                    </Button>
+            select_upload_files_button =
+                <Fragment>
+                    <Grid item xs={3} direction="row">
+                        <Button onClick={this.displayUploadComponent} style={{ visibility: this.state.showButtonVisibility }} variant="contained" color="secondary" size="small" className={classes.button}>
+                            Select Upload Files
+                        </Button>
+                    </Grid>
 
-                    {this.state.showComponent ? <Upload sub_id={this.props.submissionID} /> : null}
+                    <Grid item xs={6} direction="column" alignItems="flex-start">
+                        {this.state.showComponent ? <Upload submission_id={this.SUBMISSION_ID} displayUploadComponent={this.displayUploadComponent} /> : null}
 
-                    {this.state.showComponent ?
-                        <Button variant="contained" color="secondary" size="small" className={classes.button}
-                            onClick={() => this.setState({ showComponent: false })}>
-                            Close Window
-                        </Button> : null
-                    }
-                </Grid>
-            </Fragment>
+                        {this.state.showComponent ?
+                            <Button variant="contained" color="secondary" size="small" className={classes.button}
+                                onClick={() => this.setState({ showComponent: false, showButtonVisibility: 'visible' })}>
+                                Close Window
+                            </Button> : null}
+                    </Grid>
+                </Fragment>
         }
 
 
@@ -260,7 +265,7 @@ class SubmissionDetails extends Component {
         if (submission_status !== 'VALID') {
             submit_data_button =
                 <Fragment>
-                    <Grid item xs={2}>
+                    <Grid item xs={2} direction="row">
                         <Button disabled variant="contained" color="secondary" size="small" className={classes.button}>
                             Submit
                     </Button>
@@ -269,7 +274,7 @@ class SubmissionDetails extends Component {
         } else {
             submit_data_button =
                 <Fragment>
-                    <Grid item xs={2}>
+                    <Grid item xs={2} direction="row">
                         <Button onClick={this.submitData} variant="contained" color="secondary" size="small" className={classes.button}>
                             Submit
                     </Button>
