@@ -63,6 +63,7 @@ class SubmissionDetails extends Component {
             publicationStatus: null,
             showComponent: false,
             showButtonVisibility: 'visible',
+            fileValidationErrorMessage: null,
         })
         this.downloadSummaryStatsTemplate = this.downloadSummaryStatsTemplate.bind(this);
         this.uploadDataFile = this.uploadDataFile.bind(this);
@@ -83,6 +84,8 @@ class SubmissionDetails extends Component {
             if (data.status === 'VALID_METADATA') {
                 this.setState({ ...this.state, isNotValid: false });
             }
+            this.setState({ ...this.state, fileValidationErrorMessage: data.files[0].errors })
+
             console.log("** Get Submission Data: ", data);
         }).catch(error => {
             console.log("** Error: ", error);
@@ -168,10 +171,11 @@ class SubmissionDetails extends Component {
         const bull = <span className={classes.bullet}>•</span>;
 
         const OVERALL_STATUS_STARTED = 'STARTED';
-        // const { overallStatusStarted } = this.state;
 
         const { publicationStatus } = this.state;
         const submission_status = this.state.submission_data.submission_status;
+        const { fileValidationErrorMessage } = this.state;
+
         let submission_stats_section;
         let download_summary_stats_button;
         let select_upload_files_button;
@@ -228,25 +232,16 @@ class SubmissionDetails extends Component {
         /**
          * Manage display of "Select Upload Files" button
          */
-        if (submission_status !== 'STARTED' || submission_status.startsWith('INVALID')) {
+        if (submission_status === 'STARTED' || submission_status === 'INVALID') {
             select_upload_files_button =
                 <Fragment>
                     <Grid item xs={3}>
-                        <Button disabled variant="contained" color="secondary" size="small" className={classes.button}>
-                            Select Upload Files
-                        </Button>
-                    </Grid>
-                </Fragment>
-        } else {
-            select_upload_files_button =
-                <Fragment>
-                    <Grid item xs={3} direction="row">
                         <Button onClick={this.displayUploadComponent} style={{ visibility: this.state.showButtonVisibility }} variant="contained" color="secondary" size="small" className={classes.button}>
                             Select Upload Files
                         </Button>
                     </Grid>
 
-                    <Grid item xs={6} direction="column" alignItems="flex-start">
+                    <Grid item xs={6}>
                         {this.state.showComponent ? <Upload submission_id={this.SUBMISSION_ID} displayUploadComponent={this.displayUploadComponent} /> : null}
 
                         {this.state.showComponent ?
@@ -254,6 +249,15 @@ class SubmissionDetails extends Component {
                                 onClick={() => this.setState({ showComponent: false, showButtonVisibility: 'visible' })}>
                                 Close Window
                             </Button> : null}
+                    </Grid>
+                </Fragment>
+        } else {
+            select_upload_files_button =
+                <Fragment>
+                    <Grid item xs={3}>
+                        <Button disabled variant="contained" color="secondary" size="small" className={classes.button}>
+                            Select Upload Files
+                        </Button>
                     </Grid>
                 </Fragment>
         }
@@ -265,7 +269,7 @@ class SubmissionDetails extends Component {
         if (submission_status !== 'VALID') {
             submit_data_button =
                 <Fragment>
-                    <Grid item xs={2} direction="row">
+                    <Grid item xs={2}>
                         <Button disabled variant="contained" color="secondary" size="small" className={classes.button}>
                             Submit
                     </Button>
@@ -274,7 +278,7 @@ class SubmissionDetails extends Component {
         } else {
             submit_data_button =
                 <Fragment>
-                    <Grid item xs={2} direction="row">
+                    <Grid item xs={2}>
                         <Button onClick={this.submitData} variant="contained" color="secondary" size="small" className={classes.button}>
                             Submit
                     </Button>
@@ -305,6 +309,13 @@ class SubmissionDetails extends Component {
                                             <Typography variant="body1" gutterBottom>
                                                 Submission status: {this.state.submission_data.submission_status}
                                             </Typography>
+
+
+                                            <Typography>
+                                                <i>{fileValidationErrorMessage}</i>
+                                            </Typography>
+
+
                                         </Grid>
 
                                         {download_summary_stats_button}
