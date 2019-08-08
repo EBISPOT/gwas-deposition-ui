@@ -1,7 +1,8 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import Dropzone from '../Dropzone'
 import Progress from '../Progress'
 import './upload.css'
+import Grid from '@material-ui/core/Grid';
 import APIClient from '../apiClient'
 
 const UPLOAD_TEMPLATE_URL_BASE = process.env.REACT_APP_LOCAL_BASE_URI;
@@ -26,6 +27,7 @@ class Upload extends Component {
         this.uploadFiles = this.uploadFiles.bind(this);
         this.sendRequest = this.sendRequest.bind(this);
         this.renderActions = this.renderActions.bind(this);
+        this.hideUploadComponent = this.hideUploadComponent.bind(this);
     }
 
     onFilesAdded(files) {
@@ -57,23 +59,50 @@ class Upload extends Component {
     renderActions() {
         if (this.state.successfullUploaded) {
             return (
-                <button
-                    onClick={() =>
-                        this.setState({ files: [], successfullUploaded: false })
-                    }>
-                    Clear
+                <Fragment>
+                    <Grid item xs={3}>
+                        <button
+                            onClick={() =>
+                                this.setState({ files: [], successfullUploaded: false })
+                            }>
+                            Clear
                     </button>
+                    </Grid>
+                    <Grid item xs={3}>
+                        <button onClick={this.hideUploadComponent}>
+                            Complete
+                        </button>
+                    </Grid>
+                </Fragment>
             );
         } else {
             return (
-                <button
-                    disabled={this.state.files.length < 0 || this.state.uploading}
-                    onClick={this.uploadFiles}>
-                    Upload Files
-                </button>
+                <Fragment>
+                    <Grid item xs={3}>
+                        <button
+                            disabled={this.state.files.length <= 0 || this.state.uploading}
+                            onClick={this.uploadFiles}>
+                            Upload File
+                    </button>
+                    </Grid>
+                    <Grid item xs={3}>
+                        <button
+                            disabled={this.state.files.length <= 0 || this.state.uploading}
+                            onClick={() =>
+                                this.setState({ files: [], successfullUploaded: false })
+                            }>
+                            Clear
+                    </button>
+                    </Grid>
+                </Fragment>
             );
         }
     }
+
+    hideUploadComponent() {
+        window.location.reload();
+    }
+
 
     async uploadFiles() {
         this.setState({ uploadProgress: {}, uploading: true });
@@ -140,28 +169,58 @@ class Upload extends Component {
 
     render() {
         return (
-            <div className="Upload">
-                {/* <span className="Title">Upload Files</span> */}
-                <div className="Content">
-                    <div>
+            <div style={{ padding: 24 }}>
+                <Grid item xs={12}
+                    container
+                    direction="row"
+                    justify="flex-start"
+                    alignItems="center"
+                    spacing={3}>
+
+                    <Grid item xs={2}>
                         <Dropzone
                             onFilesAdded={this.onFilesAdded}
                             disabled={this.state.uploading || this.state.successfullUploaded}
                         />
-                    </div>
-                    <div className="Files">
+                    </Grid>
+                    <Grid item xs={4}>
                         {this.state.files.map(file => {
                             return (
                                 <div key={file.name} className="Row">
-                                    <span className="Filename">{file.name}</span>
+                                    <span className="Filename">Filename: {file.name}</span>
                                     {this.renderProgress(file)}
                                 </div>
                             );
                         })}
-                    </div>
-                </div>
-                <div className="Actions">{this.renderActions()}</div>
+                    </Grid>
+
+                    {this.renderActions()}
+
+                </Grid>
             </div>
+
+            // <div className="Upload">
+            //     {/* <span className="Title">Upload Files</span> */}
+            //     <div className="Content">
+            //         <div>
+            //             <Dropzone
+            //                 onFilesAdded={this.onFilesAdded}
+            //                 disabled={this.state.uploading || this.state.successfullUploaded}
+            //             />
+            //         </div>
+            //         <div className="Files">
+            //             {this.state.files.map(file => {
+            //                 return (
+            //                     <div key={file.name} className="Row">
+            //                         <span className="Filename">{file.name}</span>
+            //                         {this.renderProgress(file)}
+            //                     </div>
+            //                 );
+            //             })}
+            //         </div>
+            //     </div>
+            //     <div className="Actions">{this.renderActions()}</div>
+            // </div>
         );
     }
 }

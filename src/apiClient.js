@@ -70,6 +70,17 @@ class APIClient {
 
 
     /**
+     * Delete file upload
+     * @param {*} submissionId
+     * @param {*} fileId
+     */
+    deleteFileUpload(submissionId, fileId) {
+        console.log("** Trying to delete a file...")
+        return this.perform('delete', 'submissions/' + submissionId + '/uploads/' + fileId);
+    }
+
+
+    /**
      * API call to backend app to create a submission
      *  @param {String} pmid PubMedId
      *  @param {String} JWTToken Authorization token
