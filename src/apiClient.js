@@ -73,6 +73,7 @@ class APIClient {
      * Delete file upload
      * @param {*} submissionId
      * @param {*} fileId
+     * @param {*} JWTToken
      */
     deleteFileUpload(submissionId, fileId) {
         console.log("** Trying to delete a file...")

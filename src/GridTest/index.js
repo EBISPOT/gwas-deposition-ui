@@ -80,6 +80,8 @@ class GridTest extends Component {
         this.deleteData = this.deleteData.bind(this);
         this.displayUploadComponent = this.displayUploadComponent.bind(this);
         this.hideUploadComponent = this.hideUploadComponent.bind(this);
+
+        this.parseErrorMessage = this.parseErrorMessage.bind(this);
     }
 
     /**
@@ -103,12 +105,35 @@ class GridTest extends Component {
             if (data.files.length > 0) {
                 console.log("** Setting fileUploadId...", data.files[0].fileUploadId);
                 this.setState({ ...this.state, fileUploadId: data.files[0].fileUploadId })
+
                 // TODO: Need to parse error message for pretty formatting
-                this.setState({ ...this.state, fileValidationErrorMessage: data.files[0].errors })
+                // this.setState({ ...this.state, fileValidationErrorMessage: data.files[0].errors });
+
+                this.setState({ ...this.state, fileValidationErrorMessage: this.parseErrorMessage(data.files[0].errors) });
             }
         }).catch(error => {
             console.log("** Error: ", error);
         });
+    }
+
+
+    /**
+     * Parse error message
+     */
+    parseErrorMessage(errorMessage) {
+        console.log("** Called parseErrorMessage...", errorMessage);
+
+        let fieldHeaderText = "Error: ";
+        let index = 0;
+        let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
+        let errors = [];
+
+        errors.push(fieldHeader);
+        for (const error of errorMessage) {
+            index = index + 1;
+            errors.push(<span key={index}>{error}<br /></span>);
+        }
+        return errors;
     }
 
 
@@ -222,14 +247,17 @@ class GridTest extends Component {
         if (localStorage.getItem('id_token')) {
             let JWTToken = localStorage.getItem('id_token')
             this.API_CLIENT.submitSubmission(submissionId, JWTToken).then(response => {
-                this.setState(() => ({ submissionError: false }));
+                // this.setState(() => ({ submissionError: false }));
             })
                 .catch(error => {
-                    this.setState(() => ({ submissionError: true }));
+                    // this.setState(() => ({ submissionError: true }));
                     alert("There was an error creating the submission")
                 })
             // Issue: This reloads the page before the submission is submitted
             // window.location.reload();
+
+            // Redirect to My Submissions page, NOTE: If using redirect, can't set state here
+            history.push('/submissions');
         }
         else {
             alert("Please login to create a submission")
@@ -321,7 +349,7 @@ class GridTest extends Component {
         /**
          * Manage display of "Select Upload File" button
          */
-        if (submissionStatus === 'STARTED' || submissionStatus === 'INVALID') {
+        if (submissionStatus === 'STARTED') {
             select_upload_file_button =
                 <Fragment>
                     <Grid item xs={6}>
@@ -452,7 +480,7 @@ class GridTest extends Component {
                                         </Grid>
                                         <Grid item >
                                             <Typography>
-                                                Error: <i>{fileValidationErrorMessage}</i>
+                                                {fileValidationErrorMessage}
                                             </Typography>
                                         </Grid>
                                     </Grid>
