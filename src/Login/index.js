@@ -7,6 +7,7 @@ import ElixirAuthService from '../ElixirAuthService';
 import { AuthConsumer } from '../auth-context';
 
 import history from "../history";
+import { Typography } from '@material-ui/core';
 
 const AAP_URL = process.env.REACT_APP_AAPURL;
 
@@ -85,25 +86,30 @@ class Login extends Component {
         return (
             <Grid container
                 direction="column"
-                justify="center"
-                alignItems="center">
+                justify="space-evenly"
+                alignItems="center"
+                spacing={3}>
                 <Grid item xs={12} sm={6}>
-                    Single Sign On using your ELIXIR identity!
+                    <Typography>
+                        Single Sign On using your ELIXIR identity!
+                    </Typography>
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <button onClick={this.handleLogin}>
+                    <button onClick={this.handleLogin} style={{ backgroundColor: "#FAFAFA", height: '66px' }}>
                         <img src={elixir_login_button} alt="login" />
                     </button>
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    You can use the ELIXIR identity service and other ELIXIR services with the freely available
-                    ELIXIR identity, which integrates with Google, ORCID and most academic institutions.
+                    <Typography>
+                        You can use the ELIXIR identity service and other ELIXIR services with the freely available
+                        ELIXIR identity, which integrates with Google, ORCID and most academic institutions.
 
-                    Obtain your ELIXIR identity here.
+                        Obtain your ELIXIR identity here.
+                    </Typography>
                 </Grid>
-            </Grid>
+            </Grid >
         )
     }
 }
