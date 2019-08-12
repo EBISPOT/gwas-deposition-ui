@@ -64,7 +64,7 @@ class Submissions extends React.Component {
                     title="My Submissions"
                     columns={[
                         {
-                            title: 'Submission Id', field: 'submissionId',
+                            title: 'ID', field: 'submissionId',
                             render: rowData => (<Link to={{
                                 pathname: `/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
                             }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
@@ -74,7 +74,6 @@ class Submissions extends React.Component {
                         { title: 'Submission Status', field: 'submission_status' },
                         { title: 'Metadata Status', field: 'metadata_status' },
                         { title: 'Summary statistics Status', field: 'summary_statistics_status' },
-                        // { title: 'Submission Status', field: 'status' },
                         { title: 'Date submission started', field: 'created.timestamp' },
                         { title: 'Date submitted', field: 'date_submitted' },
                     ]}
@@ -126,6 +125,11 @@ class Submissions extends React.Component {
                         search: true,
                         pageSize: 10
 
+                    }}
+                    localization={{
+                        toolbar: {
+                            searchPlaceholder: 'Search by ID',
+                        }
                     }}
                 />
             </Container>

@@ -171,6 +171,11 @@ class PublicationsMatTable extends React.Component {
                         </Button>
                     ),
                 }}
+                localization={{
+                    toolbar: {
+                        searchPlaceholder: 'Search by PMID',
+                    }
+                }}
             />
         )
     }
