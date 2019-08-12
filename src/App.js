@@ -5,6 +5,7 @@ import MenuAppBar from './MenuAppBar';
 import Home from './Home';
 import Submissions from './Submissions';
 import SubmissionDetails from './SubmissionDetails';
+import GridTest from './GridTest';
 
 import { Route } from "react-router-dom";
 
@@ -37,6 +38,7 @@ const App = ({ classes }) => (
       <Route path="/publication/:pmid" exact render={props => <PublicationDetails {...props} />} />
       <Route path="/submissions" component={Submissions} />
       <Route path="/submission/:submission_id" exact render={props => <SubmissionDetails {...props} />} />
+      <Route path="/submission-grid-test/:submission_id" exact render={props => <GridTest {...props} />} />
     </main>
   </Fragment>
 );

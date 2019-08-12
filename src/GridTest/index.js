@@ -1,12 +1,17 @@
 import React, { Component, Fragment } from 'react';
+// import Container from '@material-ui/core/Container';
+
 import Upload from "../Upload";
 
 import { withStyles } from '@material-ui/core/styles';
+// import { makeStyles } from '@material-ui/core/styles';
+import { styled } from '@material-ui/styles';
 import PropTypes from 'prop-types';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 
 import { AuthConsumer } from '../auth-context';
 
@@ -15,8 +20,10 @@ import history from "../history";
 
 
 const styles = theme => ({
+    // const useStyles = makeStyles(theme => ({
     root: {
         padding: theme.spacing(3, 2),
+        // borderColor: "red !important",
     },
     paper: {
         padding: theme.spacing(4),
@@ -26,6 +33,7 @@ const styles = theme => ({
     button: {
         margin: theme.spacing(1),
         color: 'white',
+        // textTransform: 'none',
         backgroundColor: '#2a3eb1',
     },
     leftIcon: {
@@ -64,8 +72,10 @@ class GridTest extends Component {
             fileUploadId: null,
             fileValidationErrorMessage: null,
             displaySummaryStatsSection: true,
+            // toggleState: false,
         })
         this.downloadSummaryStatsTemplate = this.downloadSummaryStatsTemplate.bind(this);
+        // this.uploadDataFile = this.uploadDataFile.bind(this);
         this.submitData = this.submitData.bind(this);
         this.deleteData = this.deleteData.bind(this);
         this.displayUploadComponent = this.displayUploadComponent.bind(this);
@@ -96,7 +106,9 @@ class GridTest extends Component {
                 console.log("** Setting fileUploadId...", data.files[0].fileUploadId);
                 this.setState({ ...this.state, fileUploadId: data.files[0].fileUploadId })
 
-                // Parse error message for better display formatting
+                // TODO: Need to parse error message for pretty formatting
+                // this.setState({ ...this.state, fileValidationErrorMessage: data.files[0].errors });
+
                 this.setState({ ...this.state, fileValidationErrorMessage: this.parseErrorMessage(data.files[0].errors) });
             }
         }).catch(error => {
@@ -131,8 +143,7 @@ class GridTest extends Component {
      */
     // TODO: Implement once service exists
     downloadSummaryStatsTemplate() {
-        console.log("** downloadSummaryStatsTemplate button clicked...");
-        alert("Not yet implemented");
+        console.log("** downloadSummaryStatsTemplate button clicked...")
     }
 
 
@@ -151,7 +162,6 @@ class GridTest extends Component {
      * Manage state to hide Upload component
      */
     hideUploadComponent() {
-        // TODO: Handle in a more React-like style
         window.location.reload();
 
         // this.setState({
@@ -164,8 +174,34 @@ class GridTest extends Component {
     }
 
 
+
     /**
-     * Delete File object for Submission
+     * Upload metadata file --> This needs to use the Dropzone component
+     */
+    // uploadDataFile() {
+    //     console.log("** Clicked on uploadDataFile method...");
+    //     let submissionId = this.SUBMISSION_ID;
+
+    //     if (localStorage.getItem('id_token')) {
+    //         let JWTToken = localStorage.getItem('id_token')
+
+    //         this.API_CLIENT.createFileUpload(submissionId, JWTToken).then(response => {
+    //             this.setState(() => ({ file_upload_error: false }));
+    //         })
+    //             .catch(error => {
+    //                 this.setState(() => ({ file_upload_error: true }));
+    //                 alert("There was an error creating the submission")
+    //             })
+    //     }
+    //     else {
+    //         alert("Please login to create a submission")
+    //         history.push('/login');
+    //     }
+    // }
+
+
+    /**
+     * Delete File object
      * @param {String} SUBMISSION_ID
      * @param {String} fileUploadId
      */
@@ -246,7 +282,10 @@ class GridTest extends Component {
         // const displaySummaryStatsSection = this.state.displaySummaryStatsSection;
         const { displaySummaryStatsSection } = this.state;
 
+        // TODO: Need to parse error message for display in UI
         const { fileValidationErrorMessage } = this.state;
+
+        // const toggleState = this.state.toggleState;
 
         let submission_stats_section;
         let download_summary_stats_button;
@@ -346,22 +385,34 @@ class GridTest extends Component {
         }
 
 
+
         /** 
          * Upload component display
          */
         upload_component =
+            <Grid container
+                direction="row"
+                justify="flex-start"
+                alignItems="center">
+                <Grid item xs={12}>
+                    {this.state.showComponent ?
+                        <Upload submission_id={this.SUBMISSION_ID} displayUploadComponent={this.displayUploadComponent} /> : null}
 
-            <Grid item xs={12}>
-                {this.state.showComponent ?
-                    <Upload submission_id={this.SUBMISSION_ID} displayUploadComponent={this.displayUploadComponent} /> : null}
-
-                {this.state.showComponent ?
-                    <button variant="contained" color="secondary" size="small" className={classes.button}
-                        onClick={this.hideUploadComponent}
-                    >
-                        Cancel
+                    {this.state.showComponent ?
+                        <button variant="contained" color="secondary" size="small" className={classes.button}
+                            onClick={this.hideUploadComponent}
+                        // onClick={() => this.setState({
+                        //     showComponent: false,
+                        //     showButtonVisibility: 'visible',
+                        //     displaySummaryStatsSection: true,
+                        //     toggleState: true
+                        // })}
+                        >
+                            Cancel
                         </button> : null}
+                </Grid>
             </Grid>
+
 
 
         /**
@@ -423,6 +474,7 @@ class GridTest extends Component {
                                         alignItems="flex-start">
                                         <Grid item >
                                             <Typography variant="body1" gutterBottom>
+                                                {/* Submission status: {this.state.submission_data.submission_status} */}
                                                 Submission status: {submissionStatus}
                                             </Typography>
                                         </Grid>
@@ -444,12 +496,17 @@ class GridTest extends Component {
                                         {submit_data_button}
                                     </Grid>
                                 </Grid>
-                                <Grid container
+                                {/* <Grid
+                                    container
                                     direction="row"
                                     justify="flex-start"
-                                    alignItems="center">
-                                    {upload_component}
-                                </Grid>
+                                    alignItems="center"
+                                > */}
+                                {/* <Grid item>
+                                        TEST - Upload Component
+                                    </Grid> */}
+                                {upload_component}
+                                {/* </Grid> */}
                                 <Grid container
                                     direction="column"
                                     justify="center"
@@ -460,6 +517,22 @@ class GridTest extends Component {
                                     {submission_stats_section}
                                 </Grid>
                             </Grid>
+                            {/* <Grid item xs={12} container
+                                direction="row"
+                                justify="space-evenly"
+                                alignItems="flex-start">
+                                <Grid item xs={4}>Dropzone</Grid>
+                                <Grid item xs={2}></Grid>
+                                <Grid item xs={2}>
+                                    <button variant="contained" color="secondary" size="small" className={classes.button}>Button</button>
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <button variant="contained" color="secondary" size="small" className={classes.button}>Button</button>
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <button variant="contained" color="secondary" size="small" className={classes.button}>Button</button>
+                                </Grid>
+                            </Grid> */}
                         </Grid>
                     </Paper>
                 </div>
