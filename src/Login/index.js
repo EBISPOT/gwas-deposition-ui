@@ -7,8 +7,22 @@ import ElixirAuthService from '../ElixirAuthService';
 import { AuthConsumer } from '../auth-context';
 
 import history from "../history";
+import { Typography } from '@material-ui/core';
+import Link from '@material-ui/core/Link';
+
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+
 
 const AAP_URL = process.env.REACT_APP_AAPURL;
+
+const elixirRegisterationLink = "https://elixir-europe.org/register";
+
+const styles = theme => ({
+    active: {
+        backgroundColor: theme.palette.action.selected
+    },
+});
 
 class Login extends Component {
     constructor(props) {
@@ -85,30 +99,40 @@ class Login extends Component {
         return (
             <Grid container
                 direction="column"
-                justify="center"
-                alignItems="center">
+                justify="space-evenly"
+                alignItems="center"
+                spacing={3}>
                 <Grid item xs={12} sm={6}>
-                    Single Sign On using your ELIXIR identity!
+                    <Typography>
+                        Single Sign On using your ELIXIR identity!
+                    </Typography>
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <button onClick={this.handleLogin}>
+                    <button onClick={this.handleLogin} style={{ backgroundColor: "#FAFAFA", height: '66px' }}>
                         <img src={elixir_login_button} alt="login" />
                     </button>
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    You can use the ELIXIR identity service and other ELIXIR services with the freely available
-                    ELIXIR identity, which integrates with Google, ORCID and most academic institutions.
+                    <Typography>
+                        You can use the ELIXIR identity service and other ELIXIR services with the freely available
+                        ELIXIR identity, which integrates with Google, ORCID and most academic institutions.
 
-                    Obtain your ELIXIR identity here.
+                        Obtain your ELIXIR identity <Link href={elixirRegisterationLink} color="none">here</Link>.
+                    </Typography>
                 </Grid>
-            </Grid>
+            </Grid >
         )
     }
 }
 // export default Login
 
+Login.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+Login = withStyles(styles)(Login);
 
 export default () => (
     <AuthConsumer>
