@@ -1,11 +1,6 @@
 import React from 'react';
 import MaterialTable from 'material-table';
-import Button from '@material-ui/core/Button';
-import API_CLIENT from '../apiClient';
-import history from "../history";
-
 import { Link } from 'react-router-dom'
-
 
 import { forwardRef } from 'react';
 
@@ -49,24 +44,6 @@ const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + '/publicatio
 
 
 class PublicationsMatTable extends React.Component {
-    constructor(props) {
-        super(props);
-        this.API_CLIENT = new API_CLIENT();
-        this.createSubmission = this.createSubmission.bind(this);
-    }
-
-    createSubmission(pmid) {
-        console.log("** PMID: ", pmid);
-        // Get token from local storage
-        if (localStorage.getItem('id_token')) {
-            let JWTToken = localStorage.getItem('id_token')
-            this.API_CLIENT.createSubmission(pmid, JWTToken);
-        }
-        else {
-            alert("Please login to create a submission")
-            history.push('/login');
-        }
-    }
 
     render() {
         return (
@@ -75,24 +52,7 @@ class PublicationsMatTable extends React.Component {
                 title="Publication List"
                 columns={[
                     {
-                        // title: 'Avatar',
-                        // field: 'avatar',
-                        // render: rowData => (
-                        //     <img
-                        //         style={{ height: 36, borderRadius: '50%' }}
-                        //         src={rowData.avatar}
-                        //     />
-                        // ),
-                    },
-                    // {
-                    //     title: 'Publication ID', field: 'publicationId',
-                    //     render: rowData => (<a href={`/submission/${rowData.publicationId}`} >{rowData.publicationId}</a>)
-                    // },
-                    // { title: 'Publication ID', field: 'publicationId' },
-                    // <Link to={`/submission/${row.id}`} style={{ textDecoration: 'none' }}>{row.publication_id}</Link>
-                    {
                         title: 'PMID', field: 'pmid',
-                        // render: rowData => (<a href={`/publication/${rowData.pmid}`} >{rowData.pmid}</a>)
                         render: rowData => (<Link to={{ pathname: `/publication/${rowData.pmid}`, state: { pmid: rowData.pmid } }}
                             style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
                     },
@@ -149,27 +109,6 @@ class PublicationsMatTable extends React.Component {
                     search: true,
                     pageSize: 10
 
-                }}
-                actions={[
-                    {
-                        icon: 'save',
-                        tooltip: 'Create submission',
-                        // onClick: (event, rowData) => alert("Create submission for: " + rowData.pmid)
-                        onClick: (event, rowData) => this.createSubmission(rowData.pmid)
-                    }
-                ]}
-                components={{
-                    Action: props => (
-                        <Button
-                            onClick={(event) => props.action.onClick(event, props.data)}
-                            color="inherit"
-                            variant="contained"
-                            style={{ textTransform: 'none' }}
-                            size="small"
-                        >
-                            My Button
-                        </Button>
-                    ),
                 }}
                 localization={{
                     toolbar: {
