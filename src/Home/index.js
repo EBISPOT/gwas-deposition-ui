@@ -5,23 +5,38 @@ import { UserConsumer } from '../user-context';
 import { AuthConsumer } from '../auth-context';
 
 import PublicationsMatTable from '../PublicationsMatTable';
+import { Paper, Typography } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
 
 
 class Home extends Component {
     render() {
         return (
             <Container>
-                <div>Welcome to the GWAS Deposition App</div>
-                <UserConsumer>
-                    {({ username }) => <h1>Welcome {username}!</h1>}
-                </UserConsumer>
+                <Paper>
+                    <Grid container
+                        direction="column"
+                        justify="space-evenly"
+                        alignItems="center">
+                        <Grid item spacing={2}>
+                            <Typography variant="h5" gutterBottom>
+                                Welcome to the GWAS Deposition App
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                </Paper>
 
-                <h4> JWTToken: {this.props.token}</h4>
+
+                {/* <UserConsumer>
+                    {({ username }) => <h1>Welcome {username}!</h1>}
+                </UserConsumer> */}
+
+                {/* <h4> JWTToken: {this.props.token}</h4> */}
 
                 {/* Alternative option to get info from Context with just "export default Home" */}
-                <AuthConsumer>
+                {/* <AuthConsumer>
                     {({ isAuthenticated }) => <h4> Login State: {isAuthenticated.toString()}</h4>}
-                </AuthConsumer>
+                </AuthConsumer> */}
 
                 <PublicationsMatTable />
             </Container>
