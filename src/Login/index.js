@@ -8,8 +8,21 @@ import { AuthConsumer } from '../auth-context';
 
 import history from "../history";
 import { Typography } from '@material-ui/core';
+import Link from '@material-ui/core/Link';
+
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+
 
 const AAP_URL = process.env.REACT_APP_AAPURL;
+
+const elixirRegisterationLink = "https://elixir-europe.org/register";
+
+const styles = theme => ({
+    active: {
+        backgroundColor: theme.palette.action.selected
+    },
+});
 
 class Login extends Component {
     constructor(props) {
@@ -106,7 +119,7 @@ class Login extends Component {
                         You can use the ELIXIR identity service and other ELIXIR services with the freely available
                         ELIXIR identity, which integrates with Google, ORCID and most academic institutions.
 
-                        Obtain your ELIXIR identity here.
+                        Obtain your ELIXIR identity <Link href={elixirRegisterationLink} color="none">here</Link>.
                     </Typography>
                 </Grid>
             </Grid >
@@ -115,6 +128,11 @@ class Login extends Component {
 }
 // export default Login
 
+Login.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+Login = withStyles(styles)(Login);
 
 export default () => (
     <AuthConsumer>
