@@ -15,17 +15,20 @@ class APIClient {
     }
 
     /**
-     * API call to template services app to download template
+     * API call to gwas-template-services app to download template
      * @return {File} Metadata template file
      */
     downloadTemplate() {
         // TODO: Handle download template parameters dynamically
-        axios.post(DOWNLOAD_TEMPLATE_URL + '?curator=true', null,
+        // when types of users can be distinguished
+        let payload = JSON.stringify({ "curator": false });
+
+        axios.post(DOWNLOAD_TEMPLATE_URL, payload,
             {
                 headers:
                 {
                     'Content-Disposition': "attachment; filename=template.xlsx",
-                    'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    'Content-Type': 'application/json'
                 },
                 responseType: 'arraybuffer',
             }
@@ -39,6 +42,7 @@ class APIClient {
         })
             .catch((error) => console.log(error));
     }
+
 
     /**
      * API call to backend app to get all publications
