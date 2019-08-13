@@ -1,6 +1,7 @@
 import React from 'react';
 import MaterialTable from 'material-table';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
 
 import { forwardRef } from 'react';
 
@@ -46,10 +47,12 @@ const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + '/publicatio
 class PublicationsMatTable extends React.Component {
 
     render() {
+        const noResultsMessage = <html>No results were found. Please email <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">GWAS Info</a> to request an eligbility review of your publication.</html>;
+
         return (
             <MaterialTable
                 icons={tableIcons}
-                title="Publication List"
+                title="Publications"
                 columns={[
                     {
                         title: 'PMID', field: 'pmid',
@@ -113,6 +116,9 @@ class PublicationsMatTable extends React.Component {
                 localization={{
                     toolbar: {
                         searchPlaceholder: 'Search by PMID',
+                    },
+                    body: {
+                        emptyDataSourceMessage: <html>{noResultsMessage}</html>
                     }
                 }}
             />
