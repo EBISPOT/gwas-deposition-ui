@@ -106,22 +106,25 @@ class GridTest extends Component {
 
 
     /**
-     * Parse error message
+     * Parse file validation error message
      */
     parseErrorMessage(errorMessage) {
-        console.log("** Called parseErrorMessage...", errorMessage);
+        if (errorMessage) {
+            let fieldHeaderText = "Error: ";
+            let index = 0;
+            let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
+            let errors = [];
 
-        let fieldHeaderText = "Error: ";
-        let index = 0;
-        let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
-        let errors = [];
-
-        errors.push(fieldHeader);
-        for (const error of errorMessage) {
-            index = index + 1;
-            errors.push(<span key={index}>{error}<br /></span>);
+            errors.push(fieldHeader);
+            for (const error of errorMessage) {
+                index = index + 1;
+                errors.push(<span key={index}>{error}<br /></span>);
+            }
+            return errors;
         }
-        return errors;
+        else {
+            return null;
+        }
     }
 
 
