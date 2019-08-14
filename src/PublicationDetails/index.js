@@ -52,6 +52,7 @@ class PublicationDetails extends Component {
 
         this.state = ({
             publication: [],
+            publicationStatus: null,
             error: null,
         })
         this.testButton = this.testButton.bind(this);
@@ -64,9 +65,10 @@ class PublicationDetails extends Component {
     async componentDidMount() {
         console.log("** Called getPublication...")
 
-        this.API_CLIENT.getPublication(this.PUBMED_ID).then((data) =>
+        this.API_CLIENT.getPublication(this.PUBMED_ID).then((data) => {
             this.setState({ ...this.state, publication: data })
-        );
+            this.setState({ ...this.state, publicationStatus: data.status })
+        });
     }
 
     /**
@@ -103,6 +105,23 @@ class PublicationDetails extends Component {
     render() {
         const { classes } = this.props;
         const { error } = this.state;
+        const { publicationStatus } = this.state;
+
+        let create_submission_button;
+
+        if (publicationStatus === 'ELIGIBLE' || publicationStatus === 'PUBLISHED') {
+            create_submission_button =
+                <button onClick={this.createSubmission} variant="contained" color="secondary" size="small" className={classes.button}>
+                    Create Submission
+                </button>
+        } else {
+            create_submission_button =
+                <button disabled variant="contained" color="secondary" size="small" className={classes.button}>
+                    Create Submission
+                </button>
+        }
+
+
 
         return (
             <Container>
@@ -126,9 +145,7 @@ class PublicationDetails extends Component {
                             Submission status: {this.state.publication.status}
                         </Typography>
 
-                        <Button onClick={this.createSubmission} variant="contained" color="secondary" size="small" className={classes.button}>
-                            Create Submission
-                        </Button>
+                        {create_submission_button}
 
                         <Typography>
                             {error ? "There was an error creating the submission. Please try again." : null}
