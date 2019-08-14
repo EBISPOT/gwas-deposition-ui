@@ -62,10 +62,11 @@ class GridTest extends Component {
             showComponent: false,
             showButtonVisibility: 'visible',
             fileUploadId: null,
+            fileName: null,
             fileValidationErrorMessage: null,
             displaySummaryStatsSection: true,
         })
-        this.downloadSummaryStatsTemplate = this.downloadSummaryStatsTemplate.bind(this);
+        this.downloadDataFile = this.downloadDataFile.bind(this);
         this.submitData = this.submitData.bind(this);
         this.deleteData = this.deleteData.bind(this);
         this.displayUploadComponent = this.displayUploadComponent.bind(this);
@@ -95,6 +96,7 @@ class GridTest extends Component {
             if (data.files.length > 0) {
                 console.log("** Setting fileUploadId...", data.files[0].fileUploadId);
                 this.setState({ ...this.state, fileUploadId: data.files[0].fileUploadId })
+                this.setState({ ...this.state, fileName: data.files[0].fileName })
 
                 // Parse error message for better display formatting
                 this.setState({ ...this.state, fileValidationErrorMessage: this.parseErrorMessage(data.files[0].errors) });
@@ -129,15 +131,14 @@ class GridTest extends Component {
 
 
     /**
-     * Download Summary stats template with data
-     * pre-filled with GCSTs, traits, and ancestry
+     * Download data file for submission
      */
-    downloadSummaryStatsTemplate() {
+    downloadDataFile() {
         let submissionId = this.SUBMISSION_ID;
         let fileId = this.state.fileUploadId;
+        let fileName = this.state.fileName;
 
-        this.API_CLIENT.downloadSummaryStatsTemplate(submissionId, fileId);
-
+        this.API_CLIENT.downloadDataFile(submissionId, fileId, fileName);
     }
 
 
@@ -259,6 +260,7 @@ class GridTest extends Component {
         let upload_component;
         let submit_data_button;
         let delete_file_button;
+        let download_data_file_button;
 
         /**
          * Display Submission statistics section if a file has been uploaded
@@ -295,7 +297,7 @@ class GridTest extends Component {
                 download_summary_stats_button =
                     <Fragment>
                         <Grid item xs={2}>
-                            <button onClick={this.downloadSummaryStatsTemplate} style={{ visibility: this.state.showButtonVisibility }} variant="contained" color="secondary" size="small" className={classes.button}>
+                            <button onClick={this.downloadDataFile} style={{ visibility: this.state.showButtonVisibility }} variant="contained" color="secondary" size="small" className={classes.button}>
                                 Download SS Template
                             </button>
                         </Grid>
@@ -392,6 +394,23 @@ class GridTest extends Component {
                 </Fragment>
         }
 
+
+
+        /**
+         * Display button to download data file
+         */
+        if (submissionStatus !== OVERALL_STATUS_STARTED) {
+            download_data_file_button =
+                <Fragment>
+                    <Grid item xs={2}>
+                        <button onClick={this.downloadDataFile} variant="contained" color="secondary" size="small" className={classes.button}>
+                            Download Data File
+                        </button>
+                    </Grid>
+                </Fragment>
+        }
+
+
         return (
             <Fragment>
                 <div className={classes.root}>
@@ -463,6 +482,14 @@ class GridTest extends Component {
                                     className={classes.statistics}
                                 >
                                     {submission_stats_section}
+                                </Grid>
+                                <Grid container
+                                    direction="column"
+                                    justify="center"
+                                    alignItems="flex-start"
+                                    spacing={3}
+                                >
+                                    {download_data_file_button}
                                 </Grid>
                             </Grid>
                         </Grid>

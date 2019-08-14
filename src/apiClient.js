@@ -45,14 +45,19 @@ class APIClient {
 
 
     /**
-     * API call to gwas-backend app to get the 
-     * pre-filled template for SS submissions
+     * API call to gwas-backend app to 
+     * download file for submission
      * 
      * @param GET
      * @param {String} submissionId
      * @param {String} fileUploadId
+     * @param {String} fileName
      */
-    downloadSummaryStatsTemplate(submissionId, fileUploadId) {
+    downloadDataFile(submissionId, fileUploadId, fileName) {
+        if (!fileName) {
+            fileName = "template.xlsx";
+        }
+
         axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + fileUploadId + '/download',
             {
                 responseType: 'blob',
@@ -61,7 +66,7 @@ class APIClient {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'template.xlsx');
+            link.setAttribute('download', fileName);
             document.body.appendChild(link);
             link.click();
         }).catch((error) => console.log(error));
