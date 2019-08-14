@@ -132,10 +132,12 @@ class GridTest extends Component {
      * Download Summary stats template with data
      * pre-filled with GCSTs, traits, and ancestry
      */
-    // TODO: Implement once service exists
     downloadSummaryStatsTemplate() {
-        console.log("** downloadSummaryStatsTemplate button clicked...");
-        alert("Not yet implemented");
+        let submissionId = this.SUBMISSION_ID;
+        let fileId = this.state.fileUploadId;
+
+        this.API_CLIENT.downloadSummaryStatsTemplate(submissionId, fileId);
+
     }
 
 
