@@ -42,6 +42,9 @@ const useStyles = makeStyles(theme => ({
         color: 'inherit',
         background: 'inherit',
         textShadow: 'inherit',
+        '&:hover': {
+            color: '#FFF',
+        },
     },
     rightIcon: {
         marginLeft: theme.spacing(1),
@@ -57,16 +60,25 @@ const useStyles = makeStyles(theme => ({
     navLinkButton: {
         color: 'inherit',
         marginRight: theme.spacing(2),
+        '&:hover': {
+            color: '#FFF',
+        },
     },
     downloadButton: {
         color: 'inherit',
         background: 'inherit',
         textShadow: 'inherit',
         marginRight: theme.spacing(2),
+        '&:hover': {
+            color: '#FFF',
+        },
     },
     loginButton: {
         color: 'inherit',
         marginRight: theme.spacing(2),
+        '&:hover': {
+            color: '#FFF',
+        },
     },
 }));
 
@@ -147,7 +159,7 @@ function MenuAppBar() {
             </FormGroup>
             <AppBar position="static">
                 <Toolbar>
-                    <Button component={Link} to="/" className={classes.navLinkButton}>
+                    <Button component={Link} to="/" className={classes.navLinkButton} >
                         <ReactSVG src="/images/GWAS_Catalog_banner_logo_34x40.svg" className={classes.logo} />
                         <Typography variant="h6" className={classes.title}>
                             GWAS Deposition App
