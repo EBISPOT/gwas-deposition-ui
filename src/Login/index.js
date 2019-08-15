@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import elixir_login_button from '../elixir_login_button.png';
+import elixir_login_button from '../elixir_logo.png';
+
 import Grid from '@material-ui/core/Grid';
 import ElixirAuthService from '../ElixirAuthService';
 // import jwt_decode from 'jwt-decode';
@@ -21,6 +22,20 @@ const elixirRegisterationLink = "https://elixir-europe.org/register";
 const styles = theme => ({
     active: {
         backgroundColor: theme.palette.action.selected
+    },
+    span: {
+        fontWeight: 'bold',
+    },
+    button: {
+        margin: theme.spacing(1),
+        color: '#333',
+        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
+        borderRadius: 4,
+        border: '1px solid #ccc',
+        fontWeight: 'bold',
+        textShadow: '0 1px 0 #fff',
+        width: 120,
+        height: 40,
     },
 });
 
@@ -96,6 +111,8 @@ class Login extends Component {
     }
 
     render() {
+        const { classes } = this.props;
+
         return (
             <Grid container
                 direction="column"
@@ -109,8 +126,11 @@ class Login extends Component {
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <button onClick={this.handleLogin} style={{ backgroundColor: "#FAFAFA", height: '66px', borderColor: "#FAFAFA" }}>
-                        <img src={elixir_login_button} alt="login" />
+                    <button onClick={this.handleLogin} className={classes.button}>
+                        < span >
+                            <img src={elixir_login_button} alt="login" style={{ height: '2em', verticalAlign: 'middle', paddingRight: '4px' }} />
+                            LOGIN
+                        </span>
                     </button>
                 </Grid>
 
