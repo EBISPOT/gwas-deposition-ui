@@ -31,6 +31,9 @@ const useStyles = makeStyles(theme => ({
     grow: {
         flexGrow: 1,
     },
+    headerBar: {
+        elevation: 0,
+    },
     menuButton: {
         color: 'inherit',
         background: 'inherit',
@@ -166,7 +169,7 @@ function MenuAppBar() {
                     label={auth ? 'Logout' : 'Login'}
                 /> */}
             </FormGroup>
-            <AppBar position="static">
+            <AppBar position="static" elevation={0}>
                 <Toolbar>
                     <Button component={Link} to="/" className={classes.navLinkButton} >
                         <ReactSVG src="/images/GWAS_Catalog_banner_logo_34x40.svg" className={classes.logo} />
@@ -231,6 +234,9 @@ function MenuAppBar() {
 
                 </Toolbar>
             </AppBar>
+            <div style={{ backgroundColor: '#FFDFC2', height: '4px' }}></div>
+            <div style={{ backgroundColor: '#398A96', height: '8px' }}></div>
+            <div style={{ backgroundColor: '#B0DFE6', height: '8px' }}></div>
         </div>
     );
 }
