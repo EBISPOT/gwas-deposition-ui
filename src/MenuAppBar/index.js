@@ -31,6 +31,9 @@ const useStyles = makeStyles(theme => ({
     grow: {
         flexGrow: 1,
     },
+    headerBar: {
+        elevation: 0,
+    },
     menuButton: {
         color: 'inherit',
         background: 'inherit',
@@ -42,6 +45,9 @@ const useStyles = makeStyles(theme => ({
         color: 'inherit',
         background: 'inherit',
         textShadow: 'inherit',
+        '&:hover': {
+            color: '#FFF',
+        },
     },
     rightIcon: {
         marginLeft: theme.spacing(1),
@@ -57,16 +63,34 @@ const useStyles = makeStyles(theme => ({
     navLinkButton: {
         color: 'inherit',
         marginRight: theme.spacing(2),
+        '&:hover': {
+            color: '#FFF',
+        },
     },
     downloadButton: {
         color: 'inherit',
         background: 'inherit',
         textShadow: 'inherit',
         marginRight: theme.spacing(2),
+        '&:hover': {
+            color: '#FFF',
+        },
+    },
+    docButton: {
+        color: 'inherit',
+        background: 'inherit',
+        textShadow: 'inherit',
+        marginRight: theme.spacing(2),
+        '&:hover': {
+            color: '#FFF',
+        },
     },
     loginButton: {
         color: 'inherit',
         marginRight: theme.spacing(2),
+        '&:hover': {
+            color: '#FFF',
+        },
     },
 }));
 
@@ -145,9 +169,9 @@ function MenuAppBar() {
                     label={auth ? 'Logout' : 'Login'}
                 /> */}
             </FormGroup>
-            <AppBar position="static">
+            <AppBar position="static" elevation={0}>
                 <Toolbar>
-                    <Button component={Link} to="/" className={classes.navLinkButton}>
+                    <Button component={Link} to="/" className={classes.navLinkButton} >
                         <ReactSVG src="/images/GWAS_Catalog_banner_logo_34x40.svg" className={classes.logo} />
                         <Typography variant="h6" className={classes.title}>
                             GWAS Deposition App
@@ -159,6 +183,8 @@ function MenuAppBar() {
                     </AuthConsumer> */}
 
                     <div className={classes.grow} />
+                    <Button target="_blank" href="https://www.ebi.ac.uk/gwas/docs" className={classes.docButton}>Documentation</Button>
+
                     <Button onClick={downloadTemplate} className={classes.downloadButton} style={{ float: 'right' }}>Download Template</Button>
 
                     <AuthConsumer>
@@ -208,6 +234,9 @@ function MenuAppBar() {
 
                 </Toolbar>
             </AppBar>
+            <div style={{ backgroundColor: '#FFDFC2', height: '4px' }}></div>
+            <div style={{ backgroundColor: '#398A96', height: '8px' }}></div>
+            <div style={{ backgroundColor: '#B0DFE6', height: '8px' }}></div>
         </div>
     );
 }
