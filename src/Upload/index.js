@@ -3,9 +3,22 @@ import Dropzone from '../Dropzone'
 import Progress from '../Progress'
 import './upload.css'
 import Grid from '@material-ui/core/Grid';
-import APIClient from '../apiClient'
+
+import { withStyles } from '@material-ui/core/styles';
 
 const UPLOAD_TEMPLATE_URL_BASE = process.env.REACT_APP_LOCAL_BASE_URI;
+
+
+const styles = theme => ({
+    button: {
+        color: '#333',
+        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
+        borderRadius: 4,
+        border: '1px solid #ccc',
+        fontWeight: 'bold',
+        textShadow: '0 1px 0 #fff',
+    },
+});
 
 
 class Upload extends Component {
@@ -57,11 +70,13 @@ class Upload extends Component {
     }
 
     renderActions() {
+        const { classes } = this.props;
+
         if (this.state.successfullUploaded) {
             return (
                 <Fragment>
                     <Grid item xs={3}>
-                        <button
+                        <button className={classes.button}
                             onClick={() =>
                                 this.setState({ files: [], successfullUploaded: false })
                             }>
@@ -69,7 +84,8 @@ class Upload extends Component {
                     </button>
                     </Grid>
                     <Grid item xs={3}>
-                        <button onClick={this.hideUploadComponent}>
+                        <button className={classes.button}
+                            onClick={this.hideUploadComponent}>
                             Complete
                         </button>
                     </Grid>
@@ -79,14 +95,14 @@ class Upload extends Component {
             return (
                 <Fragment>
                     <Grid item xs={3}>
-                        <button
+                        <button variant="contained" color="secondary" size="small" className={classes.button}
                             disabled={this.state.files.length <= 0 || this.state.uploading}
                             onClick={this.uploadFiles}>
                             Upload File
                     </button>
                     </Grid>
                     <Grid item xs={3}>
-                        <button
+                        <button variant="contained" color="secondary" size="small" className={classes.button}
                             disabled={this.state.files.length <= 0 || this.state.uploading}
                             onClick={() =>
                                 this.setState({ files: [], successfullUploaded: false })
@@ -225,4 +241,5 @@ class Upload extends Component {
     }
 }
 
+Upload = withStyles(styles)(Upload)
 export default Upload

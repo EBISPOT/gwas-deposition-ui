@@ -31,8 +31,14 @@ const styles = theme => ({
     },
     button: {
         margin: theme.spacing(1),
-        color: 'white',
         textTransform: 'none',
+        color: '#333',
+        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
+        borderRadius: 4,
+        border: '1px solid #ccc',
+        fontWeight: 'bold',
+        textShadow: '0 1px 0 #fff',
+
     },
     leftIcon: {
         marginRight: theme.spacing(1),

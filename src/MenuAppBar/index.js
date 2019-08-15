@@ -32,10 +32,16 @@ const useStyles = makeStyles(theme => ({
         flexGrow: 1,
     },
     menuButton: {
+        color: 'inherit',
+        background: 'inherit',
+        textShadow: 'inherit',
         marginRight: theme.spacing(2),
     },
     button: {
         textTransform: 'none',
+        color: 'inherit',
+        background: 'inherit',
+        textShadow: 'inherit',
     },
     rightIcon: {
         marginLeft: theme.spacing(1),
@@ -54,6 +60,8 @@ const useStyles = makeStyles(theme => ({
     },
     downloadButton: {
         color: 'inherit',
+        background: 'inherit',
+        textShadow: 'inherit',
         marginRight: theme.spacing(2),
     },
     loginButton: {
