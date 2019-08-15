@@ -109,7 +109,7 @@ class Login extends Component {
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <button onClick={this.handleLogin} style={{ backgroundColor: "#FAFAFA", height: '66px' }}>
+                    <button onClick={this.handleLogin} style={{ backgroundColor: "#FAFAFA", height: '66px', borderColor: "#FAFAFA" }}>
                         <img src={elixir_login_button} alt="login" />
                     </button>
                 </Grid>

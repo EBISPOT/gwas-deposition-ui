@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 
 import { AuthConsumer } from '../auth-context';
 
@@ -25,8 +26,12 @@ const styles = theme => ({
     },
     button: {
         margin: theme.spacing(1),
-        color: 'white',
-        backgroundColor: '#2a3eb1',
+        color: '#333',
+        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
+        borderRadius: 4,
+        border: '1px solid #ccc',
+        fontWeight: 'bold',
+        textShadow: '0 1px 0 #fff',
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -297,7 +302,7 @@ class GridTest extends Component {
                 download_summary_stats_button =
                     <Fragment>
                         <Grid item xs={2}>
-                            <button onClick={this.downloadDataFile} style={{ visibility: this.state.showButtonVisibility }} variant="contained" color="secondary" size="small" className={classes.button}>
+                            <button onClick={this.downloadDataFile} style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
                                 Download SS Template
                             </button>
                         </Grid>
@@ -306,7 +311,7 @@ class GridTest extends Component {
                 download_summary_stats_button =
                     <Fragment>
                         <Grid item xs={2}>
-                            <button disabled style={{ visibility: this.state.showButtonVisibility }} variant="contained" color="secondary" size="small" className={classes.button}>
+                            <button disabled style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
                                 Download SS Template
                             </button>
                         </Grid>
@@ -322,7 +327,7 @@ class GridTest extends Component {
                 <Fragment>
                     <Grid item xs={6}>
                         <button onClick={this.displayUploadComponent} style={{ visibility: this.state.showButtonVisibility }}
-                            variant="contained" color="secondary" size="small" className={classes.button}>
+                            className={classes.button}>
                             Select Upload File
                         </button>
                     </Grid>
@@ -331,7 +336,7 @@ class GridTest extends Component {
             select_upload_file_button =
                 <Fragment>
                     <Grid item xs={6}>
-                        <button disabled variant="contained" color="secondary" size="small" className={classes.button}>
+                        <button disabled size="small" className={classes.button}>
                             Select Upload File
                         </button>
                     </Grid>
@@ -346,7 +351,7 @@ class GridTest extends Component {
         if ((submissionStatus === 'VALID' || submissionStatus === 'INVALID') && this.state.fileUploadId !== null) {
             delete_file_button =
                 <Grid item xs={2} >
-                    <button onClick={this.deleteData} variant="contained" color="secondary" size="small" className={classes.button}>
+                    <button onClick={this.deleteData} variant="outlined" color="secondary" size="small" className={classes.button}>
                         Delete File
                     </button>
                 </Grid>
@@ -363,7 +368,7 @@ class GridTest extends Component {
                     <Upload submission_id={this.SUBMISSION_ID} displayUploadComponent={this.displayUploadComponent} /> : null}
 
                 {this.state.showComponent ?
-                    <button variant="contained" color="secondary" size="small" className={classes.button}
+                    <button variant="outlined" color="secondary" size="small" className={classes.button}
                         onClick={this.hideUploadComponent}
                     >
                         Cancel
@@ -378,7 +383,7 @@ class GridTest extends Component {
             submit_data_button =
                 <Fragment>
                     <Grid item xs={2}>
-                        <button disabled style={{ visibility: this.state.showButtonVisibility }} variant="contained" color="secondary" size="small" className={classes.button}>
+                        <button disabled style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
                             Submit
                         </button>
                     </Grid>
@@ -387,7 +392,7 @@ class GridTest extends Component {
             submit_data_button =
                 <Fragment>
                     <Grid item xs={2}>
-                        <button onClick={this.submitData} style={{ visibility: this.state.showButtonVisibility }} variant="contained" color="secondary" size="small" className={classes.button}>
+                        <button onClick={this.submitData} style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
                             Submit
                         </button>
                     </Grid>
@@ -403,7 +408,7 @@ class GridTest extends Component {
             download_data_file_button =
                 <Fragment>
                     <Grid item xs={2}>
-                        <button onClick={this.downloadDataFile} variant="contained" color="secondary" size="small" className={classes.button}>
+                        <button onClick={this.downloadDataFile} variant="outlined" color="secondary" size="small" className={classes.button}>
                             Download Data File
                         </button>
                     </Grid>
