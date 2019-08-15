@@ -73,6 +73,15 @@ const useStyles = makeStyles(theme => ({
             color: '#FFF',
         },
     },
+    docButton: {
+        color: 'inherit',
+        background: 'inherit',
+        textShadow: 'inherit',
+        marginRight: theme.spacing(2),
+        '&:hover': {
+            color: '#FFF',
+        },
+    },
     loginButton: {
         color: 'inherit',
         marginRight: theme.spacing(2),
@@ -171,6 +180,8 @@ function MenuAppBar() {
                     </AuthConsumer> */}
 
                     <div className={classes.grow} />
+                    <Button target="_blank" href="https://www.ebi.ac.uk/gwas/docs" className={classes.docButton}>Documentation</Button>
+
                     <Button onClick={downloadTemplate} className={classes.downloadButton} style={{ float: 'right' }}>Download Template</Button>
 
                     <AuthConsumer>
