@@ -53,8 +53,15 @@ class GridTest extends Component {
     constructor(props) {
         super(props)
         this.API_CLIENT = new API_CLIENT();
+
         // NOTE: SUBMISSION_ID is passed from location prop in Route pathname
-        this.SUBMISSION_ID = this.props.location.pathname.split('/')[3];
+        if (process.env.PUBLIC_URL) {
+            this.SUBMISSION_ID = this.props.location.pathname.split('/')[3];
+        }
+        else {
+            this.SUBMISSION_ID = this.props.location.pathname.split('/')[2];
+        }
+        console.log("ID: ", this.SUBMISSION_ID);
 
         this.state = ({
             submission_data: [],

@@ -53,8 +53,14 @@ class PublicationDetails extends Component {
     constructor(props) {
         super(props)
         this.API_CLIENT = new API_CLIENT();
+
         // NOTE: PUBMED_ID is passed from location prop in Route pathname
-        this.PUBMED_ID = this.props.location.pathname.split('/')[3];
+        if (process.env.PUBLIC_URL) {
+            this.PUBMED_ID = this.props.location.pathname.split('/')[3];
+        }
+        else {
+            this.PUBMED_ID = this.props.location.pathname.split('/')[2];
+        }
 
         this.state = ({
             publication: [],
