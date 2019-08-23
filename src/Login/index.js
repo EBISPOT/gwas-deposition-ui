@@ -20,8 +20,11 @@ const AAP_URL = process.env.REACT_APP_AAPURL;
 const elixirRegisterationLink = "https://elixir-europe.org/register";
 
 const styles = theme => ({
-    active: {
-        backgroundColor: theme.palette.action.selected
+    linkColor: {
+        color: '#0000EE',
+        '&:visted': {
+            color: '#551A8B'
+        }
     },
     span: {
         fontWeight: 'bold',
@@ -139,7 +142,7 @@ class Login extends Component {
                         You can use the ELIXIR identity service and other ELIXIR services with the freely available
                         ELIXIR identity, which integrates with Google, ORCID and most academic institutions.
 
-                        Obtain your ELIXIR identity <Link href={elixirRegisterationLink} color="none">here</Link>.
+                        Obtain your ELIXIR identity <Link href={elixirRegisterationLink} className={classes.linkColor}>here</Link>.
                     </Typography>
                 </Grid>
             </Grid >
