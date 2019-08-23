@@ -81,7 +81,7 @@ class Dropzone extends Component {
                 <img
                     alt="upload"
                     className="Icon"
-                    src="/images/baseline-cloud_upload-24px.svg"
+                    src="/deposition/images/baseline-cloud_upload-24px.svg"
                 />
                 <span>Select File</span>
             </div>
