@@ -54,7 +54,7 @@ class GridTest extends Component {
         super(props)
         this.API_CLIENT = new API_CLIENT();
         // NOTE: SUBMISSION_ID is passed from location prop in Route pathname
-        this.SUBMISSION_ID = this.props.location.pathname.split('/')[2];
+        this.SUBMISSION_ID = this.props.location.pathname.split('/')[3];
 
         this.state = ({
             submission_data: [],
@@ -207,7 +207,7 @@ class GridTest extends Component {
         }
         else {
             alert("Please login to delete a file")
-            history.push('/login');
+            history.push(`${process.env.PUBLIC_URL}/login`);
         }
     }
 
@@ -233,11 +233,11 @@ class GridTest extends Component {
             // window.location.reload();
 
             // Redirect to My Submissions page, NOTE: If using redirect, can't set state here
-            history.push('/submissions');
+            history.push(`${process.env.PUBLIC_URL}/submissions`);
         }
         else {
             alert("Please login to create a submission")
-            history.push('/login');
+            history.push(`${process.env.PUBLIC_URL}/login`);
         }
     }
 

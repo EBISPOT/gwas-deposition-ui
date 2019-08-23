@@ -89,7 +89,7 @@ class Login extends Component {
         // console.log("** Decoded Token: ", decoded);
 
         // Redirect to Home page on successful authentication
-        history.push("/");
+        history.push(`${process.env.PUBLIC_URL}`);
     }
 
     componentDidMount() {

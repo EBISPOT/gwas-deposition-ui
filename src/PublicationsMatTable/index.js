@@ -41,13 +41,13 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + '/publications/';
+const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'publications/';
 
 
 class PublicationsMatTable extends React.Component {
 
     render() {
-        const noResultsMessage = <html>No results were found. Please email <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">GWAS Info</a> to request an eligbility review of your publication.</html>;
+        // const noResultsMessage = <html>No results were found. Please email <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">GWAS Info</a> to request an eligbility review of your publication.</html>;
 
         return (
             <MaterialTable
@@ -56,7 +56,7 @@ class PublicationsMatTable extends React.Component {
                 columns={[
                     {
                         title: 'PMID', field: 'pmid',
-                        render: rowData => (<Link to={{ pathname: `/publication/${rowData.pmid}`, state: { pmid: rowData.pmid } }}
+                        render: rowData => (<Link to={{ pathname: `${process.env.PUBLIC_URL}/publication/${rowData.pmid}`, state: { pmid: rowData.pmid } }}
                             style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
                     },
                     { title: 'First author', field: 'firstAuthor' },
@@ -117,9 +117,9 @@ class PublicationsMatTable extends React.Component {
                     toolbar: {
                         searchPlaceholder: 'Search by PMID',
                     },
-                    body: {
-                        emptyDataSourceMessage: <html>{noResultsMessage}</html>
-                    }
+                    // body: {
+                    //     emptyDataSourceMessage: <html>{noResultsMessage}</html>
+                    // }
                 }}
             />
         )

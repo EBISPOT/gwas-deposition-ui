@@ -54,7 +54,7 @@ class PublicationDetails extends Component {
         super(props)
         this.API_CLIENT = new API_CLIENT();
         // NOTE: PUBMED_ID is passed from location prop in Route pathname
-        this.PUBMED_ID = this.props.location.pathname.split('/')[2];
+        this.PUBMED_ID = this.props.location.pathname.split('/')[3];
 
         this.state = ({
             publication: [],
@@ -90,7 +90,7 @@ class PublicationDetails extends Component {
             this.API_CLIENT.createSubmission(pmid, JWTToken).then(response => {
                 this.setState(() => ({ error: false }));
 
-                history.push('/submissions');
+                history.push(`${process.env.PUBLIC_URL}/submissions`);
             })
                 .catch(error => {
                     this.setState(() => ({ error: true }));
@@ -99,7 +99,7 @@ class PublicationDetails extends Component {
         }
         else {
             alert("Please login to create a submission")
-            history.push('/login');
+            history.push(`${process.env.PUBLIC_URL}/login`);
         }
     }
 

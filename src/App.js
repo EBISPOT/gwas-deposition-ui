@@ -5,7 +5,6 @@ import MenuAppBar from './MenuAppBar';
 import Home from './Home';
 import Submissions from './Submissions';
 import SubmissionDetails from './SubmissionDetails';
-import GridTest from './GridTest';
 
 import { Route } from "react-router-dom";
 
@@ -32,13 +31,11 @@ const App = ({ classes }) => (
     <CssBaseline />
     <MenuAppBar />
     <main className={classes.main}>
-      <Route path="/" exact component={Home} />
-      <Route path="/login" component={Login}></Route>
-      {/* <Route path="/publication/:pmid" render={({ match }) => <PublicationDetails />} /> */}
-      <Route path="/publication/:pmid" exact render={props => <PublicationDetails {...props} />} />
-      <Route path="/submissions" component={Submissions} />
-      <Route path="/submission/:submission_id" exact render={props => <SubmissionDetails {...props} />} />
-      <Route path="/submission-grid-test/:submission_id" exact render={props => <GridTest {...props} />} />
+      <Route path={`${process.env.PUBLIC_URL}/`} exact component={Home} />
+      <Route path={`${process.env.PUBLIC_URL}/login`} component={Login}></Route>
+      <Route path={`${process.env.PUBLIC_URL}/publication/:pmid`} exact render={props => <PublicationDetails {...props} />} />
+      <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
+      <Route path={`${process.env.PUBLIC_URL}/submission/:submission_id`} exact render={props => <SubmissionDetails {...props} />} />
     </main>
   </Fragment>
 );

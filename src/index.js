@@ -17,7 +17,7 @@ ReactDOM.render(
     <AuthProvider>
         <UserProvider>
             <ThemeProvider theme={theme}>
-                <Router history={history}>
+                <Router basename={'/deposition'} history={history}>
                     {/* <Security {...oktaConfig}> */}
                     < App />
                     {/* </Security> */}

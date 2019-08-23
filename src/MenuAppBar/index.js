@@ -132,7 +132,7 @@ function MenuAppBar() {
     }
 
     function showMySubmissions() {
-        history.push("/submissions");
+        history.push(`${process.env.PUBLIC_URL}/submissions`);
         handleMenuClose();
     }
 
@@ -150,7 +150,7 @@ function MenuAppBar() {
         // window.location.href = "/"
 
         // Refresh Home page on Logout
-        history.push("/");
+        history.push(`${process.env.PUBLIC_URL}`);
 
 
         // Reset "auth" so Login is displayed for Testing
@@ -171,8 +171,8 @@ function MenuAppBar() {
             </FormGroup>
             <AppBar position="static" elevation={0}>
                 <Toolbar>
-                    <Button component={Link} to="/" className={classes.navLinkButton} >
-                        <ReactSVG src="/images/GWAS_Catalog_banner_logo_34x40.svg" className={classes.logo} />
+                    <Button component={Link} to={`${process.env.PUBLIC_URL}`} className={classes.navLinkButton} >
+                        <ReactSVG src="/deposition/images/GWAS_Catalog_banner_logo_34x40.svg" className={classes.logo} />
                         <Typography variant="h6" className={classes.title}>
                             GWAS Deposition App
                     </Typography>
@@ -225,7 +225,7 @@ function MenuAppBar() {
                         {value => !value.isAuthenticated && (<div>
                             {/* Authentication is FALSE */}
 
-                            <Button component={Link} to="/login" className={classes.loginButton} style={{ float: 'right', background: 'inherit' }}>
+                            <Button component={Link} to={`${process.env.PUBLIC_URL}/login`} className={classes.loginButton} style={{ float: 'right', background: 'inherit' }}>
                                 Login
                         </Button>
 

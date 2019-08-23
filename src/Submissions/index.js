@@ -66,7 +66,7 @@ class Submissions extends React.Component {
                         {
                             title: 'ID', field: 'submissionId',
                             render: rowData => (<Link to={{
-                                pathname: `/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
+                                pathname: `${process.env.PUBLIC_URL}/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
                             }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
                         },
                         { title: 'PMID', field: 'publication.pmid' },

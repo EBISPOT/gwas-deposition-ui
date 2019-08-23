@@ -18,7 +18,7 @@ class Home extends Component {
                         direction="column"
                         justify="space-evenly"
                         alignItems="center">
-                        <Grid item spacing={2}>
+                        <Grid item>
                             <Typography variant="h5" gutterBottom>
                                 Welcome to the GWAS Deposition App
                             </Typography>
