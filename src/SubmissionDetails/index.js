@@ -56,7 +56,8 @@ class GridTest extends Component {
 
         // NOTE: SUBMISSION_ID is passed from location prop in Route pathname
         if (process.env.PUBLIC_URL) {
-            this.SUBMISSION_ID = this.props.location.pathname.split('/')[3];
+            let URL = this.props.location.pathname.split(process.env.PUBLIC_URL)[1];
+            this.SUBMISSION_ID = URL.split('/')[2];
         }
         else {
             this.SUBMISSION_ID = this.props.location.pathname.split('/')[2];

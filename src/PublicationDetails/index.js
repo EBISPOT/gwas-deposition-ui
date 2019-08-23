@@ -56,7 +56,8 @@ class PublicationDetails extends Component {
 
         // NOTE: PUBMED_ID is passed from location prop in Route pathname
         if (process.env.PUBLIC_URL) {
-            this.PUBMED_ID = this.props.location.pathname.split('/')[3];
+            let URL = this.props.location.pathname.split(process.env.PUBLIC_URL)[1];
+            this.PUBMED_ID = URL.split('/')[2];
         }
         else {
             this.PUBMED_ID = this.props.location.pathname.split('/')[2];
