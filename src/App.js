@@ -5,6 +5,7 @@ import MenuAppBar from './MenuAppBar';
 import Home from './Home';
 import Submissions from './Submissions';
 import SubmissionDetails from './SubmissionDetails';
+import Footer from './Footer';
 
 import { Route } from "react-router-dom";
 
@@ -37,6 +38,7 @@ const App = ({ classes }) => (
       <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
       <Route path={`${process.env.PUBLIC_URL}/submission/:submission_id`} exact render={props => <SubmissionDetails {...props} />} />
     </main>
+    <Footer />
   </Fragment>
 );
 
