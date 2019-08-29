@@ -15,6 +15,7 @@ npm-build:
   image: node:current-alpine
   stage: build
   script:
+    - node -v
     - npm install npm@latest -g
     - npm run build
   artifacts:
