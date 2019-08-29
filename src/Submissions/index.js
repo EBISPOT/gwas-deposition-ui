@@ -118,13 +118,13 @@ class Submissions extends React.Component {
                                     page: 0,
                                     totalCount: 0,
                                 });
-                            }, 250);
+                            }, 5000);
                         })
                     }
                     options={{
                         search: true,
-                        pageSize: 10
-
+                        pageSize: 10,
+                        pageSizeOptions: [10, 20, 50]
                     }}
                     localization={{
                         toolbar: {
