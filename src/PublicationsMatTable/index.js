@@ -41,7 +41,7 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'publications/';
+const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'publications';
 
 
 class PublicationsMatTable extends React.Component {
@@ -71,7 +71,7 @@ class PublicationsMatTable extends React.Component {
 
                         // Handle display of search results
                         if (query.search) {
-                            url += query.search + '?pmid=true'
+                            url += '/' + query.search + '?pmid=true'
                             fetch(url)
                                 .then(response => response.json())
                                 .then(result => {

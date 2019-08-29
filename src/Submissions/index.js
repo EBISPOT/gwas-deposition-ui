@@ -47,7 +47,7 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-const GET_SUBMISSIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + '/submissions/';
+const GET_SUBMISSIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'submissions';
 
 
 class Submissions extends React.Component {
@@ -84,7 +84,7 @@ class Submissions extends React.Component {
 
                             // Handle display of search results
                             if (query.search) {
-                                url += query.search
+                                url += '/' + query.search
                                 fetch(url)
                                     .then(response => response.json())
                                     .then(result => {

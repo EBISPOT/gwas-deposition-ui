@@ -172,7 +172,7 @@ function MenuAppBar() {
             <AppBar position="static" elevation={0}>
                 <Toolbar>
                     <Button component={Link} to={`${process.env.PUBLIC_URL}`} className={classes.navLinkButton} >
-                        <ReactSVG src="/deposition/images/GWAS_Catalog_banner_logo_34x40.svg" className={classes.logo} />
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/GWAS_Catalog_banner_logo_34x40.svg'} className={classes.logo} />
                         <Typography variant="h6" className={classes.title}>
                             GWAS Deposition App
                     </Typography>

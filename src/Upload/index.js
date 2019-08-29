@@ -58,7 +58,7 @@ class Upload extends Component {
                     <img
                         className="CheckIcon"
                         alt="done"
-                        src="/deposition/images/baseline-check_circle_outline-24px.svg"
+                        src={process.env.PUBLIC_URL + '/images/baseline-check_circle_outline-24px.svg'}
                         style={{
                             opacity:
                                 uploadProgress && uploadProgress.state === "done" ? 0.5 : 0
@@ -75,14 +75,6 @@ class Upload extends Component {
         if (this.state.successfullUploaded) {
             return (
                 <Fragment>
-                    <Grid item xs={3}>
-                        <button className={classes.button}
-                            onClick={() =>
-                                this.setState({ files: [], successfullUploaded: false })
-                            }>
-                            Clear
-                    </button>
-                    </Grid>
                     <Grid item xs={3}>
                         <button className={classes.button}
                             onClick={this.hideUploadComponent}>
