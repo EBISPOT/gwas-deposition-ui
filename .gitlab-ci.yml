@@ -12,11 +12,11 @@ variables:
   UI_SERVICE_NAME: gwas-deposition-ui
 
 npm-build:
-  image: node:current-alpine
+  image: node:10-buster
   stage: build
   script:
     - node -v
-    - npm install npm@latest -g
+    - npm install
     - npm run build
   artifacts:
     paths:
