@@ -1,10 +1,11 @@
 import React, { Fragment } from 'react';
-import './App.css';
 import Login from './Login';
 import MenuAppBar from './MenuAppBar';
 import Home from './Home';
 import Submissions from './Submissions';
 import SubmissionDetails from './SubmissionDetails';
+import Footer from './Footer';
+import './App.css';
 
 import { Route } from "react-router-dom";
 
@@ -29,14 +30,23 @@ const styles = theme => ({
 const App = ({ classes }) => (
   <Fragment>
     <CssBaseline />
-    <MenuAppBar />
-    <main className={classes.main}>
-      <Route path={`${process.env.PUBLIC_URL}/`} exact component={Home} />
-      <Route path={`${process.env.PUBLIC_URL}/login`} component={Login}></Route>
-      <Route path={`${process.env.PUBLIC_URL}/publication/:pmid`} exact render={props => <PublicationDetails {...props} />} />
-      <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
-      <Route path={`${process.env.PUBLIC_URL}/submission/:submission_id`} exact render={props => <SubmissionDetails {...props} />} />
-    </main>
+    <div className="Site">
+      <div className="Site-content">
+        <div>
+          <MenuAppBar />
+        </div>
+        <div>
+          <main className={classes.main}>
+            <Route path={`${process.env.PUBLIC_URL}/`} exact component={Home} />
+            <Route path={`${process.env.PUBLIC_URL}/login`} component={Login}></Route>
+            <Route path={`${process.env.PUBLIC_URL}/publication/:pmid`} exact render={props => <PublicationDetails {...props} />} />
+            <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
+            <Route path={`${process.env.PUBLIC_URL}/submission/:submission_id`} exact render={props => <SubmissionDetails {...props} />} />
+          </main>
+        </div>
+      </div>
+      <Footer />
+    </div>
   </Fragment>
 );
 
