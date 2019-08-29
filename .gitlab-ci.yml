@@ -19,7 +19,7 @@ npm-build:
     - node -v
     - rm -rf node_modules
     - npm install
-    - npm run build
+    - CI=false npm run build
   artifacts:
     paths:
       - build/*
