@@ -5,10 +5,6 @@ services:
 stages:
   - build
 
-cache:
-  paths:
-    - node_modules/
-
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
@@ -16,7 +12,7 @@ variables:
   UI_SERVICE_NAME: gwas-deposition-ui
 
 npm-build:
-  image: node:10-jessie
+  image: node:current-alpine
   stage: build
   script:
     - npm install npm@latest -g
