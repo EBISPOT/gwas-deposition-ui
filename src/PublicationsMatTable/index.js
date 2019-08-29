@@ -1,7 +1,6 @@
 import React from 'react';
 import MaterialTable from 'material-table';
 import { Link } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
 
 import { forwardRef } from 'react';
 
@@ -41,7 +40,7 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'publications/';
+const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'publications';
 
 
 class PublicationsMatTable extends React.Component {
@@ -71,7 +70,7 @@ class PublicationsMatTable extends React.Component {
 
                         // Handle display of search results
                         if (query.search) {
-                            url += query.search + '?pmid=true'
+                            url += '/' + query.search + '?pmid=true'
                             fetch(url)
                                 .then(response => response.json())
                                 .then(result => {
@@ -105,12 +104,13 @@ class PublicationsMatTable extends React.Component {
                                 page: 0,
                                 totalCount: 0,
                             });
-                        }, 250);
+                        }, 5000);
                     })
                 }
                 options={{
                     search: true,
-                    pageSize: 10
+                    pageSize: 10,
+                    pageSizeOptions: [10, 20, 50]
 
                 }}
                 localization={{
