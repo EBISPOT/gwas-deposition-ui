@@ -12,7 +12,7 @@ variables:
   UI_SERVICE_NAME: gwas-deposition-ui
 
 npm-build:
-  image: node:10-buster
+  image: node:10.15.3
   stage: build
   script:
     - node -v
