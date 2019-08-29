@@ -18,6 +18,7 @@ npm-build:
     - node -v
     - npm install
     - npm run build
+    - ls -lah
   artifacts:
     paths:
       - build/*
