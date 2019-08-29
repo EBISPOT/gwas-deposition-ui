@@ -16,10 +16,10 @@ variables:
   UI_SERVICE_NAME: gwas-deposition-ui
 
 npm-build:
-  image: node:latest
+  image: node:10-jessie
   stage: build
   script:
-    - npm install
+    - npm install npm@latest -g
     - npm run build
   artifacts:
     paths:
