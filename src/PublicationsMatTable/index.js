@@ -46,7 +46,8 @@ const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'publication
 class PublicationsMatTable extends React.Component {
 
     render() {
-        // const noResultsMessage = <html>No results were found. Please email <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">GWAS Info</a> to request an eligbility review of your publication.</html>;
+        const emailContact = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">GWAS Info</a>;
+        const noResultsMessage = <span>No results were found. Please email {emailContact} to request an eligbility review of your publication.</span>;
 
         return (
             <MaterialTable
@@ -117,9 +118,9 @@ class PublicationsMatTable extends React.Component {
                     toolbar: {
                         searchPlaceholder: 'Search by PMID',
                     },
-                    // body: {
-                    //     emptyDataSourceMessage: <html>{noResultsMessage}</html>
-                    // }
+                    body: {
+                        emptyDataSourceMessage: noResultsMessage
+                    }
                 }}
             />
         )
