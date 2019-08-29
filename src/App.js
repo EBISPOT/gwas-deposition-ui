@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import Login from './Login';
+import GDPR from './GDPR';
 import MenuAppBar from './MenuAppBar';
 import Home from './Home';
 import Submissions from './Submissions';
@@ -39,6 +40,7 @@ const App = ({ classes }) => (
           <main className={classes.main}>
             <Route path={`${process.env.PUBLIC_URL}/`} exact component={Home} />
             <Route path={`${process.env.PUBLIC_URL}/login`} component={Login}></Route>
+            <Route path={`${process.env.PUBLIC_URL}/gdpr`} component={GDPR}></Route>
             <Route path={`${process.env.PUBLIC_URL}/publication/:pmid`} exact render={props => <PublicationDetails {...props} />} />
             <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
             <Route path={`${process.env.PUBLIC_URL}/submission/:submission_id`} exact render={props => <SubmissionDetails {...props} />} />

@@ -225,7 +225,7 @@ function MenuAppBar() {
                         {value => !value.isAuthenticated && (<div>
                             {/* Authentication is FALSE */}
 
-                            <Button component={Link} to={`${process.env.PUBLIC_URL}/login`} className={classes.loginButton} style={{ float: 'right', background: 'inherit' }}>
+                            <Button component={Link} to={`${process.env.PUBLIC_URL}/gdpr`} className={classes.loginButton} style={{ float: 'right', background: 'inherit' }}>
                                 Login
                         </Button>
 
