@@ -15,10 +15,11 @@ npm-build:
   image: node:10.15.3
   stage: build
   script:
+    - npm -v
     - node -v
+    - rm -rf node_modules
     - npm install
     - npm run build
-    - ls -lah
   artifacts:
     paths:
       - build/*
