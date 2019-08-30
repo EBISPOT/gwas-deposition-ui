@@ -75,7 +75,7 @@ class Dropzone extends Component {
                     ref={this.fileInputRef}
                     className="FileInput"
                     type="file"
-                    multiple
+                    accept=".xlsx"
                     onChange={this.onFilesAdded}
                 />
                 <img
