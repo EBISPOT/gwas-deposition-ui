@@ -22,13 +22,19 @@ var button = {
     border: 'none',
 }
 
+function getCurrentYear() {
+    let date = new Date();
+    let currentYear = date.getFullYear();
+    return currentYear;
+}
+
 function Footer() {
     const textDivider = "|";
 
     return (
         <div style={style}>
             <Typography>
-                Copyright © EMBL-EBI 2019 {textDivider} EMBL-EBI is an Outstation of the
+                Copyright © EMBL-EBI {getCurrentYear()} {textDivider} EMBL-EBI is an Outstation of the
                     <Link target="_blank" href="https://www.embl.org/" style={linkStyle}>
                     European Molecular Biology Laboratory
                     </Link>
