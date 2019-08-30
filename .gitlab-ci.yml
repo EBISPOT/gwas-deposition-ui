@@ -5,12 +5,12 @@ services:
 stages:
   - build
   - docker
-  - helm
+  - deploy
 
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  UI_REGISTRY_IMAGE: ebispot/gwas-deposition-ui
+  CI_REGISTRY_IMAGE: ebispot/gwas-deposition-ui
   UI_SERVICE_NAME: gwas-deposition-ui
 
 npm-build:
@@ -34,21 +34,36 @@ docker-build:
     - echo "$DOCKER_HUB_PASSWORD" > dhpw.txt
     - docker login -u "${DOCKER_HUB_USER}" --password-stdin < dhpw.txt
     - docker build --force-rm=true -t $UI_SERVICE_NAME:latest .
-    - docker tag $UI_SERVICE_NAME:latest $UI_REGISTRY_IMAGE:latest-sandbox
-    - docker push $UI_REGISTRY_IMAGE:latest-sandbox
+    - docker tag $UI_SERVICE_NAME:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   only:
     - test/ci_cd
 
-docker-deploy:
+docker-build-release:
+  variables:
+    GIT_STRATEGY: none
+  stage: docker
+  script:
+    - echo "$DOCKER_HUB_PASSWORD" > dhpw.txt
+    - docker login -u "${DOCKER_HUB_USER}" --password-stdin < dhpw.txt
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+  only:
+    - tags
+
+docker-deploy-sandbox:
   image: dtzar/helm-kubectl:2.13.1
-  stage: helm
+  stage: deploy
   script:
     - echo "Deploy to sandbox server"
     - mkdir -p /root/.kube
     - echo ${SANBOX_KUBECONF} | base64 -d > /root/.kube/config
     - helm init
     - helm delete --purge gwas-deposition-ui || true
-    - helm install --name gwas-deposition-ui --set k8Namespace=default,image.repository=$UI_REGISTRY_IMAGE,image.tag=latest-sandbox ./k8chart/ --wait
+    - helm install --name gwas-deposition-ui --set k8Namespace=default,image.repository=$CI_REGISTRY_IMAGE,image.tag=$CI_COMMIT_SHA ./k8chart/ --wait
   environment:
     name: sandbox
   only:
