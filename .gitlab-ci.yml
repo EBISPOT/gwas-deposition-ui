@@ -15,7 +15,7 @@ variables:
 
 npm-build:
   image: node:10.15.3
-  stage: build-build
+  stage: build
   script:
     - npm -v
     - node -v
