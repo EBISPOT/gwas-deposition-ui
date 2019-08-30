@@ -1,4 +1,5 @@
 import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 
 const DOWNLOAD_TEMPLATE_URL = process.env.REACT_APP_TEMPLATE_DOWNLOAD_API_URL;
 
@@ -19,9 +20,24 @@ class APIClient {
      * @return {File} Metadata template file
      */
     downloadTemplate() {
-        // TODO: Handle download template parameters dynamically
-        // when types of users can be distinguished
-        let payload = JSON.stringify({ "curator": false });
+        var payload;
+        var curator_domain = "self.GWAS_Curator";
+
+        // Check for authentication token
+        if (localStorage.getItem('id_token')) {
+            let token = localStorage.getItem('id_token');
+
+            // Check if user in GWAS_Curator domain
+            let decoded_token = jwt_decode(token);
+
+            if (decoded_token.domains.includes(curator_domain)) {
+                payload = JSON.stringify({ "curator": true });
+            } else {
+                payload = JSON.stringify({ "curator": false });
+            }
+        } else {
+            payload = JSON.stringify({ "curator": false });
+        }
 
         axios.post(DOWNLOAD_TEMPLATE_URL, payload,
             {
