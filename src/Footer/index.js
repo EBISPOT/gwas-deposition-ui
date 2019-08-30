@@ -1,13 +1,13 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
-
+import Button from '@material-ui/core/Button';
 
 var style = {
-    backgroundColor: "#E7F7F9",
+    backgroundColor: "#A9A9A9",
     textAlign: "center",
     padding: "20px",
-    height: "60px",
+    height: "80px",
     width: "100%",
 }
 
@@ -17,6 +17,16 @@ var linkStyle = {
     paddingRight: 4,
 }
 
+var button = {
+    backgroundColor: "#A9A9A9",
+    border: 'none',
+}
+
+function getCurrentYear() {
+    let date = new Date();
+    let currentYear = date.getFullYear();
+    return currentYear;
+}
 
 function Footer() {
     const textDivider = "|";
@@ -24,7 +34,7 @@ function Footer() {
     return (
         <div style={style}>
             <Typography>
-                Copyright © EMBL-EBI 2019 {textDivider} EMBL-EBI is an Outstation of the
+                Copyright © EMBL-EBI {getCurrentYear()} {textDivider} EMBL-EBI is an Outstation of the
                     <Link target="_blank" href="https://www.embl.org/" style={linkStyle}>
                     European Molecular Biology Laboratory
                     </Link>
@@ -40,6 +50,12 @@ function Footer() {
                 <Link target="_blank" href="https://www.ebi.ac.uk/about/terms-of-use" style={linkStyle}>
                     Terms of use
                     </Link>
+                <Button style={button} target="_blank" href="https://www.ebi.ac.uk/">
+                    <img src={process.env.PUBLIC_URL + '/images/EMBL_EBI_Logo_white.png'} alt="embl-ebi" />
+                </Button>
+                <Button style={button} target="_blank" href="https://www.genome.gov/">
+                    <img src={process.env.PUBLIC_URL + '/images/NHGRI_NIH_logo.png'} alt="nih" />
+                </Button>
             </Typography>
         </div>
     )
