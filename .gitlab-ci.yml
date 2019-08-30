@@ -4,6 +4,8 @@ services:
 
 stages:
   - build
+  - docker
+  - helm
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -13,7 +15,7 @@ variables:
 
 npm-build:
   image: node:10.15.3
-  stage: build
+  stage: build-build
   script:
     - npm -v
     - node -v
@@ -23,5 +25,31 @@ npm-build:
   artifacts:
     paths:
       - build/*
+  only:
+    - test/ci_cd
+
+docker-build:
+  stage: docker
+  script:
+    - echo "$DOCKER_HUB_PASSWORD" > dhpw.txt
+    - docker login -u "${DOCKER_HUB_USER}" --password-stdin < dhpw.txt
+    - docker build --force-rm=true -t $UI_SERVICE_NAME:latest .
+    - docker tag $UI_SERVICE_NAME:latest $UI_REGISTRY_IMAGE:latest-sandbox
+    - docker push $UI_REGISTRY_IMAGE:latest-sandbox
+  only:
+    - test/ci_cd
+
+docker-deploy:
+  image: dtzar/helm-kubectl:2.13.1
+  stage: helm
+  script:
+    - echo "Deploy to sandbox server"
+    - mkdir -p /root/.kube
+    - echo ${SANBOX_KUBECONF} | base64 -d > /root/.kube/config
+    - helm init
+    - helm delete --purge gwas-deposition-ui || true
+    - helm install --name gwas-deposition-ui --set k8Namespace=default,image.repository=$UI_REGISTRY_IMAGE,image.tag=latest-sandbox ./k8chart/ --wait
+  environment:
+    name: sandbox
   only:
     - test/ci_cd
