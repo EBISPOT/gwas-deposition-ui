@@ -79,13 +79,21 @@ class Submissions extends React.Component {
                     ]}
                     data={query =>
                         new Promise((resolve, reject) => {
+                            let auth = localStorage.getItem('id_token');
 
                             let url = GET_SUBMISSIONS_URL
 
                             // Handle display of search results
                             if (query.search) {
                                 url += '/' + query.search
-                                fetch(url)
+                                fetch(url, {
+                                    method: 'GET',
+                                    headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                        'Authorization': "Bearer " + auth,
+                                    },
+                                })
                                     .then(response => response.json())
                                     .then(result => {
                                         resolve({
