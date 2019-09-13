@@ -116,7 +116,7 @@ class PublicationsMatTable extends React.Component {
                 }}
                 localization={{
                     toolbar: {
-                        searchPlaceholder: 'Search by PMID',
+                        searchPlaceholder: 'Search by PubMedID',
                     },
                     body: {
                         emptyDataSourceMessage: noResultsMessage
