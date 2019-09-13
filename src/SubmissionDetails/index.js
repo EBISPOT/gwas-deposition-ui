@@ -125,7 +125,7 @@ class GridTest extends Component {
      * Parse file validation error message
      */
     parseErrorMessage(errorMessage) {
-        if (errorMessage) {
+        if (errorMessage && errorMessage.length > 0) {
             let fieldHeaderText = "Error: ";
             let index = 0;
             let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
