@@ -69,7 +69,7 @@ class Submissions extends React.Component {
                                 pathname: `${process.env.PUBLIC_URL}/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
                             }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
                         },
-                        { title: 'PMID', field: 'publication.pmid' },
+                        { title: 'PubMedID', field: 'publication.pmid' },
                         { title: 'First author', field: 'publication.firstAuthor' },
                         { title: 'Submission Status', field: 'submission_status' },
                         { title: 'Metadata Status', field: 'metadata_status' },
@@ -82,19 +82,37 @@ class Submissions extends React.Component {
 
                             let url = GET_SUBMISSIONS_URL
 
-                            // Handle display of search results
+                            // Handle search by PubMedID
+                            let onlyNumbers = /^\d+$/;
+
                             if (query.search) {
-                                url += '/' + query.search
-                                fetch(url)
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        resolve({
-                                            data: [result],
-                                            page: 0,
-                                            totalCount: 1,
+                                if (onlyNumbers.test(query.search)) {
+                                    url += '?pmid=' + query.search
+                                    fetch(url)
+                                        .then(response => response.json())
+                                        .then(result => {
+                                            resolve({
+                                                data: result._embedded.submissions,
+                                                page: result.page.number,
+                                                totalCount: result.page.totalElements,
+                                            })
+                                        }).catch(error => {
                                         })
-                                    }).catch(error => {
-                                    })
+                                }
+                                // Handle search by SubmissionID
+                                else {
+                                    url += '/' + query.search
+                                    fetch(url)
+                                        .then(response => response.json())
+                                        .then(result => {
+                                            resolve({
+                                                data: [result],
+                                                page: 0,
+                                                totalCount: 1,
+                                            })
+                                        }).catch(error => {
+                                        })
+                                }
                             }
                             // Display all results
                             else {
@@ -124,11 +142,14 @@ class Submissions extends React.Component {
                     options={{
                         search: true,
                         pageSize: 10,
-                        pageSizeOptions: [10, 20, 50]
+                        pageSizeOptions: [10, 20, 50],
+                        searchFieldStyle: {
+                            width: 340,
+                        }
                     }}
                     localization={{
                         toolbar: {
-                            searchPlaceholder: 'Search by ID',
+                            searchPlaceholder: 'Search by PubMedID or ID',
                         }
                     }}
                 />

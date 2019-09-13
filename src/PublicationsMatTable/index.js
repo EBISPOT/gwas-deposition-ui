@@ -55,7 +55,7 @@ class PublicationsMatTable extends React.Component {
                 title="Publications"
                 columns={[
                     {
-                        title: 'PMID', field: 'pmid',
+                        title: 'PubMedID', field: 'pmid',
                         render: rowData => (<Link to={{ pathname: `${process.env.PUBLIC_URL}/publication/${rowData.pmid}`, state: { pmid: rowData.pmid } }}
                             style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
                     },
@@ -116,7 +116,7 @@ class PublicationsMatTable extends React.Component {
                 }}
                 localization={{
                     toolbar: {
-                        searchPlaceholder: 'Search by PMID',
+                        searchPlaceholder: 'Search by PubMedID',
                     },
                     body: {
                         emptyDataSourceMessage: noResultsMessage
