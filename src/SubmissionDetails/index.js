@@ -62,7 +62,6 @@ class GridTest extends Component {
         else {
             this.SUBMISSION_ID = this.props.location.pathname.split('/')[2];
         }
-        console.log("ID: ", this.SUBMISSION_ID);
 
         this.state = ({
             submission_data: [],
@@ -159,8 +158,6 @@ class GridTest extends Component {
              * Set data for Summary Stats File Object
              */
             if (file.type === SUMMARY_STATS_FILE_TYPE) {
-                console.log("** SS File file object found!!!")
-                console.log("** SS File: ", file)
 
                 // Set Summary Stats fileUploadId
                 if (file.fileUploadId) {
@@ -178,15 +175,12 @@ class GridTest extends Component {
                     let fieldHeaderText = "Error: ";
                     let index = 0;
                     let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
-                    // let errorMessage = [];
                     summaryStatsErrorMessage.push(fieldHeader);
 
                     for (const error of file.errors) {
-                        // console.log("-- Error message: ", error);
                         index = index + 1;
                         summaryStatsErrorMessage.push(<span key={index}>{error}<br /></span>);
                     }
-                    // console.log("** Error Message: ", sumStatsErrorMessage);
                     summaryStatsFileMetadata.summary_stats_errors = summaryStatsErrorMessage;
                 }
             }
@@ -195,8 +189,6 @@ class GridTest extends Component {
              * Set data for Metadata File Object
              */
             if (file.type === METADATA_FILE_TYPE) {
-                console.log("** Metadata File file object found!!!")
-                console.log("** Metadata File: ", file)
 
                 // Set Metadata fileUploadId
                 if (file.fileUploadId) {
@@ -211,7 +203,6 @@ class GridTest extends Component {
                 // Set Metadata errors
                 let metadataErrorMessage = [];
                 if (file.errors && file.errors.length > 0) {
-                    console.log("** Parsing errors...")
                     let fieldHeaderText = "Error: ";
                     let index = 0;
                     let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
@@ -221,7 +212,6 @@ class GridTest extends Component {
                         index = index + 1;
                         metadataErrorMessage.push(<span key={index}>{error}<br /></span>);
                     }
-                    console.log("** metadataErrorMessage: ", metadataErrorMessage);
                     metadataFileMetadata.metadata_errors = metadataErrorMessage;
                 }
             }
@@ -230,8 +220,6 @@ class GridTest extends Component {
             * Set data for Summary Stats Template File Object
             */
             if (file.type === SUMMARY_STATS_TEMPLATE_FILE_TYPE) {
-                console.log("** Summary Stats Template file object found!!!")
-                console.log("** Summary Stats Template: ", file)
 
                 // Set Summary Stats Template fileUploadId
                 if (file.fileUploadId) {
@@ -246,7 +234,6 @@ class GridTest extends Component {
                 // Set Summary Stats Template errors
                 let summaryStatsTemplateErrorMessage = [];
                 if (file.errors && file.errors.length > 0) {
-                    console.log("** Parsing errors...")
                     let fieldHeaderText = "Error: ";
                     let index = 0;
                     let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
@@ -256,7 +243,6 @@ class GridTest extends Component {
                         index = index + 1;
                         summaryStatsTemplateErrorMessage.push(<span key={index}>{error}<br /></span>);
                     }
-                    console.log("** summaryStatsTemplateErrorMessage: ", summaryStatsTemplateErrorMessage);
                     summaryStatsTemplateFileMetadata.metadata_errors = summaryStatsTemplateErrorMessage;
                 }
             }
@@ -283,7 +269,6 @@ class GridTest extends Component {
         let submissionId = this.SUBMISSION_ID;
         let summaryStatsTemplateFileId = this.state.summaryStatsTemplateFileUploadId;
         let summaryStatsTemplateFileName = this.state.summaryStatsTemplateFileName;
-        console.log("** downloadSummaryStatsTemplate Params: ", summaryStatsTemplateFileId, summaryStatsTemplateFileName);
 
         this.API_CLIENT.downloadDataFile(submissionId, summaryStatsTemplateFileId, summaryStatsTemplateFileName);
     }
@@ -323,10 +308,8 @@ class GridTest extends Component {
      * @param {String} fileUploadId
      */
     deleteData() {
-        console.log("** Button click called deleteData method...");
         let submissionId = this.SUBMISSION_ID;
         let fileId = this.state.fileUploadId;
-        console.log("** FUID: ", fileId);
 
         // Check if user is logged in, Get token from local storage
         if (localStorage.getItem('id_token')) {
@@ -357,7 +340,6 @@ class GridTest extends Component {
      * Submit data 
      */
     submitData() {
-        console.log("** Button click called submitData method...");
         let submissionId = this.SUBMISSION_ID;
 
         // Check if user is logged in, Get token from local storage
