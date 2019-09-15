@@ -132,7 +132,8 @@ class PublicationsMatTable extends React.Component {
                     pageSizeOptions: [10, 20, 50],
                     searchFieldStyle: {
                         width: 350,
-                    }
+                    },
+                    debounceInterval: 2500,
                 }}
                 localization={{
                     toolbar: {
