@@ -62,7 +62,6 @@ class GridTest extends Component {
         else {
             this.SUBMISSION_ID = this.props.location.pathname.split('/')[2];
         }
-        console.log("ID: ", this.SUBMISSION_ID);
 
         this.state = ({
             submission_data: [],
@@ -79,24 +78,23 @@ class GridTest extends Component {
             fileName: null,
             fileValidationErrorMessage: null,
             displaySummaryStatsSection: true,
+            summaryStatsTemplateFileUploadId: null,
+            summaryStatsTemplateFileName: null,
         })
         this.downloadDataFile = this.downloadDataFile.bind(this);
+        this.downloadSummaryStatsTemplate = this.downloadSummaryStatsTemplate.bind(this);
         this.submitData = this.submitData.bind(this);
         this.deleteData = this.deleteData.bind(this);
         this.displayUploadComponent = this.displayUploadComponent.bind(this);
         this.hideUploadComponent = this.hideUploadComponent.bind(this);
-
-        this.parseErrorMessage = this.parseErrorMessage.bind(this);
+        this.parseFileMetadata = this.parseFileMetadata.bind(this);
     }
 
     /**
      * Get Submission details and update state
      */
     async componentDidMount() {
-        console.log("** Called getSubmission...")
-
         this.API_CLIENT.getSubmission(this.SUBMISSION_ID).then((data) => {
-            console.log("** Get Submission Data: ", data);
 
             this.setState({ ...this.state, submission_data: data });
             this.setState({ ...this.state, submissionStatus: data.submission_status });
@@ -108,12 +106,34 @@ class GridTest extends Component {
             }
 
             if (data.files.length > 0) {
-                console.log("** Setting fileUploadId...", data.files[0].fileUploadId);
-                this.setState({ ...this.state, fileUploadId: data.files[0].fileUploadId })
-                this.setState({ ...this.state, fileName: data.files[0].fileName })
+                /** 
+                 * Parse file metadata
+                */
+                const { summaryStatsFileMetadata,
+                    metadataFileMetadata,
+                    summaryStatsTemplateFileMetadata } = this.parseFileMetadata(data.files);
 
-                // Parse error message for better display formatting
-                this.setState({ ...this.state, fileValidationErrorMessage: this.parseErrorMessage(data.files[0].errors) });
+                /**
+                 * Set state based on type of file uploaded
+                 */
+                if (summaryStatsFileMetadata.fileUploadId !== undefined) {
+                    this.setState({ ...this.state, fileUploadId: summaryStatsFileMetadata.fileUploadId })
+                    this.setState({ ...this.state, fileName: summaryStatsFileMetadata.fileName })
+                    this.setState({ ...this.state, fileValidationErrorMessage: summaryStatsFileMetadata.summary_stats_errors });
+                }
+                else {
+                    this.setState({ ...this.state, fileUploadId: metadataFileMetadata.fileUploadId })
+                    this.setState({ ...this.state, fileName: metadataFileMetadata.fileName })
+                    this.setState({ ...this.state, fileValidationErrorMessage: metadataFileMetadata.metadata_errors });
+                }
+
+                /**
+                 * Set data for Download SS template
+                 */
+                if (summaryStatsTemplateFileMetadata.fileUploadId !== undefined) {
+                    this.setState({ ...this.state, summaryStatsTemplateFileUploadId: summaryStatsTemplateFileMetadata.fileUploadId });
+                    this.setState({ ...this.state, summaryStatsTemplateFileName: summaryStatsTemplateFileMetadata.fileName });
+                }
             }
         }).catch(error => {
             console.log("** Error: ", error);
@@ -122,25 +142,112 @@ class GridTest extends Component {
 
 
     /**
-     * Parse file validation error message
+     * Parse file metadata for submission
      */
-    parseErrorMessage(errorMessage) {
-        if (errorMessage && errorMessage.length > 0) {
-            let fieldHeaderText = "Error: ";
-            let index = 0;
-            let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
-            let errors = [];
+    parseFileMetadata(allFiles) {
+        let SUMMARY_STATS_FILE_TYPE = "SUMMARY_STATS";
+        let METADATA_FILE_TYPE = "METADATA";
+        let SUMMARY_STATS_TEMPLATE_FILE_TYPE = "SUMMARY_STATS_TEMPLATE";
 
-            errors.push(fieldHeader);
-            for (const error of errorMessage) {
-                index = index + 1;
-                errors.push(<span key={index}>{error}<br /></span>);
+        let summaryStatsFileMetadata = {};
+        let metadataFileMetadata = {};
+        let summaryStatsTemplateFileMetadata = {};
+
+        allFiles.forEach((file) => {
+            /**
+             * Set data for Summary Stats File Object
+             */
+            if (file.type === SUMMARY_STATS_FILE_TYPE) {
+
+                // Set Summary Stats fileUploadId
+                if (file.fileUploadId) {
+                    summaryStatsFileMetadata.fileUploadId = file.fileUploadId;
+                }
+
+                // Set Summary Stats fileName
+                if (file.fileName) {
+                    summaryStatsFileMetadata.fileName = file.fileName;
+                }
+
+                // Set Summary Stats errors
+                let summaryStatsErrorMessage = [];
+                if (file.errors && file.errors.length > 0) {
+                    let fieldHeaderText = "Error: ";
+                    let index = 0;
+                    let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
+                    summaryStatsErrorMessage.push(fieldHeader);
+
+                    for (const error of file.errors) {
+                        index = index + 1;
+                        summaryStatsErrorMessage.push(<span key={index}>{error}<br /></span>);
+                    }
+                    summaryStatsFileMetadata.summary_stats_errors = summaryStatsErrorMessage;
+                }
             }
-            return errors;
-        }
-        else {
-            return null;
-        }
+
+            /**
+             * Set data for Metadata File Object
+             */
+            if (file.type === METADATA_FILE_TYPE) {
+
+                // Set Metadata fileUploadId
+                if (file.fileUploadId) {
+                    metadataFileMetadata.fileUploadId = file.fileUploadId;
+                }
+
+                // Set Metadata fileName
+                if (file.fileName) {
+                    metadataFileMetadata.fileName = file.fileName;
+                }
+
+                // Set Metadata errors
+                let metadataErrorMessage = [];
+                if (file.errors && file.errors.length > 0) {
+                    let fieldHeaderText = "Error: ";
+                    let index = 0;
+                    let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
+                    metadataErrorMessage.push(fieldHeader);
+
+                    for (const error of file.errors) {
+                        index = index + 1;
+                        metadataErrorMessage.push(<span key={index}>{error}<br /></span>);
+                    }
+                    metadataFileMetadata.metadata_errors = metadataErrorMessage;
+                }
+            }
+
+            /**
+            * Set data for Summary Stats Template File Object
+            */
+            if (file.type === SUMMARY_STATS_TEMPLATE_FILE_TYPE) {
+
+                // Set Summary Stats Template fileUploadId
+                if (file.fileUploadId) {
+                    summaryStatsTemplateFileMetadata.fileUploadId = file.fileUploadId;
+                }
+
+                // Set Summary Stats Template fileName
+                if (file.fileName) {
+                    summaryStatsTemplateFileMetadata.fileName = file.fileName;
+                }
+
+                // Set Summary Stats Template errors
+                let summaryStatsTemplateErrorMessage = [];
+                if (file.errors && file.errors.length > 0) {
+                    let fieldHeaderText = "Error: ";
+                    let index = 0;
+                    let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
+                    summaryStatsTemplateErrorMessage.push(fieldHeader);
+
+                    for (const error of file.errors) {
+                        index = index + 1;
+                        summaryStatsTemplateErrorMessage.push(<span key={index}>{error}<br /></span>);
+                    }
+                    summaryStatsTemplateFileMetadata.metadata_errors = summaryStatsTemplateErrorMessage;
+                }
+            }
+        });
+        return { summaryStatsFileMetadata, metadataFileMetadata, summaryStatsTemplateFileMetadata };
     }
 
 
@@ -153,6 +260,17 @@ class GridTest extends Component {
         let fileName = this.state.fileName;
 
         this.API_CLIENT.downloadDataFile(submissionId, fileId, fileName);
+    }
+
+    /**
+     * Download SS template
+     */
+    downloadSummaryStatsTemplate() {
+        let submissionId = this.SUBMISSION_ID;
+        let summaryStatsTemplateFileId = this.state.summaryStatsTemplateFileUploadId;
+        let summaryStatsTemplateFileName = this.state.summaryStatsTemplateFileName;
+
+        this.API_CLIENT.downloadDataFile(submissionId, summaryStatsTemplateFileId, summaryStatsTemplateFileName);
     }
 
 
@@ -190,10 +308,8 @@ class GridTest extends Component {
      * @param {String} fileUploadId
      */
     deleteData() {
-        console.log("** Button click called deleteData method...");
         let submissionId = this.SUBMISSION_ID;
         let fileId = this.state.fileUploadId;
-        console.log("** FUID: ", fileId);
 
         // Check if user is logged in, Get token from local storage
         if (localStorage.getItem('id_token')) {
@@ -224,7 +340,6 @@ class GridTest extends Component {
      * Submit data 
      */
     submitData() {
-        console.log("** Button click called submitData method...");
         let submissionId = this.SUBMISSION_ID;
 
         // Check if user is logged in, Get token from local storage
@@ -276,6 +391,11 @@ class GridTest extends Component {
         let delete_file_button;
         let download_data_file_button;
 
+        let buttonUploadText = "Upload Template";
+        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
+            buttonUploadText = "Upload SS Template";
+        }
+
         /**
          * Display Submission statistics section if a file has been uploaded
          * and the file Dropzone component is not being displayed
@@ -311,7 +431,7 @@ class GridTest extends Component {
                 download_summary_stats_button =
                     <Fragment>
                         <Grid item xs={2}>
-                            <button onClick={this.downloadDataFile} style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
+                            <button onClick={this.downloadSummaryStatsTemplate} style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
                                 Download SS Template
                             </button>
                         </Grid>
@@ -337,7 +457,7 @@ class GridTest extends Component {
                     <Grid item xs={6}>
                         <button onClick={this.displayUploadComponent} style={{ visibility: this.state.showButtonVisibility }}
                             className={classes.button}>
-                            Select Upload File
+                            {buttonUploadText}
                         </button>
                     </Grid>
                 </Fragment>
@@ -346,7 +466,7 @@ class GridTest extends Component {
                 <Fragment>
                     <Grid item xs={6}>
                         <button disabled size="small" className={classes.button}>
-                            Select Upload File
+                            {buttonUploadText}
                         </button>
                     </Grid>
                 </Fragment>
