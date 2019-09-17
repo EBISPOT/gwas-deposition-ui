@@ -19,11 +19,28 @@ class Home extends Component {
                         justify="space-evenly"
                         alignItems="center">
                         <Grid item>
-                            <Typography variant="h5" gutterBottom>
-                                Welcome to the GWAS Deposition App
+                            <Typography gutterBottom variant="h5">
+                                Welcome to the GWAS Catalog submission page
                             </Typography>
                         </Grid>
+                        <Grid container spacing={3}>
+                            <Grid item xs>
+                                <Paper></Paper>
+                            </Grid>
+                            <Grid item xs={8}>
+                                <Typography gutterBottom variant="body1">
+                                    In the table below, you can view all eligible GWAS Catalog publications, including those in the curation queue.
+                                    If you are an author of one of these publications and have available summary statistics, please click on
+                                    the publication PMID to start your submission.
+                                    For additional information please read the documentation [link to “How to submit” page].
+                            </Typography>
+
+                            </Grid>
+                            <Grid item xs>
+                            </Grid>
+                        </Grid>
                     </Grid>
+
                 </Paper>
 
 
