@@ -70,6 +70,7 @@ class GridTest extends Component {
             isNotValid: true,
             submissionError: null,
             deleteFileError: null,
+            downloadSummaryStatsFileError: null,
             submissionStatus: null,
             publicationStatus: null,
             showComponent: false,
@@ -434,6 +435,7 @@ class GridTest extends Component {
                             <button onClick={this.downloadSummaryStatsTemplate} style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
                                 Download SS Template
                             </button>
+                            {this.state.downloadSummaryStatsFileError}
                         </Grid>
                     </Fragment>
             } else {

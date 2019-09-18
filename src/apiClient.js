@@ -70,6 +70,7 @@ class APIClient {
      * @param {String} fileName
      */
     downloadDataFile(submissionId, fileUploadId, fileName) {
+        // Name SS default as "template.xlsx", otherwise use existing filename
         if (!fileName) {
             fileName = "template.xlsx";
         }
@@ -85,7 +86,12 @@ class APIClient {
             link.setAttribute('download', fileName);
             document.body.appendChild(link);
             link.click();
-        }).catch((error) => console.log(error));
+        }).catch((error) => {
+            console.log("** Error occurred")
+            return error;
+        }, function (error) {
+            return Promise.reject(error.response);
+        });
     }
 
 
