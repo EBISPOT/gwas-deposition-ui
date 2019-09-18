@@ -2,7 +2,7 @@ import jwt_decode from 'jwt-decode';
 
 export default class ElixirAuthService {
     constructor() {
-        this._domain = encodeURIComponent(window.location.origin) || 'http://localhost:8080';
+        this._domain = encodeURIComponent(window.location.origin) || 'http://localhost:80';
         this._appURL = process.env.REACT_APP_AAPURL.replace(/\/$/, '');
 
         this.getProfile = this.getProfile.bind(this);

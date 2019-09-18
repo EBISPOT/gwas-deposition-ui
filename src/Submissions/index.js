@@ -48,6 +48,7 @@ const tableIcons = {
 };
 
 const GET_SUBMISSIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'submissions';
+const auth = localStorage.getItem('id_token');
 
 
 class Submissions extends React.Component {
@@ -119,7 +120,21 @@ class Submissions extends React.Component {
                                 url += '?size=' + query.pageSize
                                 url += '&page=' + (query.page)
 
-                                fetch(url)
+                                // const myHeaders = new Headers();
+                                // myHeaders.append('Authorization', 'Bearer ' + auth);
+                                // console.log("** Headers: ", myHeaders)
+
+                                // fetch(url)
+                                fetch(url, {
+                                    method: 'GET',
+                                    // headers: myHeaders,
+                                    // withCredentials: true,
+                                    // credentials: 'include',
+                                    // mode: 'no-cors',
+                                    headers: {
+                                        'Authorization': 'Bearer ' + auth,
+                                    },
+                                })
                                     .then(response => response.json())
                                     .then(result => {
                                         resolve({
@@ -128,6 +143,7 @@ class Submissions extends React.Component {
                                             totalCount: result.page.totalElements,
                                         })
                                     }).catch(error => {
+                                        console.log("Blocked by browser!", error);
                                     })
                             }
                             setTimeout(() => {
