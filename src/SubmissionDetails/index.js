@@ -306,6 +306,7 @@ class GridTest extends Component {
         this.setState({ showComponent: true });
         this.setState({ showButtonVisibility: 'hidden' });
         this.setState({ displaySummaryStatsSection: false });
+        this.setState({ downloadSummaryStatsFileError: null });
     }
 
 
