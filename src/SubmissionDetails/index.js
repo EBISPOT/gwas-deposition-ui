@@ -397,6 +397,7 @@ class GridTest extends Component {
         const bull = <span className={classes.bullet}>•</span>;
 
         const OVERALL_STATUS_STARTED = 'STARTED';
+        const VALID_SUBMISSION = 'VALID';
 
         const { publicationStatus } = this.state;
 
@@ -425,8 +426,8 @@ class GridTest extends Component {
          * Display Submission statistics section if a file has been uploaded
          * and the file Dropzone component is not being displayed
          */
-        if (submissionStatus !== OVERALL_STATUS_STARTED) {
-            if (displaySummaryStatsSection) {
+        if (submissionStatus === VALID_SUBMISSION) {
+            if (displaySummaryStatsSection && publicationStatus !== 'UNDER_SUMMARY_STATS_SUBMISSION') {
                 submission_stats_section =
                     <Fragment>
                         <Grid item>
@@ -442,6 +443,18 @@ class GridTest extends Component {
                             <Typography gutterBottom>
                                 {bull} {this.state.submission_data.sample_count} sample groups
                         </Typography>
+                        </Grid>
+                    </Fragment>
+            } else {
+                submission_stats_section =
+                    <Fragment>
+                        <Grid item>
+                            <Typography gutterBottom variant="body1">
+                                Submission Stats
+                            </Typography>
+                            <Typography gutterBottom>
+                                {bull} {this.state.submission_data.study_count} studies
+                            </Typography>
                         </Grid>
                     </Fragment>
             }
