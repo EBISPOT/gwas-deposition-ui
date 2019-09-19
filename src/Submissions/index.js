@@ -74,6 +74,7 @@ class Submissions extends React.Component {
                         { title: 'Submission Status', field: 'submission_status' },
                         { title: 'Metadata Status', field: 'metadata_status' },
                         { title: 'Summary statistics Status', field: 'summary_statistics_status' },
+                        { title: 'Submitter', field: 'created.user.name' },
                         { title: 'Date submission started', field: 'created.timestamp' },
                         { title: 'Date submitted', field: 'date_submitted' },
                     ]}
