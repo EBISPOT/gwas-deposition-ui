@@ -14,6 +14,8 @@ import { AuthConsumer } from '../auth-context';
 import API_CLIENT from '../apiClient';
 import history from "../history";
 
+import axios from 'axios';
+
 
 const styles = theme => ({
     root: {
@@ -46,6 +48,10 @@ const styles = theme => ({
     statistics: {
         paddingTop: 24,
     },
+    inputCenter: {
+        textAlign: "center",
+        color: "red"
+    }
 });
 
 
@@ -70,6 +76,7 @@ class GridTest extends Component {
             isNotValid: true,
             submissionError: null,
             deleteFileError: null,
+            downloadSummaryStatsFileError: null,
             submissionStatus: null,
             publicationStatus: null,
             showComponent: false,
@@ -270,7 +277,24 @@ class GridTest extends Component {
         let summaryStatsTemplateFileId = this.state.summaryStatsTemplateFileUploadId;
         let summaryStatsTemplateFileName = this.state.summaryStatsTemplateFileName;
 
-        this.API_CLIENT.downloadDataFile(submissionId, summaryStatsTemplateFileId, summaryStatsTemplateFileName);
+        const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
+
+        axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + summaryStatsTemplateFileId + '/download',
+            {
+                responseType: 'blob',
+            }
+        ).then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', summaryStatsTemplateFileName);
+            document.body.appendChild(link);
+            link.click();
+        }
+        ).catch((error) => {
+            let downloadSSTemplateErrorLabel = "Error: File not found."
+            this.setState({ downloadSummaryStatsFileError: downloadSSTemplateErrorLabel });
+        })
     }
 
 
@@ -434,6 +458,11 @@ class GridTest extends Component {
                             <button onClick={this.downloadSummaryStatsTemplate} style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
                                 Download SS Template
                             </button>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant="body2" gutterBottom className={classes.inputCenter}>
+                                {this.state.downloadSummaryStatsFileError}
+                            </Typography>
                         </Grid>
                     </Fragment>
             } else {

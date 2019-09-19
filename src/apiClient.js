@@ -63,30 +63,33 @@ class APIClient {
     /**
      * API call to gwas-backend app to 
      * download file for submission
+     * TODO: Decide whether to keep this method here
+     * or just use directly in Component
      * 
      * @param GET
      * @param {String} submissionId
      * @param {String} fileUploadId
      * @param {String} fileName
      */
-    downloadDataFile(submissionId, fileUploadId, fileName) {
-        if (!fileName) {
-            fileName = "template.xlsx";
-        }
+    // downloadDataFile(submissionId, fileUploadId, fileName) {
+    //     // Name SS default file as "template.xlsx", otherwise use existing filename
+    //     if (!fileName) {
+    //         fileName = "template.xlsx";
+    //     }
 
-        axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + fileUploadId + '/download',
-            {
-                responseType: 'blob',
-            }
-        ).then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', fileName);
-            document.body.appendChild(link);
-            link.click();
-        }).catch((error) => console.log(error));
-    }
+    //     axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + fileUploadId + '/download',
+    //         {
+    //             responseType: 'blob',
+    //         }
+    //     ).then((response) => {
+    //         const url = window.URL.createObjectURL(new Blob([response.data]));
+    //         const link = document.createElement('a');
+    //         link.href = url;
+    //         link.setAttribute('download', fileName);
+    //         document.body.appendChild(link);
+    //         link.click();
+    //     });
+    // }
 
 
     /**
