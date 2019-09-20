@@ -6,12 +6,14 @@ import PropTypes from 'prop-types';
 
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
 
 import { AuthConsumer } from '../auth-context';
 
 import API_CLIENT from '../apiClient';
 import history from "../history";
+
+import Grid from '@material-ui/core/Grid';
 
 
 // THIS WORKS
@@ -66,10 +68,11 @@ class PublicationDetails extends Component {
         this.state = ({
             publication: [],
             publicationStatus: null,
-            error: null,
+            createSubmissionError: false,
+            redirectError: false,
         })
-        this.testButton = this.testButton.bind(this);
         this.createSubmission = this.createSubmission.bind(this);
+        this.redirectToSubmissionDetails = this.redirectToSubmissionDetails.bind(this);
     }
 
     /**
@@ -95,13 +98,17 @@ class PublicationDetails extends Component {
         if (localStorage.getItem('id_token')) {
             let JWTToken = localStorage.getItem('id_token')
             this.API_CLIENT.createSubmission(pmid, JWTToken).then(response => {
-                this.setState(() => ({ error: false }));
+                this.setState(() => ({ createSubmissionError: false }));
 
-                history.push(`${process.env.PUBLIC_URL}/submissions`);
+                // Display list of all submissions
+                // history.push(`${process.env.PUBLIC_URL}/submissions`);
+
+                this.redirectToSubmissionDetails();
+
             })
                 .catch(error => {
-                    this.setState(() => ({ error: true }));
-                    alert("There was an error creating the submission")
+                    this.setState(() => ({ createSubmissionError: true }));
+                    // alert("There was an error creating the submission")
                 })
         }
         else {
@@ -110,18 +117,33 @@ class PublicationDetails extends Component {
         }
     }
 
-    testButton() {
-        alert('Button clicked!')
+
+    async redirectToSubmissionDetails() {
+        let pmid = this.PUBMED_ID;
+
+        // Get SubmissionId
+        await this.API_CLIENT.getSubmissionId(pmid).then(response => {
+            let newSubmissionId = response.data._embedded.submissions[0].submissionId
+            return history.push(`${process.env.PUBLIC_URL}/submission/${newSubmissionId}`);
+        }).catch(error => {
+            console.log("There was an error getting the SubmissionID");
+            // Display redirect error message
+            this.setState(() => ({ redirectError: true }));
+        });
     }
 
 
     render() {
         const { classes } = this.props;
-        const { error } = this.state;
+        const { createSubmissionError } = this.state;
+        const { redirectError } = this.state;
         const { publicationStatus } = this.state;
 
         let create_submission_button;
+        let showSubmissionDetailsButton;
 
+
+        // Show Create Submission button
         if (publicationStatus === 'ELIGIBLE' || publicationStatus === 'PUBLISHED') {
             create_submission_button =
                 <button onClick={this.createSubmission} variant="contained" color="secondary" size="small" className={classes.button}>
@@ -134,6 +156,14 @@ class PublicationDetails extends Component {
                 </button>
         }
 
+        // Show View Submission details button
+        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' || publicationStatus === 'UNDER_SUBMISSION') {
+            showSubmissionDetailsButton =
+                <button onClick={this.redirectToSubmissionDetails} variant="contained" color="secondary" size="small"
+                    className={classes.button}>
+                    View Submission Details
+                </button>
+        }
 
 
         return (
@@ -141,28 +171,57 @@ class PublicationDetails extends Component {
 
                 <div>
                     <Paper className={classes.root}>
-                        <Typography variant="h5" component="h3">
-                            Publication details for <i>{this.PUBMED_ID}</i>
-                        </Typography>
-                        <Typography component="h4">
-                            <div>
-                                {this.state.publication.title}
-                            </div>
+                        <Grid
+                            container
+                            direction="row"
+                            justify="space-between"
+                            alignItems="flex-start"
+                        >
+                            <Grid item xs={6}>
+                                <Typography variant="h5" component="h3">
+                                    Publication details for <i>{this.PUBMED_ID}</i>
+                                </Typography>
+                                <Typography component="h4">
+                                    <div>
+                                        {this.state.publication.title}
+                                    </div>
 
-                            <div>
-                                {this.state.publication.firstAuthor} et al., {this.state.publication.publicationDate}, {this.state.publication.journal}
-                            </div>
-                        </Typography>
+                                    <div>
+                                        {this.state.publication.firstAuthor} et al., {this.state.publication.publicationDate}, {this.state.publication.journal}
+                                    </div>
+                                </Typography>
 
-                        <Typography>
-                            Submission status: {this.state.publication.status}
-                        </Typography>
+                                <Typography>
+                                    Submission status: {this.state.publication.status}
+                                </Typography>
 
-                        {create_submission_button}
+                                {create_submission_button}
 
-                        <Typography>
-                            {error ? "There was an error creating the submission. Please try again." : null}
-                        </Typography>
+                                <Typography>
+                                    {createSubmissionError ? "There was an error creating the submission. Please try again." : null}
+                                </Typography>
+                            </Grid>
+
+
+                            <Grid item xs={6}>
+                                <Grid
+                                    container
+                                    direction="column"
+                                    justify="flex-start"
+                                    alignItems="flex-end"
+                                >
+                                    <Grid item xs={6}>
+                                        {showSubmissionDetailsButton}
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography variant="body2" gutterBottom>
+                                            {redirectError ? "There was an error displaying the submission details." : null}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+
+                        </Grid>
 
                     </Paper>
                 </div>
