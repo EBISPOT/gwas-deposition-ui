@@ -160,6 +160,16 @@ class APIClient {
         //     });
     }
 
+
+    /**
+     * Get Submission ID from PMID
+     * @param {*} pmid
+     */
+    getSubmissionId(pmid) {
+        return axios.get(BASE_URI + 'submissions?pmid=' + pmid)
+    }
+
+
     /**
      *
      * @param {*} PUT
