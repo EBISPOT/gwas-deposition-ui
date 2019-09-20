@@ -43,7 +43,7 @@ class APIClient {
             {
                 headers:
                 {
-                    'Content-Disposition': "attachment; filename=template.xlsx",
+                    'Content-Disposition': "attachment; filename=new_template.xlsx",
                     'Content-Type': 'application/json'
                 },
                 responseType: 'arraybuffer',
@@ -52,7 +52,7 @@ class APIClient {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'template.xlsx');
+            link.setAttribute('download', 'new_template.xlsx');
             document.body.appendChild(link);
             link.click();
         })
@@ -71,25 +71,25 @@ class APIClient {
      * @param {String} fileUploadId
      * @param {String} fileName
      */
-    // downloadDataFile(submissionId, fileUploadId, fileName) {
-    //     // Name SS default file as "template.xlsx", otherwise use existing filename
-    //     if (!fileName) {
-    //         fileName = "template.xlsx";
-    //     }
+    downloadDataFile(submissionId, fileUploadId, fileName) {
+        // Name SS default file as "template.xlsx", otherwise use existing filename
+        if (!fileName) {
+            fileName = "template.xlsx";
+        }
 
-    //     axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + fileUploadId + '/download',
-    //         {
-    //             responseType: 'blob',
-    //         }
-    //     ).then((response) => {
-    //         const url = window.URL.createObjectURL(new Blob([response.data]));
-    //         const link = document.createElement('a');
-    //         link.href = url;
-    //         link.setAttribute('download', fileName);
-    //         document.body.appendChild(link);
-    //         link.click();
-    //     });
-    // }
+        axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + fileUploadId + '/download',
+            {
+                responseType: 'blob',
+            }
+        ).then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+        });
+    }
 
 
     /**

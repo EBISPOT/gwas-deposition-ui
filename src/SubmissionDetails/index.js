@@ -270,12 +270,14 @@ class GridTest extends Component {
     }
 
     /**
-     * Download SS template
+     * Download prefilled SS template
      */
     downloadSummaryStatsTemplate() {
         let submissionId = this.SUBMISSION_ID;
+        let pmid = this.state.publication_obj.pmid;
         let summaryStatsTemplateFileId = this.state.summaryStatsTemplateFileUploadId;
-        let summaryStatsTemplateFileName = this.state.summaryStatsTemplateFileName;
+        // let summaryStatsTemplateFileName = this.state.summaryStatsTemplateFileName;
+        let summaryStatsTemplateFileName = `prefilled_template_${pmid}.xlsx`;
 
         const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
 
