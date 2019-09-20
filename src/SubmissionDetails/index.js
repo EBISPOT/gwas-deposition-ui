@@ -400,6 +400,7 @@ class GridTest extends Component {
 
         const OVERALL_STATUS_STARTED = 'STARTED';
         const VALID_SUBMISSION = 'VALID';
+        const SUBMITTED = 'SUBMITTED';
 
         const { publicationStatus } = this.state;
 
@@ -428,7 +429,7 @@ class GridTest extends Component {
          * Display Submission statistics section if a file has been uploaded
          * and the file Dropzone component is not being displayed
          */
-        if (submissionStatus === VALID_SUBMISSION) {
+        if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) {
             if (displaySummaryStatsSection && publicationStatus !== 'UNDER_SUMMARY_STATS_SUBMISSION') {
                 submission_stats_section =
                     <Fragment>
