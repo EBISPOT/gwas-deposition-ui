@@ -120,6 +120,14 @@ class Submissions extends React.Component {
                                 url += '?size=' + query.pageSize
                                 url += '&page=' + (query.page)
 
+                                // Handle sorting all results
+                                if (query.orderBy) {
+                                    let sortOrder = query.orderDirection;
+                                    //TODO: Get format of sort for submissions
+                                    url += '&sort=' + query.orderBy.field + ',' + sortOrder
+                                }
+                                console.log("** URL: ", url)
+
                                 fetch(url)
                                     .then(response => response.json())
                                     .then(result => {
@@ -146,7 +154,8 @@ class Submissions extends React.Component {
                         pageSizeOptions: [10, 20, 50],
                         searchFieldStyle: {
                             width: 340,
-                        }
+                        },
+                        sorting: true,
                     }}
                     localization={{
                         toolbar: {
