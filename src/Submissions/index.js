@@ -69,14 +69,14 @@ class Submissions extends React.Component {
                                 pathname: `${process.env.PUBLIC_URL}/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
                             }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
                         },
-                        { title: 'PubMedID', field: 'publication.pmid' },
-                        { title: 'First author', field: 'publication.firstAuthor' },
-                        { title: 'Submission Status', field: 'submission_status' },
-                        { title: 'Metadata Status', field: 'metadata_status' },
-                        { title: 'Summary statistics Status', field: 'summary_statistics_status' },
-                        { title: 'Submitter', field: 'created.user.name' },
-                        { title: 'Date submission started', field: 'created.timestamp' },
-                        { title: 'Date submitted', field: 'date_submitted' },
+                        { title: 'PubMedID', field: 'publication.pmid', sorting: false },
+                        { title: 'First author', field: 'publication.firstAuthor', sorting: false },
+                        { title: 'Submission Status', field: 'submission_status', sorting: false },
+                        { title: 'Metadata Status', field: 'metadata_status', sorting: false },
+                        { title: 'Summary statistics Status', field: 'summary_statistics_status', sorting: false },
+                        { title: 'Submitter', field: 'created.user.name', sorting: false },
+                        { title: 'Date submission started', field: 'created.timestamp', sorting: false },
+                        { title: 'Date submitted', field: 'date_submitted', sorting: false },
                     ]}
                     data={query =>
                         new Promise((resolve, reject) => {
@@ -123,10 +123,9 @@ class Submissions extends React.Component {
                                 // Handle sorting all results
                                 if (query.orderBy) {
                                     let sortOrder = query.orderDirection;
-                                    //TODO: Get format of sort for submissions
+                                    //Sorting for submissions is only supported for submissionId
                                     url += '&sort=' + query.orderBy.field + ',' + sortOrder
                                 }
-                                console.log("** URL: ", url)
 
                                 fetch(url)
                                     .then(response => response.json())
