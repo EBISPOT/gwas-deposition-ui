@@ -19,6 +19,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { doesNotReject } from 'assert';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -89,6 +90,20 @@ class PublicationsMatTable extends React.Component {
                             // Handle search by Author
                             else {
                                 url += '?author=' + query.search
+                                url += '&size=' + query.pageSize
+                                url += '&page=' + (query.page)
+
+                                // Handle sorting search by Author results
+                                if (query.orderBy) {
+                                    let sortOrder = query.orderDirection;
+                                    url += '&sort=' + query.orderBy.field + ',' + sortOrder
+                                }
+                                else {
+                                    // Sort search by Author results asc by default
+                                    // Note: Sorting is supported for only 1 column
+                                    url += '&sort=firstAuthor,asc'
+                                }
+
                                 fetch(url)
                                     .then(response => response.json())
                                     .then(result => {
@@ -105,6 +120,12 @@ class PublicationsMatTable extends React.Component {
                         else {
                             url += '?size=' + query.pageSize
                             url += '&page=' + (query.page)
+
+                            // Handle sorting all results
+                            if (query.orderBy) {
+                                let sortOrder = query.orderDirection;
+                                url += '&sort=' + query.orderBy.field + ',' + sortOrder
+                            }
 
                             fetch(url)
                                 .then(response => response.json())
@@ -134,6 +155,7 @@ class PublicationsMatTable extends React.Component {
                         width: 350,
                     },
                     debounceInterval: 2500,
+                    sorting: true,
                 }}
                 localization={{
                     toolbar: {
