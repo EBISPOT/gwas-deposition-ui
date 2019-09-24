@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import MaterialTable from 'material-table';
 import { Link } from 'react-router-dom';
 
@@ -19,13 +19,11 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
-
 import Grid from '@material-ui/core/Grid';
 import { TextField } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import { fade } from '@material-ui/core/styles';
 
 
 const tableIcons = {
@@ -59,14 +57,24 @@ const styles = theme => ({
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
         width: 350,
-    },
-    dense: {
-        marginTop: theme.spacing(2),
-    },
-    menu: {
-        width: 200,
+        verticalAlign: 'inherit',
     },
 });
+
+const CssTextField = withStyles({
+    root: {
+        '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+                borderColor: 'gray',
+            },
+            '&.Mui-focused fieldset': {
+                boxShadow: `${fade('#1976d2', 0.25)} 0 0 0 0.2rem`,
+                borderColor: '#1976d2',
+                border: '1px solid #ced4da',
+            },
+        },
+    },
+})(TextField);
 
 
 class PublicationsMatTable extends React.Component {
@@ -86,7 +94,7 @@ class PublicationsMatTable extends React.Component {
         this.setState({ value: event.target.value });
     }
 
-    clear = () => {
+    clearSearchInput = () => {
         // clear value
         this.setState({
             value: '',
@@ -101,7 +109,6 @@ class PublicationsMatTable extends React.Component {
         const emailContact = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">GWAS Info</a>;
         const noResultsMessage = <span>No results were found. Please email {emailContact} to request an eligbility review of your publication.</span>;
         const { value } = this.state;
-        console.log("** Query variable: ", value)
         let searchTextValue = value;
 
         return (
@@ -114,10 +121,10 @@ class PublicationsMatTable extends React.Component {
             >
 
                 <Grid item>
-                    <TextField
+                    <CssTextField
+                        id="outlined-bare"
                         name="searchInput"
                         value={this.state.value}
-                        id="outlined-bare"
                         className={classes.textField}
                         variant="outlined"
                         placeholder="Search by PubMedID or Author"
@@ -126,19 +133,14 @@ class PublicationsMatTable extends React.Component {
                         onChange={this.handleChange}
 
                         onKeyPress={(event) => {
-                            // console.log(`Pressed keyCode: ${event.key}`);
                             if (event.key === 'Enter') {
                                 event.preventDefault();
-
                                 this.setState({ value: event.target.value });
-                                console.log("** Search Value: ", event.target.value)
-
                                 this.tableRef.current.onQueryChange();
-
                             }
                         }}
                     />
-                    <button label="Clear" onClick={this.clear}> Clear </button>
+                    <button label="Clear" onClick={this.clearSearchInput}> Clear </button>
                 </Grid>
 
 
@@ -146,21 +148,22 @@ class PublicationsMatTable extends React.Component {
                     <MaterialTable
                         tableRef={this.tableRef}
                         icons={tableIcons}
-                        title=""
                         columns={[
                             {
-                                title: 'PubMedID', field: 'pmid',
-                                render: rowData => (<Link to={{ pathname: `${process.env.PUBLIC_URL}/publication/${rowData.pmid}`, state: { pmid: rowData.pmid } }}
+                                title: 'PubMedID', field: 'pmid', cellStyle: { width: '45px' },
+                                render: rowData => (<Link to={{
+                                    pathname: `${process.env.PUBLIC_URL}/publication/${rowData.pmid}`,
+                                    state: { pmid: rowData.pmid }
+                                }}
                                     style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
                             },
-                            { title: 'First author', field: 'firstAuthor' },
+                            { title: 'First author', field: 'firstAuthor', },
                             { title: 'Publication', field: 'title' },
                             { title: 'Journal', field: 'journal' },
                             { title: 'Status', field: 'status' },
                         ]}
                         data={query =>
                             new Promise((resolve, reject) => {
-                                console.log("** Custom search value: ", searchTextValue)
                                 // Replace search text value in Query object with input from TextField
                                 query.search = searchTextValue;
 
@@ -244,18 +247,16 @@ class PublicationsMatTable extends React.Component {
                             })
                         }
                         options={{
-                            search: false,
                             pageSize: 10,
                             pageSizeOptions: [10, 20, 50],
                             debounceInterval: 250,
-                            sorting: true,
+                            toolbar: false,
                         }}
                         localization={{
                             body: {
                                 emptyDataSourceMessage: noResultsMessage
                             }
                         }}
-
                     />
                 </Grid>
 
