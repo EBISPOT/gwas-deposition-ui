@@ -146,7 +146,7 @@ class PublicationsMatTable extends React.Component {
                     <MaterialTable
                         tableRef={this.tableRef}
                         icons={tableIcons}
-                        title="Publications"
+                        title=""
                         columns={[
                             {
                                 title: 'PubMedID', field: 'pmid',
