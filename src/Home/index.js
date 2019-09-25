@@ -62,9 +62,7 @@ class Home extends React.Component {
                     {({ isAuthenticated }) => <h4> Login State: {isAuthenticated.toString()}</h4>}
                 </AuthConsumer> */}
 
-                    <Grid item>
-                        <PublicationsMatTable />
-                    </Grid>
+                    <PublicationsMatTable />
 
                 </Grid>
             </Container>

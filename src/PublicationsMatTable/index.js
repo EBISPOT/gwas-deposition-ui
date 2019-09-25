@@ -20,7 +20,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import Grid from '@material-ui/core/Grid';
-import { TextField } from '@material-ui/core';
+import { TextField, Container } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { fade } from '@material-ui/core/styles';
@@ -49,16 +49,16 @@ const tableIcons = {
 const GET_PUBLICATIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'publications';
 
 const styles = theme => ({
-    container: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
     textField: {
+        marginTop: theme.spacing(4),
+        marginBottom: theme.spacing(2),
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
         width: 350,
         verticalAlign: 'inherit',
     },
+    publicationContainer:
+        { paddingBottom: 32 }
 });
 
 const CssTextField = withStyles({
@@ -112,118 +112,92 @@ class PublicationsMatTable extends React.Component {
         let searchTextValue = value;
 
         return (
-            <Grid
-                container
-                direction="column"
-                justify="center"
-                alignItems="center"
-                spacing={4}
-            >
+            <Container className={classes.publicationContainer}>
 
-                <Grid item>
-                    <CssTextField
-                        id="outlined-bare"
-                        name="searchInput"
-                        value={this.state.value}
-                        className={classes.textField}
-                        variant="outlined"
-                        placeholder="Search by PubMedID or Author"
-                        helperText="Enter an Author name, e.g. Yao, or PMID, e.g. 25533513"
+                <Grid container
+                    direction="row"
+                    justify="center"
+                    alignItems="center">
+                    <Grid item>
+                        <CssTextField
+                            id="outlined-bare"
+                            name="searchInput"
+                            value={this.state.value}
+                            className={classes.textField}
+                            variant="outlined"
+                            placeholder="Search by PubMedID or Author"
+                            helperText="Enter an Author name, e.g. Yao, or PMID, e.g. 25533513"
 
-                        onChange={this.handleChange}
+                            onChange={this.handleChange}
 
-                        onKeyPress={(event) => {
-                            if (event.key === 'Enter') {
-                                event.preventDefault();
-                                this.setState({ value: event.target.value });
-                                this.tableRef.current.onQueryChange();
-                            }
-                        }}
-                    />
-                    <button label="Clear" onClick={this.clearSearchInput}> Clear </button>
+                            onKeyPress={(event) => {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault();
+                                    this.setState({ value: event.target.value });
+                                    this.tableRef.current.onQueryChange();
+                                }
+                            }}
+                        />
+                        <button label="Clear" onClick={this.clearSearchInput}> Clear </button>
+                    </Grid>
                 </Grid>
 
+                <MaterialTable
+                    tableRef={this.tableRef}
+                    icons={tableIcons}
+                    columns={[
+                        {
+                            title: 'PubMedID', field: 'pmid',
+                            render: rowData => (<Link to={{
+                                pathname: `${process.env.PUBLIC_URL}/publication/${rowData.pmid}`,
+                                state: { pmid: rowData.pmid }
+                            }}
+                                style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
+                        },
+                        { title: 'First author', field: 'firstAuthor', },
+                        { title: 'Publication', field: 'title' },
+                        { title: 'Journal', field: 'journal' },
+                        { title: 'Status', field: 'status' },
+                    ]}
+                    data={query =>
+                        new Promise((resolve, reject) => {
+                            // Replace search text value in Query object with input from TextField
+                            query.search = searchTextValue;
 
-                <Grid item>
-                    <MaterialTable
-                        tableRef={this.tableRef}
-                        icons={tableIcons}
-                        columns={[
-                            {
-                                title: 'PubMedID', field: 'pmid', cellStyle: { width: '45px' },
-                                render: rowData => (<Link to={{
-                                    pathname: `${process.env.PUBLIC_URL}/publication/${rowData.pmid}`,
-                                    state: { pmid: rowData.pmid }
-                                }}
-                                    style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
-                            },
-                            { title: 'First author', field: 'firstAuthor', },
-                            { title: 'Publication', field: 'title' },
-                            { title: 'Journal', field: 'journal' },
-                            { title: 'Status', field: 'status' },
-                        ]}
-                        data={query =>
-                            new Promise((resolve, reject) => {
-                                // Replace search text value in Query object with input from TextField
-                                query.search = searchTextValue;
+                            let url = GET_PUBLICATIONS_URL
 
-                                let url = GET_PUBLICATIONS_URL
+                            // Handle search by PubMedID
+                            let onlyNumbers = /^\d+$/;
 
-                                // Handle search by PubMedID
-                                let onlyNumbers = /^\d+$/;
-
-                                if (query.search) {
-                                    if (onlyNumbers.test(query.search)) {
-                                        url += '/' + query.search + '?pmid=true'
-                                        fetch(url)
-                                            .then(response => response.json())
-                                            .then(result => {
-                                                resolve({
-                                                    data: [result],
-                                                    page: 0,
-                                                    totalCount: 1,
-                                                })
-                                            }).catch(error => {
+                            if (query.search) {
+                                if (onlyNumbers.test(query.search)) {
+                                    url += '/' + query.search + '?pmid=true'
+                                    fetch(url)
+                                        .then(response => response.json())
+                                        .then(result => {
+                                            resolve({
+                                                data: [result],
+                                                page: 0,
+                                                totalCount: 1,
                                             })
-                                    }
-                                    // Handle search by Author
-                                    else {
-                                        url += '?author=' + query.search
-                                        url += '&size=' + query.pageSize
-                                        url += '&page=' + (query.page)
-
-                                        // Handle sorting search by Author results
-                                        if (query.orderBy) {
-                                            let sortOrder = query.orderDirection;
-                                            url += '&sort=' + query.orderBy.field + ',' + sortOrder
-                                        }
-                                        else {
-                                            // Sort search by Author results asc by default
-                                            // Note: Sorting is supported for only 1 column
-                                            url += '&sort=firstAuthor,asc'
-                                        }
-
-                                        fetch(url)
-                                            .then(response => response.json())
-                                            .then(result => {
-                                                resolve({
-                                                    data: result._embedded.publications,
-                                                    page: result.page.number,
-                                                    totalCount: result.page.totalElements,
-                                                })
-                                            }).catch(error => {
-                                            })
-                                    }
+                                        }).catch(error => {
+                                        })
                                 }
-                                // Display all results
+                                // Handle search by Author
                                 else {
-                                    url += '?size=' + query.pageSize
+                                    url += '?author=' + query.search
+                                    url += '&size=' + query.pageSize
                                     url += '&page=' + (query.page)
 
-                                    // Handle sorting all results
+                                    // Handle sorting search by Author results
                                     if (query.orderBy) {
                                         let sortOrder = query.orderDirection;
                                         url += '&sort=' + query.orderBy.field + ',' + sortOrder
+                                    }
+                                    else {
+                                        // Sort search by Author results asc by default
+                                        // Note: Sorting is supported for only 1 column
+                                        url += '&sort=firstAuthor,asc'
                                     }
 
                                     fetch(url)
@@ -237,30 +211,51 @@ class PublicationsMatTable extends React.Component {
                                         }).catch(error => {
                                         })
                                 }
-                                setTimeout(() => {
-                                    resolve({
-                                        data: [],
-                                        page: 0,
-                                        totalCount: 0,
-                                    });
-                                }, 5000);
-                            })
-                        }
-                        options={{
-                            pageSize: 10,
-                            pageSizeOptions: [10, 20, 50],
-                            debounceInterval: 250,
-                            toolbar: false,
-                        }}
-                        localization={{
-                            body: {
-                                emptyDataSourceMessage: noResultsMessage
                             }
-                        }}
-                    />
-                </Grid>
+                            // Display all results
+                            else {
+                                url += '?size=' + query.pageSize
+                                url += '&page=' + (query.page)
 
-            </Grid>
+                                // Handle sorting all results
+                                if (query.orderBy) {
+                                    let sortOrder = query.orderDirection;
+                                    url += '&sort=' + query.orderBy.field + ',' + sortOrder
+                                }
+
+                                fetch(url)
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        resolve({
+                                            data: result._embedded.publications,
+                                            page: result.page.number,
+                                            totalCount: result.page.totalElements,
+                                        })
+                                    }).catch(error => {
+                                    })
+                            }
+                            setTimeout(() => {
+                                resolve({
+                                    data: [],
+                                    page: 0,
+                                    totalCount: 0,
+                                });
+                            }, 5000);
+                        })
+                    }
+                    options={{
+                        pageSize: 10,
+                        pageSizeOptions: [10, 20, 50],
+                        debounceInterval: 250,
+                        toolbar: false,
+                    }}
+                    localization={{
+                        body: {
+                            emptyDataSourceMessage: noResultsMessage
+                        }
+                    }}
+                />
+            </Container>
         )
     }
 }
