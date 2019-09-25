@@ -57,8 +57,12 @@ const styles = theme => ({
         width: 350,
         verticalAlign: 'inherit',
     },
-    publicationContainer:
-        { paddingBottom: 32 }
+    publicationContainer: {
+        paddingBottom: 32
+    },
+    noResultsTextStyle: {
+        fontSize: 18,
+    },
 });
 
 const CssTextField = withStyles({
@@ -106,10 +110,10 @@ class PublicationsMatTable extends React.Component {
 
     render() {
         const { classes } = this.props;
-        const emailContact = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">GWAS Info</a>;
-        const noResultsMessage = <span>No results were found. Please email {emailContact} to request an eligbility review of your publication.</span>;
+        const emailContact = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
+        const noResultsMessage = <span className={classes.noResultsTextStyle}>No results were found. Please email {emailContact} to request an eligibility review of your publication.</span>;
         const { value } = this.state;
-        let searchTextValue = value;
+        let searchTextValue = value.trim();
 
         return (
             <Container className={classes.publicationContainer}>
