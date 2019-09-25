@@ -60,6 +60,11 @@ const useStyles = makeStyles(theme => ({
         marginBottom: 4,
         alt: 'GWAS Logo',
     },
+    logoButton: {
+        color: 'inherit',
+        marginLeft: theme.spacing(4),
+        paddingRight: theme.spacing(0),
+    },
     navLinkButton: {
         color: 'inherit',
         marginRight: theme.spacing(2),
@@ -132,8 +137,13 @@ function MenuAppBar() {
     }
 
     function showMySubmissions() {
-        history.push(`${process.env.PUBLIC_URL}/submissions`);
-        handleMenuClose();
+        // Check if logged in
+        if (localStorage.getItem('id_token')) {
+            history.push(`${process.env.PUBLIC_URL}/submissions`);
+        } else {
+            history.push(`${process.env.PUBLIC_URL}/login`);
+        }
+        // handleMenuClose();
     }
 
     function handleLogout() {
@@ -171,10 +181,12 @@ function MenuAppBar() {
             </FormGroup>
             <AppBar position="static" elevation={0}>
                 <Toolbar>
-                    <Button component={Link} to={`${process.env.PUBLIC_URL}`} className={classes.navLinkButton} >
+                    <Button target="_blank" href="https://www.ebi.ac.uk/gwas" className={classes.logoButton}>
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/GWAS_Catalog_banner_logo_34x40.svg'} className={classes.logo} />
+                    </Button>
+                    <Button component={Link} to={`${process.env.PUBLIC_URL}`} className={classes.navLinkButton}>
                         <Typography variant="h6" className={classes.title}>
-                            GWAS Deposition App
+                            GWAS Catalog Submission
                     </Typography>
                     </Button>
 
@@ -185,7 +197,9 @@ function MenuAppBar() {
                     <div className={classes.grow} />
                     <Button target="_blank" href="https://www.ebi.ac.uk/gwas/docs" className={classes.docButton}>Documentation</Button>
 
-                    <Button onClick={downloadTemplate} className={classes.downloadButton} style={{ float: 'right' }}>Download Template</Button>
+                    {/* <Button onClick={downloadTemplate} className={classes.downloadButton} style={{ float: 'right' }}>Download Template</Button> */}
+
+                    <Button onClick={showMySubmissions} className={classes.navLinkButton}>My Submissions</Button>
 
                     <AuthConsumer>
                         {value => value.isAuthenticated && (<div>
@@ -214,7 +228,7 @@ function MenuAppBar() {
                                     open={open}
                                     onClose={handleMenuClose}
                                 >
-                                    <MenuItem onClick={showMySubmissions}>My Submissions</MenuItem>
+                                    {/* <MenuItem onClick={showMySubmissions}>My Submissions</MenuItem> */}
                                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                                 </Menu>
                             </div>
