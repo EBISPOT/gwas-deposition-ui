@@ -73,6 +73,7 @@ class PublicationDetails extends Component {
         })
         this.createSubmission = this.createSubmission.bind(this);
         this.redirectToSubmissionDetails = this.redirectToSubmissionDetails.bind(this);
+        this.redirectToSubmissionDetailsNEW = this.redirectToSubmissionDetailsNEW.bind(this);
     }
 
     /**
@@ -103,7 +104,9 @@ class PublicationDetails extends Component {
                 // Display list of all submissions
                 // history.push(`${process.env.PUBLIC_URL}/submissions`);
 
-                this.redirectToSubmissionDetails();
+                // this.redirectToSubmissionDetails();
+
+                this.redirectToSubmissionDetailsNEW();
 
             })
                 .catch(error => {
@@ -133,6 +136,21 @@ class PublicationDetails extends Component {
     }
 
 
+    async redirectToSubmissionDetailsNEW() {
+        let pmid = this.PUBMED_ID;
+
+        // Get SubmissionId
+        await this.API_CLIENT.getSubmissionId(pmid).then(response => {
+            let newSubmissionId = response.data._embedded.submissions[0].submissionId
+            return history.push(`${process.env.PUBLIC_URL}/submissionNEW/${newSubmissionId}`);
+        }).catch(error => {
+            console.log("There was an error getting the SubmissionID");
+            // Display redirect error message
+            this.setState(() => ({ redirectError: true }));
+        });
+    }
+
+
     render() {
         const { classes } = this.props;
         const { createSubmissionError } = this.state;
@@ -141,6 +159,7 @@ class PublicationDetails extends Component {
 
         let create_submission_button;
         let showSubmissionDetailsButton;
+        let showSubmissionDetailsNEWButton;
 
 
         // Show Create Submission button
@@ -162,6 +181,15 @@ class PublicationDetails extends Component {
                 <button onClick={this.redirectToSubmissionDetails} variant="contained" color="secondary" size="small"
                     className={classes.button}>
                     View Submission Details
+                </button>
+        }
+
+        // Show View Submission details button
+        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' || publicationStatus === 'UNDER_SUBMISSION') {
+            showSubmissionDetailsNEWButton =
+                <button onClick={this.redirectToSubmissionDetailsNEW} variant="contained" color="secondary" size="small"
+                    className={classes.button}>
+                    View Submission Details - NEW Layout
                 </button>
         }
 
@@ -212,6 +240,9 @@ class PublicationDetails extends Component {
                                 >
                                     <Grid item xs={6}>
                                         {showSubmissionDetailsButton}
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        {showSubmissionDetailsNEWButton}
                                     </Grid>
                                     <Grid item xs={4}>
                                         <Typography variant="body2" gutterBottom>
