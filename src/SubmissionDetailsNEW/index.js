@@ -15,7 +15,6 @@ import API_CLIENT from '../apiClient';
 import history from "../history";
 
 import axios from 'axios';
-import { mergeClasses } from '@material-ui/styles';
 
 
 const styles = theme => ({
@@ -54,16 +53,16 @@ const styles = theme => ({
         marginTop: 24,
     },
     button: {
-        margin: theme.spacing(1),
+        marginTop: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        marginBottom: theme.spacing(1),
         padding: theme.spacing(1),
         color: '#333',
-        // background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
+        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
         borderRadius: 4,
         border: '1px solid #ccc',
         fontWeight: 'bold',
         textShadow: '0 1px 0 #fff',
-        width: '100%',
-        // background: 'red',
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -678,23 +677,33 @@ class SubmissionDetails extends Component {
                                 alignItems="stretch"
                             />
                             <Grid item container xs={12}>
-                                <button>Download Template Button Placeholder</button>
-                            </Grid>
-
-                            <Grid item>
-                                <button>Upload Template Button Placeholder</button>
+                                <Button fullWidth className={classes.button}>
+                                    Download template
+                                </Button>
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Button fullWidth>Submit</Button>
+                                <Button fullWidth className={classes.button}>
+                                    Upload template
+                                </Button>
                             </Grid>
 
-                            <Grid item>
-                                <button>Review latest file</button>
+                            <Grid item container xs={12}>
+                                <Button fullWidth className={classes.button}>
+                                    Submit
+                                </Button>
                             </Grid>
 
-                            <Grid item>
-                                <button>Delete latest file</button>
+                            <Grid item container xs={12}>
+                                <Button fullWidth className={classes.button}>
+                                    Review latest file
+                                </Button>
+                            </Grid>
+
+                            <Grid item container xs={12}>
+                                <Button fullWidth className={classes.button}>
+                                    Delete latest file
+                                </Button>
                             </Grid>
                         </Grid>
 
