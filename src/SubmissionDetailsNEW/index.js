@@ -555,6 +555,22 @@ class SubmissionDetails extends Component {
 
 
         /**
+         * Manage display of "Current status" label
+         */
+        let currentStatus;
+        if (submissionStatus === 'VALID') {
+            currentStatus = 'TEMPLATE VALID'
+        } else if (submissionStatus === 'VALIDATING') {
+            currentStatus = 'VALIDATING TEMPLATE...'
+        } else if (submissionStatus === 'INVALID') {
+            currentStatus = 'TEMPLATE INVALID'
+        } else {
+            currentStatus = submissionStatus;
+        }
+
+
+
+        /**
          * Manage display of File validation errors.
          */
         if (fileValidationErrorMessage) {
@@ -927,7 +943,7 @@ class SubmissionDetails extends Component {
                                                 </Grid>
                                                 <Grid item xs={8}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        {submissionStatus}
+                                                        {currentStatus}
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
