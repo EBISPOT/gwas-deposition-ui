@@ -414,6 +414,8 @@ class SubmissionDetails extends Component {
                     fileUploadId: null,
                     fileValidationErrorMessage: null,
                     displaySummaryStatsSection: false,
+                    metadataStatus: 'NA',
+                    summaryStatisticsStatus: 'NA',
                 }));
             }).catch(error => {
                 this.setState(() => ({ deleteFileError: true }));
@@ -696,24 +698,34 @@ class SubmissionDetails extends Component {
         /** 
          * Manage display of Metadata status image
          */
-        if (metadataStatus === 'VALID' || metadataStatus === 'NA') {
+        if (metadataStatus === 'VALID') {
             metadata_status_icon =
-                <Fragment>
-                    <Grid item xs={8}>
-                        <Typography variant="h6" className={classes.submissionTextStyle}>
-                            <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.logo} />
-                        </Typography>
-                    </Grid>
-                </Fragment>
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.logo} />
+                    </Typography>
+                </Grid>
+        } else if (metadataStatus === 'INVALID') {
+            metadata_status_icon =
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.logo} />
+                    </Typography>
+                </Grid>
+        } else if (metadataStatus === 'VALIDATING') {
+            metadata_status_icon =
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                        <CircularProgress className={classes.progress} size={24} />
+                    </Typography>
+                </Grid>
         } else {
             metadata_status_icon =
-                <Fragment>
-                    <Grid item xs={8}>
-                        <Typography variant="h6" className={classes.submissionTextStyle}>
-                            <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.logo} />
-                        </Typography>
-                    </Grid>
-                </Fragment>
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.logo} />
+                    </Typography>
+                </Grid>
         }
 
 
