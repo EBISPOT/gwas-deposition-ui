@@ -23,6 +23,7 @@ const styles = theme => ({
     },
     paper: {
         padding: theme.spacing(2),
+        height: '100%',
         // margin: 'auto',
         // maxWidth: 1200,
     },
@@ -47,7 +48,10 @@ const styles = theme => ({
         marginRight: 8,
     },
     filler: {
-        height: 47,
+        height: "100%",
+    },
+    section: {
+        marginTop: theme.spacing(1),
     },
     submissionStats: {
         marginTop: 24,
@@ -63,6 +67,10 @@ const styles = theme => ({
         border: '1px solid #ccc',
         fontWeight: 'bold',
         textShadow: '0 1px 0 #fff',
+        textTransform: 'none',
+        '&:disabled': {
+            textShadow: 'none',
+        }
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -99,6 +107,8 @@ class SubmissionDetails extends Component {
 
         this.state = ({
             submission_data: [],
+            userName: null,
+            submissionCreatedDate: null,
             publication_obj: [],
             file_upload_error: null,
             isNotValid: true,
@@ -136,6 +146,18 @@ class SubmissionDetails extends Component {
             this.setState({ ...this.state, publication_obj: data.publication });
             this.setState({ ...this.state, publicationStatus: data.publication.status });
 
+            if (data.created.user.name) {
+                this.setState({ ...this.state, userName: data.created.user.name });
+            }
+
+            if (data.created.timestamp) {
+                // Format timeStamp for display
+                // new Date(unix_timestamp * 1000).format('h:i:s')
+                let createdTimestamp = new Date(data.created.timestamp);
+                createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
+                this.setState({ ...this.state, submissionCreatedDate: createdTimestamp });
+            }
+
             if (data.status === 'VALID_METADATA') {
                 this.setState({ ...this.state, isNotValid: false });
             }
@@ -163,7 +185,7 @@ class SubmissionDetails extends Component {
                 }
 
                 /**
-                 * Set data for Download SS template
+                 * Set data for Download Summary Stats template
                  */
                 if (summaryStatsTemplateFileMetadata.fileUploadId !== undefined) {
                     this.setState({ ...this.state, summaryStatsTemplateFileUploadId: summaryStatsTemplateFileMetadata.fileUploadId });
@@ -207,10 +229,10 @@ class SubmissionDetails extends Component {
                 // Set Summary Stats errors
                 let summaryStatsErrorMessage = [];
                 if (file.errors && file.errors.length > 0) {
-                    let fieldHeaderText = "Error: ";
+                    // let fieldHeaderText = "Error: ";
                     let index = 0;
-                    let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
-                    summaryStatsErrorMessage.push(fieldHeader);
+                    // let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
+                    // summaryStatsErrorMessage.push(fieldHeader);
 
                     for (const error of file.errors) {
                         index = index + 1;
@@ -238,10 +260,10 @@ class SubmissionDetails extends Component {
                 // Set Metadata errors
                 let metadataErrorMessage = [];
                 if (file.errors && file.errors.length > 0) {
-                    let fieldHeaderText = "Error: ";
+                    // let fieldHeaderText = "Error: ";
                     let index = 0;
-                    let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
-                    metadataErrorMessage.push(fieldHeader);
+                    // let fieldHeader = <span key={index}>{fieldHeaderText}<br /></span>;
+                    // metadataErrorMessage.push(fieldHeader);
 
                     for (const error of file.errors) {
                         index = index + 1;
@@ -295,6 +317,10 @@ class SubmissionDetails extends Component {
         let fileName = this.state.fileName;
 
         this.API_CLIENT.downloadDataFile(submissionId, fileId, fileName);
+    }
+
+    downloadMetadataTemplate() {
+        this.API_CLIENT.downloadTemplate();
     }
 
     /**
@@ -424,34 +450,38 @@ class SubmissionDetails extends Component {
         const { classes } = this.props;
         const { error } = this.state;
         const { submissionError } = this.state;
-        const bull = <span className={classes.bullet}>•</span>;
+        // const bull = <span className={classes.bullet}>•</span>;
 
         const OVERALL_STATUS_STARTED = 'STARTED';
         const VALID_SUBMISSION = 'VALID';
+        const VALIDATING = 'VALIDATING';
         const SUBMITTED = 'SUBMITTED';
 
         const { publicationStatus } = this.state;
+        let transformedPublicationStatus;
+        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
+            transformedPublicationStatus = 'OPEN FOR SUMMARY STATISTICS SUBMISSION';
+        }
+        else {
+            transformedPublicationStatus = 'OPEN FOR SUBMISSION';
+        }
 
-        // const submissionStatus = this.state.submission_data.submission_status;
         const { submissionStatus } = this.state;
 
-        // const displaySummaryStatsSection = this.state.displaySummaryStatsSection;
         const { displaySummaryStatsSection } = this.state;
-
         const { fileValidationErrorMessage } = this.state;
+        const { userName } = this.state;
+        const { submissionCreatedDate } = this.state;
 
         let submission_stats_section;
+        let file_validation_error_section;
         let download_summary_stats_button;
+        let download_template;
         let select_upload_file_button;
         let upload_component;
         let submit_data_button;
         let delete_file_button;
         let download_data_file_button;
-
-        let buttonUploadText = "Upload Template";
-        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-            buttonUploadText = "Upload SS Template";
-        }
 
         /**
          * Display Submission statistics section if a file has been uploaded
@@ -461,103 +491,189 @@ class SubmissionDetails extends Component {
             if (displaySummaryStatsSection && publicationStatus !== 'UNDER_SUMMARY_STATS_SUBMISSION') {
                 submission_stats_section =
                     <Fragment>
-                        <Grid item>
-                            <Typography gutterBottom variant="body1">
-                                Submission Stats
-                        </Typography>
-                            <Typography gutterBottom>
-                                {bull} {this.state.submission_data.study_count} studies
-                        </Typography>
-                            <Typography gutterBottom>
-                                {bull} {this.state.submission_data.association_count} total associations
-                        </Typography>
-                            <Typography gutterBottom>
-                                {bull} {this.state.submission_data.sample_count} sample groups
-                        </Typography>
+                        <Grid item container xs={12}>
+                            <Grid item xs={2}>
+                                <Typography variant="h6" className={classes.submissionTextStyle}>
+                                    Submission Stats:
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={10}>
+                                <Typography variant="h6" className={classes.submissionTextStyle}>
+                                    {this.state.submission_data.study_count} studies
+                                </Typography>
+                                <Typography variant="h6" className={classes.submissionTextStyle}>
+                                    {this.state.submission_data.association_count} total associations
+                                 </Typography>
+                                <Typography variant="h6" className={classes.submissionTextStyle}>
+                                    {this.state.submission_data.sample_count} sample groups
+                                </Typography>
+                            </Grid>
                         </Grid>
                     </Fragment>
             } else {
                 submission_stats_section =
                     <Fragment>
-                        <Grid item>
-                            <Typography gutterBottom variant="body1">
-                                Submission Stats
+                        <Grid item container xs={12}>
+                            <Grid item xs={2}>
+                                <Typography variant="h6" className={classes.submissionTextStyle}>
+                                    Submission Stats:
                             </Typography>
-                            <Typography gutterBottom>
-                                {bull} {this.state.submission_data.study_count} studies
+                            </Grid>
+                            <Grid item xs={10}>
+                                <Typography variant="h6" className={classes.submissionTextStyle}>
+                                    {this.state.submission_data.study_count} studies
                             </Typography>
+                            </Grid>
                         </Grid>
                     </Fragment>
             }
         }
 
+
         /**
-         * Manage display of "Download SS Template" button
-         * This downloads the pre-filled template file
+         * Manage display of File validation errors.
          */
-        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-            if (submissionStatus === 'STARTED') {
-                download_summary_stats_button =
-                    <Fragment>
+        if (fileValidationErrorMessage) {
+            file_validation_error_section =
+                <Fragment>
+                    <Grid item container xs={12}>
                         <Grid item xs={2}>
-                            <button onClick={this.downloadSummaryStatsTemplate} style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
-                                Download SS Template
-                            </button>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="body2" gutterBottom className={classes.inputCenter}>
-                                {this.state.downloadSummaryStatsFileError}
+                            <Typography variant="h6" className={classes.submissionTextStyle}>
+                                Errors:
                             </Typography>
                         </Grid>
-                    </Fragment>
-            } else {
-                download_summary_stats_button =
-                    <Fragment>
-                        <Grid item xs={2}>
-                            <button disabled style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
-                                Download SS Template
-                            </button>
+                        <Grid item xs={10}>
+                            {fileValidationErrorMessage.map(function (error, index) {
+                                return <Typography key={index} variant="h6" className={classes.submissionTextStyle}>
+                                    {error}
+                                </Typography>
+                            })}
                         </Grid>
+                    </Grid>
+                </Fragment>
+        }
+
+
+        /**
+         * Manage display of "Download template" file button
+         * For a publication with status UNDER_SUMMARY_STATS_SUBMISSION, 
+         * this downloads the pre-filled template file.
+         * 
+         * For a publication with status UNDER_SUBMISSION, this downloads 
+         * the metadata template. 
+         */
+        if (submissionStatus === 'STARTED') {
+            if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
+                download_template =
+                    <Fragment>
+                        <Button onClick={this.downloadSummaryStatsTemplate} fullWidth className={classes.button}>
+                            Download template
+                        </Button>
+                        <Typography variant="body2" gutterBottom className={classes.inputCenter}>
+                            {this.state.downloadSummaryStatsFileError}
+                        </Typography>
+                    </Fragment>
+            }
+            if (publicationStatus === 'UNDER_SUBMISSION') {
+                download_template =
+                    <Fragment>
+                        <Button onClick={this.downloadMetadataTemplate} fullWidth className={classes.button}>
+                            Download template
+                        </Button>
+                        <Typography variant="body2" gutterBottom className={classes.inputCenter}>
+                            {/* {this.state.downloadSummaryStatsFileError} */}
+                        </Typography>
                     </Fragment>
             }
         }
+        else {
+            download_template =
+                <Fragment>
+                    <Button fullWidth className={classes.button} disabled style={{ visibility: this.state.showButtonVisibility }} variant="outlined">
+                        Download template
+                    </Button>
+                </Fragment>
+        }
+
 
         /**
-         * Manage display of "Select Upload File" button
+         * Manage display of "Upload template" file button
          */
         if (submissionStatus === 'STARTED') {
             select_upload_file_button =
                 <Fragment>
-                    <Grid item xs={6}>
-                        <button onClick={this.displayUploadComponent} style={{ visibility: this.state.showButtonVisibility }}
-                            className={classes.button}>
-                            {buttonUploadText}
-                        </button>
-                    </Grid>
+                    <Button fullWidth onClick={this.displayUploadComponent} className={classes.button} variant="outlined">
+                        Upload template
+                    </Button>
+                    <Typography variant="body2" gutterBottom className={classes.inputCenter}>
+                        {   /* TODO: Add upload Error: {this.state.downloadSummaryStatsFileError} */}
+                    </Typography>
                 </Fragment>
         } else {
             select_upload_file_button =
                 <Fragment>
-                    <Grid item xs={6}>
-                        <button disabled size="small" className={classes.button}>
-                            {buttonUploadText}
-                        </button>
-                    </Grid>
+                    <Button fullWidth disabled size="small" className={classes.button} variant="outlined">
+                        Upload template
+                    </Button>
                 </Fragment>
         }
 
 
         /**
-         * Delete file button, this is needed when the submitter needs 
-         * to re-submit a new file even though the first it was valid
+        * Manage display of "Submit" button
+        */
+        if (submissionStatus !== 'VALID') {
+            submit_data_button =
+                <Fragment>
+                    <Button disabled fullWidth className={classes.button} variant="outlined">
+                        Submit
+                    </Button>
+                </Fragment>
+        } else {
+            submit_data_button =
+                <Fragment>
+                    <Button onClick={this.submitData} fullWidth className={classes.button}>
+                        Submit
+                    </Button>
+                </Fragment>
+        }
+
+
+        /**
+        * Manage display of "Review latest file" button
+        * This downloads the user provided data file.
+        */
+        if (submissionStatus === 'VALID' || submissionStatus === 'INVALID' || submissionStatus === 'SUBMITTED') {
+            download_data_file_button =
+                <Fragment>
+                    <Button onClick={this.downloadDataFile} fullWidth className={classes.button}>
+                        Review latest file
+                    </Button>
+                </Fragment>
+        } else {
+            download_data_file_button =
+                <Fragment>
+                    <Button disabled fullWidth className={classes.button} variant="outlined">
+                        Review latest file
+                    </Button>
+                </Fragment>
+        }
+
+
+        /**
+         * Manage display of "Delete latest file" button 
+         * This allows the submitter needs delete an existing file and re-submit a new one.
          */
         if ((submissionStatus === 'VALID' || submissionStatus === 'INVALID') && this.state.fileUploadId !== null) {
             delete_file_button =
-                <Grid item xs={2} >
-                    <button onClick={this.deleteData} variant="outlined" color="secondary" size="small" className={classes.button}>
-                        Delete File
-                    </button>
-                </Grid>
+                <Button onClick={this.deleteData} fullWidth className={classes.button}>
+                    Delete latest file
+                </Button>
+        } else {
+            delete_file_button =
+                <Button disabled fullWidth className={classes.button} variant="outlined">
+                    Delete latest file
+                </Button>
         }
 
 
@@ -578,45 +694,6 @@ class SubmissionDetails extends Component {
                         </button> : null}
             </Grid>
 
-
-        /**
-         * Manage display of "Submit Data" button
-         */
-        if (submissionStatus !== 'VALID') {
-            submit_data_button =
-                <Fragment>
-                    <Grid item xs={2}>
-                        <button disabled style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
-                            Submit
-                        </button>
-                    </Grid>
-                </Fragment>
-        } else {
-            submit_data_button =
-                <Fragment>
-                    <Grid item xs={2}>
-                        <button onClick={this.submitData} style={{ visibility: this.state.showButtonVisibility }} variant="outlined" color="secondary" size="small" className={classes.button}>
-                            Submit
-                        </button>
-                    </Grid>
-                </Fragment>
-        }
-
-
-
-        /**
-         * Display button to download data file
-         */
-        if (submissionStatus !== OVERALL_STATUS_STARTED) {
-            download_data_file_button =
-                <Fragment>
-                    <Grid item xs={2}>
-                        <button onClick={this.downloadDataFile} variant="outlined" color="secondary" size="small" className={classes.button}>
-                            Download Data File
-                        </button>
-                    </Grid>
-                </Fragment>
-        }
 
 
         return (
@@ -655,14 +732,14 @@ class SubmissionDetails extends Component {
 
                             <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                    Catalog status: {this.state.publication_obj.status}
+                                    Catalog status: {transformedPublicationStatus}
                                 </Typography>
                             </Grid>
                         </Paper>
                     </Grid>
                 </div>
 
-                <div>
+                <div className={classes.section}>
                     <Grid container
                         direction="row"
                         justify="flex-start"
@@ -677,33 +754,23 @@ class SubmissionDetails extends Component {
                                 alignItems="stretch"
                             />
                             <Grid item container xs={12}>
-                                <Button fullWidth className={classes.button}>
-                                    Download template
-                                </Button>
+                                {download_template}
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Button fullWidth className={classes.button}>
-                                    Upload template
-                                </Button>
+                                {select_upload_file_button}
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Button fullWidth className={classes.button}>
-                                    Submit
-                                </Button>
+                                {submit_data_button}
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Button fullWidth className={classes.button}>
-                                    Review latest file
-                                </Button>
+                                {download_data_file_button}
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Button fullWidth className={classes.button}>
-                                    Delete latest file
-                                </Button>
+                                {delete_file_button}
                             </Grid>
                         </Grid>
 
@@ -735,7 +802,7 @@ class SubmissionDetails extends Component {
                                                 </Grid>
                                                 <Grid item xs={8}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        Some value...
+                                                        {this.SUBMISSION_ID}
                                                     </Typography>
                                                 </Grid>
 
@@ -746,7 +813,7 @@ class SubmissionDetails extends Component {
                                                 </Grid>
                                                 <Grid item xs={8}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        Some value...
+                                                        {submissionCreatedDate}
                                                     </Typography>
                                                 </Grid>
 
@@ -757,7 +824,7 @@ class SubmissionDetails extends Component {
                                                 </Grid>
                                                 <Grid item xs={8}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        User name
+                                                        {userName}
                                                     </Typography>
                                                 </Grid>
 
@@ -768,7 +835,7 @@ class SubmissionDetails extends Component {
                                                 </Grid>
                                                 <Grid item xs={8}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        submission validation status...
+                                                        {submissionStatus}
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
@@ -797,7 +864,7 @@ class SubmissionDetails extends Component {
                                                 </Grid>
 
                                                 <Grid item xs={12} className={classes.filler}>
-                                                    <span></span>
+
                                                 </Grid>
 
                                             </Grid>
@@ -805,18 +872,25 @@ class SubmissionDetails extends Component {
                                     </Grid>
 
                                     <Grid container className={classes.submissionStats}>
-                                        <Grid item container xs={12}>
+                                        {submission_stats_section}
+
+                                        {/* {fileValidationErrorMessage} */}
+
+                                        {file_validation_error_section}
+
+                                        {/* <Grid item container xs={12}>
                                             <Grid item xs={2}>
                                                 <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    Submission Stats:
-                                                    </Typography>
+                                                    Errors:
+                                                 </Typography>
                                             </Grid>
                                             <Grid item xs={10}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    submission stats here...
-                                                    </Typography>
+                                                <Typography gutterBottom>
+                                                {fileValidationErrorMessage}
+                                                </Typography>
                                             </Grid>
-                                        </Grid>
+                                        </Grid> */}
+
                                     </Grid>
 
                                 </Grid>
@@ -935,7 +1009,7 @@ class SubmissionDetails extends Component {
 
 
 
-                    <Grid item xs={12}
+                    {/* <Grid item xs={12}
                         container
                         direction="row"
                         justify="space-evenly"
@@ -983,17 +1057,16 @@ class SubmissionDetails extends Component {
                         className={classes.statistics}
                     >
                         {submission_stats_section}
-                    </Grid>
-                    <Grid container
+                    </Grid> */}
+                    {/* <Grid container
                         direction="column"
                         justify="center"
                         alignItems="flex-start"
                         spacing={3}
                     >
                         {download_data_file_button}
-                    </Grid>
+                    </Grid> */}
                     {/* </Grid> */}
-
 
                 </div >
             </Fragment >
