@@ -512,7 +512,8 @@ class SubmissionDetails extends Component {
                             </Grid>
                             <Grid item xs={10}>
                                 <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    {this.state.submission_data.study_count} studies
+                                    {this.state.submission_data.study_count}
+                                    {this.state.submission_data.study_count === 1 ? " study" : " studies"}
                                 </Typography>
                                 <Typography variant="h6" className={classes.submissionTextStyle}>
                                     {this.state.submission_data.association_count} total associations
@@ -534,8 +535,9 @@ class SubmissionDetails extends Component {
                             </Grid>
                             <Grid item xs={10}>
                                 <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    {this.state.submission_data.study_count} studies
-                            </Typography>
+                                    {this.state.submission_data.study_count}
+                                    {this.state.submission_data.study_count === 1 ? " study" : " studies"}
+                                </Typography>
                             </Grid>
                         </Grid>
                     </Fragment>
