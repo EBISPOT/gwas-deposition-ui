@@ -134,6 +134,7 @@ class SubmissionDetails extends Component {
             summaryStatsTemplateFileUploadId: null,
             summaryStatsTemplateFileName: null,
         })
+        this.downloadMetadataTemplate = this.downloadMetadataTemplate.bind(this);
         this.downloadDataFile = this.downloadDataFile.bind(this);
         this.downloadSummaryStatsTemplate = this.downloadSummaryStatsTemplate.bind(this);
         this.submitData = this.submitData.bind(this);
