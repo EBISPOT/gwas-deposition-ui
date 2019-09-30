@@ -62,6 +62,12 @@ const styles = theme => ({
         height: 25,
         width: 25,
     },
+    check_icon: {
+        fill: 'green',
+    },
+    error_icon: {
+        fill: 'red',
+    },
     button: {
         marginTop: theme.spacing(1),
         marginRight: theme.spacing(1),
@@ -702,14 +708,14 @@ class SubmissionDetails extends Component {
             metadata_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.logo} />
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
                     </Typography>
                 </Grid>
         } else if (metadataStatus === 'INVALID') {
             metadata_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.logo} />
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
                     </Typography>
                 </Grid>
         } else if (metadataStatus === 'VALIDATING') {
@@ -723,7 +729,7 @@ class SubmissionDetails extends Component {
             metadata_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.logo} />
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
                     </Typography>
                 </Grid>
         }
@@ -736,14 +742,14 @@ class SubmissionDetails extends Component {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.logo} />
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
                     </Typography>
                 </Grid>
         } else if (summaryStatisticsStatus === 'INVALID') {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.logo} />
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
                     </Typography>
                 </Grid>
         } else if (summaryStatisticsStatus === 'VALIDATING') {
@@ -757,7 +763,7 @@ class SubmissionDetails extends Component {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.logo} />
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
                     </Typography>
                 </Grid>
         }
