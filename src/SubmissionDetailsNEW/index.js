@@ -8,6 +8,8 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import ReactSVG from 'react-svg'
 
 import { AuthConsumer } from '../auth-context';
 
@@ -55,6 +57,10 @@ const styles = theme => ({
     },
     submissionStats: {
         marginTop: 24,
+    },
+    progress: {
+        height: 25,
+        width: 25,
     },
     button: {
         marginTop: theme.spacing(1),
@@ -116,6 +122,8 @@ class SubmissionDetails extends Component {
             deleteFileError: null,
             downloadSummaryStatsFileError: null,
             submissionStatus: null,
+            metadataStatus: null,
+            summaryStatisticsStatus: null,
             publicationStatus: null,
             showComponent: false,
             showButtonVisibility: 'visible',
@@ -143,6 +151,8 @@ class SubmissionDetails extends Component {
 
             this.setState({ ...this.state, submission_data: data });
             this.setState({ ...this.state, submissionStatus: data.submission_status });
+            this.setState({ ...this.state, metadataStatus: data.metadata_status });
+            this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
             this.setState({ ...this.state, publication_obj: data.publication });
             this.setState({ ...this.state, publicationStatus: data.publication.status });
 
@@ -152,7 +162,6 @@ class SubmissionDetails extends Component {
 
             if (data.created.timestamp) {
                 // Format timeStamp for display
-                // new Date(unix_timestamp * 1000).format('h:i:s')
                 let createdTimestamp = new Date(data.created.timestamp);
                 createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
                 this.setState({ ...this.state, submissionCreatedDate: createdTimestamp });
@@ -467,6 +476,10 @@ class SubmissionDetails extends Component {
         }
 
         const { submissionStatus } = this.state;
+        const { metadataStatus } = this.state;
+        let metadata_status_icon;
+        const { summaryStatisticsStatus } = this.state;
+        let summary_statistics_status_icon;
 
         const { displaySummaryStatsSection } = this.state;
         const { fileValidationErrorMessage } = this.state;
@@ -678,6 +691,64 @@ class SubmissionDetails extends Component {
 
 
         /** 
+         * Manage display of Metadata status image
+         */
+        if (metadataStatus === 'VALID' || metadataStatus === 'NA') {
+            metadata_status_icon =
+                <Fragment>
+                    <Grid item xs={8}>
+                        <Typography variant="h6" className={classes.submissionTextStyle}>
+                            <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.logo} />
+                        </Typography>
+                    </Grid>
+                </Fragment>
+        } else {
+            metadata_status_icon =
+                <Fragment>
+                    <Grid item xs={8}>
+                        <Typography variant="h6" className={classes.submissionTextStyle}>
+                            <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.logo} />
+                        </Typography>
+                    </Grid>
+                </Fragment>
+        }
+
+
+        /** 
+         * Manage display of Summary statistics status image
+         */
+        if (summaryStatisticsStatus === 'VALID') {
+            summary_statistics_status_icon =
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.logo} />
+                    </Typography>
+                </Grid>
+        } else if (summaryStatisticsStatus === 'INVALID') {
+            summary_statistics_status_icon =
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.logo} />
+                    </Typography>
+                </Grid>
+        } else if (summaryStatisticsStatus === 'VALIDATING') {
+            summary_statistics_status_icon =
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                        <CircularProgress className={classes.progress} size={24} />
+                    </Typography>
+                </Grid>
+        } else {
+            summary_statistics_status_icon =
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.logo} />
+                    </Typography>
+                </Grid>
+        }
+
+
+        /** 
          * Upload component display
          */
         upload_component =
@@ -846,27 +917,16 @@ class SubmissionDetails extends Component {
                                                         Metadata valid
                                                     </Typography>
                                                 </Grid>
-                                                <Grid item xs={8}>
-                                                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        metadata status image... check or x
-                                                    </Typography>
-                                                </Grid>
+                                                {metadata_status_icon}
 
                                                 <Grid item xs={4}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
                                                         SumStats valid
-                                                </Typography>
+                                                    </Typography>
                                                 </Grid>
-                                                <Grid item xs={8}>
-                                                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        sumstats status image... check or x
-                                                </Typography>
-                                                </Grid>
+                                                {summary_statistics_status_icon}
 
-                                                <Grid item xs={12} className={classes.filler}>
-
-                                                </Grid>
-
+                                                <Grid item xs={12} className={classes.filler}></Grid>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -1009,7 +1069,7 @@ class SubmissionDetails extends Component {
 
 
 
-                    {/* <Grid item xs={12}
+                    <Grid item xs={12}
                         container
                         direction="row"
                         justify="space-evenly"
@@ -1057,7 +1117,7 @@ class SubmissionDetails extends Component {
                         className={classes.statistics}
                     >
                         {submission_stats_section}
-                    </Grid> */}
+                    </Grid>
                     {/* <Grid container
                         direction="column"
                         justify="center"
