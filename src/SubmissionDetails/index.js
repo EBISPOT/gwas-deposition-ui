@@ -765,11 +765,26 @@ class SubmissionDetails extends Component {
                         <CircularProgress className={classes.progress} size={24} />
                     </Typography>
                 </Grid>
-        } else {
+        } else if (metadataStatus === 'NA' && publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
+            metadata_status_icon =
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
+                    </Typography>
+                </Grid>
+        } else if (metadataStatus === 'NA' && publicationStatus === 'UNDER_SUBMISSION') {
             metadata_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
+                    </Typography>
+                </Grid>
+        }
+        else {
+            metadata_status_icon =
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
                     </Typography>
                 </Grid>
         }
@@ -785,7 +800,7 @@ class SubmissionDetails extends Component {
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
                     </Typography>
                 </Grid>
-        } else if (summaryStatisticsStatus === 'INVALID') {
+        } else if (summaryStatisticsStatus === 'INVALID' || summaryStatisticsStatus === 'NA') {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
@@ -803,7 +818,7 @@ class SubmissionDetails extends Component {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
                     </Typography>
                 </Grid>
         }
