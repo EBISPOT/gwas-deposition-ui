@@ -19,7 +19,6 @@ import history from "../history";
 
 import axios from 'axios';
 
-
 const styles = theme => ({
     root: {
         padding: theme.spacing(3, 2),
@@ -167,7 +166,7 @@ class SubmissionDetails extends Component {
             } else {
                 this.getSubmissionDetails();
             }
-        }, 500)
+        }, 200)
     }
 
     componentWillUnmount() {
@@ -866,6 +865,10 @@ class SubmissionDetails extends Component {
                             <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     Catalog status: {transformedPublicationStatus}
+                                </Typography>
+                            </Grid><Grid item xs={12}>
+                                <Typography className={classes.publicationTextStyle}>
+                                    Summary statistics location: <i>To be added once data is available....</i>
                                 </Typography>
                             </Grid>
                         </Paper>

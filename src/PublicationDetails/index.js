@@ -104,9 +104,9 @@ class PublicationDetails extends Component {
                 // Display list of all submissions
                 // history.push(`${process.env.PUBLIC_URL}/submissions`);
 
-                // this.redirectToSubmissionDetails();
+                this.redirectToSubmissionDetails();
 
-                this.redirectToSubmissionDetailsNEW();
+                // this.redirectToSubmissionDetailsNEW();
 
             })
                 .catch(error => {
