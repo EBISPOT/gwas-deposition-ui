@@ -89,40 +89,40 @@ class Upload extends Component {
     renderActions() {
         const { classes } = this.props;
 
-        if (this.state.successfullUploaded) {
-            return (
-                <Fragment>
-                    <Grid item xs={3}>
-                        <Button className={classes.button}
-                            onClick={this.hideUploadComponent}>
-                            Complete
+        // if (this.state.successfullUploaded) {
+        //     return (
+        //         <Fragment>
+        //             <Grid item xs={3}>
+        //                 <Button className={classes.button}
+        //                     onClick={this.hideUploadComponent}>
+        //                     Complete
+        //                 </Button>
+        //             </Grid>
+        //         </Fragment>
+        //     );
+        // } else {
+        return (
+            <Fragment>
+                <Grid item xs={3}>
+                    <Button className={classes.button} variant="outlined"
+                        disabled={this.state.files.length <= 0 || this.state.uploading}
+                        onClick={this.uploadFiles}>
+                        Upload File
                         </Button>
-                    </Grid>
-                </Fragment>
-            );
-        } else {
-            return (
-                <Fragment>
-                    <Grid item xs={3}>
-                        <Button className={classes.button} variant="outlined"
-                            disabled={this.state.files.length <= 0 || this.state.uploading}
-                            onClick={this.uploadFiles}>
-                            Upload File
+                </Grid>
+                <Grid item xs={3}>
+                    <Button className={classes.button} variant="outlined"
+                        disabled={this.state.files.length <= 0 || this.state.uploading}
+                        onClick={() =>
+                            this.setState({ files: [], successfullUploaded: false })
+                        }>
+                        Clear
                         </Button>
-                    </Grid>
-                    <Grid item xs={3}>
-                        <Button className={classes.button} variant="outlined"
-                            disabled={this.state.files.length <= 0 || this.state.uploading}
-                            onClick={() =>
-                                this.setState({ files: [], successfullUploaded: false })
-                            }>
-                            Clear
-                        </Button>
-                    </Grid>
-                </Fragment>
-            );
-        }
+                </Grid>
+            </Fragment>
+        );
     }
+    // }
 
     hideUploadComponent() {
         window.location.reload();
