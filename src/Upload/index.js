@@ -108,7 +108,7 @@ class Upload extends Component {
                             disabled={this.state.files.length <= 0 || this.state.uploading}
                             onClick={this.uploadFiles}>
                             Upload File
-                    </Button>
+                        </Button>
                     </Grid>
                     <Grid item xs={3}>
                         <Button className={classes.button} variant="outlined"
@@ -134,17 +134,16 @@ class Upload extends Component {
         const promises = [];
         this.state.files.forEach(file => {
             promises.push(this.sendRequest(file));
-            console.log('** File Name: ' + file.name);
         });
 
         try {
             await Promise.all(promises);
             this.setState({ successfullUploaded: true, uploading: false });
+            this.hideUploadComponent();
 
         } catch (e) {
             // TODO: Add error handling for file upload failure
             this.setState({ successfullUploaded: false, uploading: false });
-            console.log('** File upload error: ' + e);
         }
     }
 
@@ -179,10 +178,6 @@ class Upload extends Component {
 
             const formData = new FormData();
             formData.append("file", file);
-            console.log("** Upload Filename: ", file.name);
-
-            // TODO: Before posting file, check if any previous files exist
-            // and delete since file upload versioning is not implemented
 
             // Post file to GWAS Backend app
             let file_upload_url = UPLOAD_TEMPLATE_URL_BASE + "submissions/" + this.state.SUBMISSION_ID + "/uploads";
