@@ -154,10 +154,31 @@ class SubmissionDetails extends Component {
         this.parseFileMetadata = this.parseFileMetadata.bind(this);
     }
 
+
+    // TEST - Add polling
+    clearInterval() {
+        this.timer = null;
+    }
+    componentDidMount() {
+        this.timer = setInterval(() => {
+            if (this.state.submissionStatus === 'VALID' || this.state.submissionStatus === 'INVALID') {
+                console.log("** Result found!", this.state.submissionStatus);
+                clearInterval(this.timer)
+            } else {
+                this.getSubmissionDetails();
+            }
+        }, 500)
+    }
+
+    componentWillUnmount() {
+        this.timer = null;
+    }
+
     /**
      * Get Submission details and update state
      */
-    async componentDidMount() {
+    getSubmissionDetails() {
+        // async componentDidMount() {
         this.API_CLIENT.getSubmission(this.SUBMISSION_ID).then((data) => {
 
             this.setState({ ...this.state, submission_data: data });
