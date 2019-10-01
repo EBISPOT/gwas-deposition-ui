@@ -107,6 +107,8 @@ const styles = theme => ({
 
 
 class SubmissionDetails extends Component {
+    _isMounted = false;
+
     constructor(props) {
         super(props)
         this.API_CLIENT = new API_CLIENT();
@@ -154,14 +156,17 @@ class SubmissionDetails extends Component {
     }
 
 
-    // TEST - Add polling
+    // Clear timer after polling end condition reached
     clearInterval() {
         this.timer = null;
     }
+
     componentDidMount() {
+        this._isMounted = true;
+
         this.timer = setInterval(() => {
             if (this.state.submissionStatus === 'VALID' || this.state.submissionStatus === 'INVALID') {
-                console.log("** Result found!", this.state.submissionStatus);
+                // console.log("** Result found!", this.state.submissionStatus);
                 clearInterval(this.timer)
             } else {
                 this.getSubmissionDetails();
@@ -171,6 +176,7 @@ class SubmissionDetails extends Component {
 
     componentWillUnmount() {
         this.timer = null;
+        this._isMounted = false;
     }
 
     /**
@@ -180,56 +186,60 @@ class SubmissionDetails extends Component {
         // async componentDidMount() {
         this.API_CLIENT.getSubmission(this.SUBMISSION_ID).then((data) => {
 
-            this.setState({ ...this.state, submission_data: data });
-            this.setState({ ...this.state, submissionStatus: data.submission_status });
-            this.setState({ ...this.state, metadataStatus: data.metadata_status });
-            this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
-            this.setState({ ...this.state, publication_obj: data.publication });
-            this.setState({ ...this.state, publicationStatus: data.publication.status });
+            // Only update state if component still mounted
+            if (this._isMounted) {
 
-            if (data.created.user.name) {
-                this.setState({ ...this.state, userName: data.created.user.name });
-            }
+                this.setState({ ...this.state, submission_data: data });
+                this.setState({ ...this.state, submissionStatus: data.submission_status });
+                this.setState({ ...this.state, metadataStatus: data.metadata_status });
+                this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
+                this.setState({ ...this.state, publication_obj: data.publication });
+                this.setState({ ...this.state, publicationStatus: data.publication.status });
 
-            if (data.created.timestamp) {
-                // Format timeStamp for display
-                let createdTimestamp = new Date(data.created.timestamp);
-                createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
-                this.setState({ ...this.state, submissionCreatedDate: createdTimestamp });
-            }
-
-            if (data.status === 'VALID_METADATA') {
-                this.setState({ ...this.state, isNotValid: false });
-            }
-
-            if (data.files.length > 0) {
-                /** 
-                 * Parse file metadata
-                */
-                const { summaryStatsFileMetadata,
-                    metadataFileMetadata,
-                    summaryStatsTemplateFileMetadata } = this.parseFileMetadata(data.files);
-
-                /**
-                 * Set state based on type of file uploaded
-                 */
-                if (summaryStatsFileMetadata.fileUploadId !== undefined) {
-                    this.setState({ ...this.state, fileUploadId: summaryStatsFileMetadata.fileUploadId })
-                    this.setState({ ...this.state, fileName: summaryStatsFileMetadata.fileName })
-                    this.setState({ ...this.state, fileValidationErrorMessage: summaryStatsFileMetadata.summary_stats_errors });
-                }
-                else {
-                    this.setState({ ...this.state, fileUploadId: metadataFileMetadata.fileUploadId })
-                    this.setState({ ...this.state, fileName: metadataFileMetadata.fileName })
-                    this.setState({ ...this.state, fileValidationErrorMessage: metadataFileMetadata.metadata_errors });
+                if (data.created.user.name) {
+                    this.setState({ ...this.state, userName: data.created.user.name });
                 }
 
-                /**
-                 * Set data for Download Summary Stats template
-                 */
-                if (summaryStatsTemplateFileMetadata.fileUploadId !== undefined) {
-                    this.setState({ ...this.state, summaryStatsTemplateFileUploadId: summaryStatsTemplateFileMetadata.fileUploadId });
-                    this.setState({ ...this.state, summaryStatsTemplateFileName: summaryStatsTemplateFileMetadata.fileName });
+                if (data.created.timestamp) {
+                    // Format timeStamp for display
+                    let createdTimestamp = new Date(data.created.timestamp);
+                    createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
+                    this.setState({ ...this.state, submissionCreatedDate: createdTimestamp });
+                }
+
+                if (data.status === 'VALID_METADATA') {
+                    this.setState({ ...this.state, isNotValid: false });
+                }
+
+                if (data.files.length > 0) {
+                    /** 
+                     * Parse file metadata
+                    */
+                    const { summaryStatsFileMetadata,
+                        metadataFileMetadata,
+                        summaryStatsTemplateFileMetadata } = this.parseFileMetadata(data.files);
+
+                    /**
+                     * Set state based on type of file uploaded
+                     */
+                    if (summaryStatsFileMetadata.fileUploadId !== undefined) {
+                        this.setState({ ...this.state, fileUploadId: summaryStatsFileMetadata.fileUploadId })
+                        this.setState({ ...this.state, fileName: summaryStatsFileMetadata.fileName })
+                        this.setState({ ...this.state, fileValidationErrorMessage: summaryStatsFileMetadata.summary_stats_errors });
+                    }
+                    else {
+                        this.setState({ ...this.state, fileUploadId: metadataFileMetadata.fileUploadId })
+                        this.setState({ ...this.state, fileName: metadataFileMetadata.fileName })
+                        this.setState({ ...this.state, fileValidationErrorMessage: metadataFileMetadata.metadata_errors });
+                    }
+
+                    /**
+                     * Set data for Download Summary Stats template
+                     */
+                    if (summaryStatsTemplateFileMetadata.fileUploadId !== undefined) {
+                        this.setState({ ...this.state, summaryStatsTemplateFileUploadId: summaryStatsTemplateFileMetadata.fileUploadId });
+                        this.setState({ ...this.state, summaryStatsTemplateFileName: summaryStatsTemplateFileMetadata.fileName });
+                    }
                 }
             }
         }).catch(error => {
