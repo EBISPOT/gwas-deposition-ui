@@ -789,18 +789,19 @@ class SubmissionDetails extends Component {
          * Upload component display
          */
         upload_component =
+            <Fragment>
+                <Grid item xs={12}>
+                    {this.state.showComponent ?
+                        <Upload submission_id={this.SUBMISSION_ID} displayUploadComponent={this.displayUploadComponent} /> : null}
 
-            <Grid item xs={12}>
-                {this.state.showComponent ?
-                    <Upload submission_id={this.SUBMISSION_ID} displayUploadComponent={this.displayUploadComponent} /> : null}
-
-                {this.state.showComponent ?
-                    <button variant="outlined" color="secondary" size="small" className={classes.button}
-                        onClick={this.hideUploadComponent}
-                    >
-                        Cancel
+                    {this.state.showComponent ?
+                        <button variant="outlined" color="secondary" size="small" className={classes.button}
+                            onClick={this.hideUploadComponent}
+                        >
+                            Cancel
                         </button> : null}
-            </Grid>
+                </Grid>
+            </Fragment>
 
 
 
@@ -971,142 +972,25 @@ class SubmissionDetails extends Component {
                                     <Grid container className={classes.submissionStats}>
                                         {submission_stats_section}
 
-                                        {/* {fileValidationErrorMessage} */}
-
                                         {file_validation_error_section}
+                                    </Grid>
 
-                                        {/* <Grid item container xs={12}>
-                                            <Grid item xs={2}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    Errors:
-                                                 </Typography>
-                                            </Grid>
-                                            <Grid item xs={10}>
-                                                <Typography gutterBottom>
-                                                {fileValidationErrorMessage}
-                                                </Typography>
-                                            </Grid>
-                                        </Grid> */}
-
+                                    <Grid container
+                                        direction="row"
+                                        justify="flex-start"
+                                        alignItems="center">
+                                        {upload_component}
                                     </Grid>
 
                                 </Grid>
                             </Paper>
 
-
-                            {/* <Paper className={classes.paper}>
-
-                                    <Grid container>
-                                        <Grid item xs={12}>
-                                            <Typography gutterBottom variant="h5" className={classes.headerTextStyle}>
-                                                Submission Report
-                                            </Typography>
-                                        </Grid>
-
-                                        <Grid container xs={6}>
-                                            <Grid item xs={3}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    Submission ID:
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={9}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    Some value...
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-
-                                        <Grid container item xs={6}>
-                                            <Grid item xs={4}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    Metadata valid
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={8}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    metadata status image... check or x
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-
-                                        <Grid container xs={6}>
-                                            <Grid item xs={3}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    Date created:
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={9}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    Some value...
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-
-                                        <Grid container item xs={6}>
-                                            <Grid item xs={4}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    SumStats valid
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={8}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    sumstats status image... check or x
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-
-                                        <Grid container xs={12}>
-                                            <Grid item xs={3}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    User:
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={9}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    User name
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-
-
-                                        <Grid container xs={12}>
-                                            <Grid item xs={3}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    Current status:
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={9}>
-                                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                    submission status here...
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-
-                                        <Grid item xs={3}>
-                                            <Paper className={classes.paper}>xs=3</Paper>
-                                        </Grid>
-                                        <Grid item xs={3}>
-                                            <Paper className={classes.paper}>xs=3</Paper>
-                                        </Grid>
-                                        <Grid item xs={3}>
-                                            <Paper className={classes.paper}>xs=3</Paper>
-                                        </Grid>
-                                        <Grid item xs={3}>
-                                            <Paper className={classes.paper}>xs=3</Paper>
-                                        </Grid>
-                                    </Grid>
-                                </Paper>
-                                </Grid>
-                                */}
-
-
                         </Grid>
-
                     </Grid>
 
 
 
-                    <Grid item xs={12}
+                    {/* <Grid item xs={12}
                         container
                         direction="row"
                         justify="space-evenly"
@@ -1145,8 +1029,8 @@ class SubmissionDetails extends Component {
                         justify="flex-start"
                         alignItems="center">
                         {upload_component}
-                    </Grid>
-                    <Grid container
+                    </Grid> */}
+                    {/* <Grid container
                         direction="column"
                         justify="center"
                         alignItems="flex-start"
@@ -1154,7 +1038,7 @@ class SubmissionDetails extends Component {
                         className={classes.statistics}
                     >
                         {submission_stats_section}
-                    </Grid>
+                    </Grid> */}
                     {/* <Grid container
                         direction="column"
                         justify="center"
