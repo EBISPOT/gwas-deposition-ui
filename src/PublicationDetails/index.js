@@ -185,13 +185,13 @@ class PublicationDetails extends Component {
         }
 
         // Show View Submission details button
-        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' || publicationStatus === 'UNDER_SUBMISSION') {
-            showSubmissionDetailsNEWButton =
-                <button onClick={this.redirectToSubmissionDetailsNEW} variant="contained" color="secondary" size="small"
-                    className={classes.button}>
-                    View Submission Details - NEW Layout
-                </button>
-        }
+        // if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' || publicationStatus === 'UNDER_SUBMISSION') {
+        //     showSubmissionDetailsNEWButton =
+        //         <button onClick={this.redirectToSubmissionDetailsNEW} variant="contained" color="secondary" size="small"
+        //             className={classes.button}>
+        //             View Submission Details - NEW Layout
+        //         </button>
+        // }
 
 
         return (
