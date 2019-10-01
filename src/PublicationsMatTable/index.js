@@ -89,6 +89,7 @@ class PublicationsMatTable extends React.Component {
             value: '',
         });
         this.handleChange = this.handleChange.bind(this);
+        this.getUserFriendlyStatusLabels = this.getUserFriendlyStatusLabels.bind(this);
     }
 
     tableRef = React.createRef();
@@ -105,6 +106,23 @@ class PublicationsMatTable extends React.Component {
         })
         // refresh table
         this.tableRef.current.onQueryChange();
+    }
+
+
+    /**
+     * Set user friendly status label
+     */
+    getUserFriendlyStatusLabels(rowData) {
+        if (rowData === 'UNDER_SUBMISSION' || rowData === 'UNDER_SUMMARY_STATS_SUBMISSION'
+            || rowData === 'PUBLISHED_WITH_SS') {
+            return 'CLOSED'
+        }
+        if (rowData === 'ELIGIBLE') {
+            return 'OPEN FOR SUBMISSION'
+        }
+        if (rowData === 'PUBLISHED') {
+            return 'OPEN FOR SUMMARY STATISTICS SUBMISSION'
+        }
     }
 
 
@@ -161,7 +179,10 @@ class PublicationsMatTable extends React.Component {
                         { title: 'First author', field: 'firstAuthor', },
                         { title: 'Publication', field: 'title' },
                         { title: 'Journal', field: 'journal' },
-                        { title: 'Status', field: 'status' },
+                        {
+                            title: 'Status', field: 'status',
+                            render: rowData => (this.getUserFriendlyStatusLabels(rowData.status))
+                        },
                     ]}
                     data={query =>
                         new Promise((resolve, reject) => {
