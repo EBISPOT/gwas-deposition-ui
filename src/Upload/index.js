@@ -3,6 +3,7 @@ import Dropzone from '../Dropzone'
 import Progress from '../Progress'
 import './upload.css'
 import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -11,13 +12,29 @@ const UPLOAD_TEMPLATE_URL_BASE = process.env.REACT_APP_LOCAL_BASE_URI;
 
 const styles = theme => ({
     button: {
+        marginTop: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        padding: theme.spacing(1),
         color: '#333',
         background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
         borderRadius: 4,
         border: '1px solid #ccc',
         fontWeight: 'bold',
         textShadow: '0 1px 0 #fff',
-    },
+        textTransform: 'none',
+        '&:disabled': {
+            textShadow: 'none',
+        },
+    }
+    // button: {
+    //     color: '#333',
+    //     background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
+    //     borderRadius: 4,
+    //     border: '1px solid #ccc',
+    //     fontWeight: 'bold',
+    //     textShadow: '0 1px 0 #fff',
+    // },
 });
 
 
@@ -76,10 +93,10 @@ class Upload extends Component {
             return (
                 <Fragment>
                     <Grid item xs={3}>
-                        <button className={classes.button}
+                        <Button className={classes.button}
                             onClick={this.hideUploadComponent}>
                             Complete
-                        </button>
+                        </Button>
                     </Grid>
                 </Fragment>
             );
@@ -87,20 +104,20 @@ class Upload extends Component {
             return (
                 <Fragment>
                     <Grid item xs={3}>
-                        <button variant="contained" color="secondary" size="small" className={classes.button}
+                        <Button className={classes.button} variant="outlined"
                             disabled={this.state.files.length <= 0 || this.state.uploading}
                             onClick={this.uploadFiles}>
                             Upload File
-                    </button>
+                    </Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <button variant="contained" color="secondary" size="small" className={classes.button}
+                        <Button className={classes.button} variant="outlined"
                             disabled={this.state.files.length <= 0 || this.state.uploading}
                             onClick={() =>
                                 this.setState({ files: [], successfullUploaded: false })
                             }>
                             Clear
-                    </button>
+                        </Button>
                     </Grid>
                 </Fragment>
             );

@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import classNames from 'classnames'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSVG from 'react-svg'
 
@@ -83,6 +84,9 @@ const styles = theme => ({
         '&:disabled': {
             textShadow: 'none',
         }
+    },
+    closeUploadComponentButton: {
+        marginLeft: 18,
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -793,13 +797,12 @@ class SubmissionDetails extends Component {
                 <Grid item xs={12}>
                     {this.state.showComponent ?
                         <Upload submission_id={this.SUBMISSION_ID} displayUploadComponent={this.displayUploadComponent} /> : null}
-
+                </Grid>
+                <Grid item xs={12}>
                     {this.state.showComponent ?
-                        <button variant="outlined" color="secondary" size="small" className={classes.button}
-                            onClick={this.hideUploadComponent}
-                        >
-                            Cancel
-                        </button> : null}
+                        <Button onClick={this.hideUploadComponent} className={classNames(classes.button, classes.closeUploadComponentButton)}>
+                            Close File Upload
+                        </Button> : null}
                 </Grid>
             </Fragment>
 
