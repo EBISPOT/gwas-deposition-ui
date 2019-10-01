@@ -19,6 +19,7 @@ import history from "../history";
 
 import axios from 'axios';
 
+
 const styles = theme => ({
     root: {
         padding: theme.spacing(3, 2),
@@ -107,8 +108,6 @@ const styles = theme => ({
 
 
 class SubmissionDetails extends Component {
-    _isMounted = false;
-
     constructor(props) {
         super(props)
         this.API_CLIENT = new API_CLIENT();
@@ -156,27 +155,23 @@ class SubmissionDetails extends Component {
     }
 
 
-    // Clear timer after polling end condition reached
+    // Add polling
     clearInterval() {
         this.timer = null;
     }
-
     componentDidMount() {
-        this._isMounted = true;
-
         this.timer = setInterval(() => {
             if (this.state.submissionStatus === 'VALID' || this.state.submissionStatus === 'INVALID') {
-                // console.log("** Result found!", this.state.submissionStatus);
+                console.log("** Result found!", this.state.submissionStatus);
                 clearInterval(this.timer)
             } else {
                 this.getSubmissionDetails();
             }
-        }, 200)
+        }, 500)
     }
 
     componentWillUnmount() {
-        this.timer = null;
-        this._isMounted = false;
+        this.timer = null; // here...
     }
 
     /**
@@ -184,62 +179,59 @@ class SubmissionDetails extends Component {
      */
     getSubmissionDetails() {
         // async componentDidMount() {
+        console.log("** Called getSubmissionDetails...")
         this.API_CLIENT.getSubmission(this.SUBMISSION_ID).then((data) => {
 
-            // Only update state if component still mounted
-            if (this._isMounted) {
+            this.setState({ ...this.state, submission_data: data });
+            this.setState({ ...this.state, submissionStatus: data.submission_status });
+            this.setState({ ...this.state, metadataStatus: data.metadata_status });
+            this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
+            this.setState({ ...this.state, publication_obj: data.publication });
+            this.setState({ ...this.state, publicationStatus: data.publication.status });
 
-                this.setState({ ...this.state, submission_data: data });
-                this.setState({ ...this.state, submissionStatus: data.submission_status });
-                this.setState({ ...this.state, metadataStatus: data.metadata_status });
-                this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
-                this.setState({ ...this.state, publication_obj: data.publication });
-                this.setState({ ...this.state, publicationStatus: data.publication.status });
+            if (data.created.user.name) {
+                this.setState({ ...this.state, userName: data.created.user.name });
+            }
 
-                if (data.created.user.name) {
-                    this.setState({ ...this.state, userName: data.created.user.name });
+            if (data.created.timestamp) {
+                // Format timeStamp for display
+                let createdTimestamp = new Date(data.created.timestamp);
+                createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
+                this.setState({ ...this.state, submissionCreatedDate: createdTimestamp });
+            }
+
+            if (data.status === 'VALID_METADATA') {
+                this.setState({ ...this.state, isNotValid: false });
+            }
+
+            if (data.files.length > 0) {
+                /** 
+                 * Parse file metadata
+                */
+                const { summaryStatsFileMetadata,
+                    metadataFileMetadata,
+                    summaryStatsTemplateFileMetadata } = this.parseFileMetadata(data.files);
+
+                /**
+                 * Set state based on type of file uploaded
+                 */
+                if (summaryStatsFileMetadata.fileUploadId !== undefined) {
+                    this.setState({ ...this.state, fileUploadId: summaryStatsFileMetadata.fileUploadId })
+                    this.setState({ ...this.state, fileName: summaryStatsFileMetadata.fileName })
+                    this.setState({ ...this.state, fileValidationErrorMessage: summaryStatsFileMetadata.summary_stats_errors });
+                }
+                else {
+                    this.setState({ ...this.state, fileUploadId: metadataFileMetadata.fileUploadId })
+                    this.setState({ ...this.state, fileName: metadataFileMetadata.fileName })
+                    this.setState({ ...this.state, fileValidationErrorMessage: metadataFileMetadata.metadata_errors });
                 }
 
-                if (data.created.timestamp) {
-                    // Format timeStamp for display
-                    let createdTimestamp = new Date(data.created.timestamp);
-                    createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
-                    this.setState({ ...this.state, submissionCreatedDate: createdTimestamp });
-                }
-
-                if (data.status === 'VALID_METADATA') {
-                    this.setState({ ...this.state, isNotValid: false });
-                }
-
-                if (data.files.length > 0) {
-                    /** 
-                     * Parse file metadata
-                    */
-                    const { summaryStatsFileMetadata,
-                        metadataFileMetadata,
-                        summaryStatsTemplateFileMetadata } = this.parseFileMetadata(data.files);
-
-                    /**
-                     * Set state based on type of file uploaded
-                     */
-                    if (summaryStatsFileMetadata.fileUploadId !== undefined) {
-                        this.setState({ ...this.state, fileUploadId: summaryStatsFileMetadata.fileUploadId })
-                        this.setState({ ...this.state, fileName: summaryStatsFileMetadata.fileName })
-                        this.setState({ ...this.state, fileValidationErrorMessage: summaryStatsFileMetadata.summary_stats_errors });
-                    }
-                    else {
-                        this.setState({ ...this.state, fileUploadId: metadataFileMetadata.fileUploadId })
-                        this.setState({ ...this.state, fileName: metadataFileMetadata.fileName })
-                        this.setState({ ...this.state, fileValidationErrorMessage: metadataFileMetadata.metadata_errors });
-                    }
-
-                    /**
-                     * Set data for Download Summary Stats template
-                     */
-                    if (summaryStatsTemplateFileMetadata.fileUploadId !== undefined) {
-                        this.setState({ ...this.state, summaryStatsTemplateFileUploadId: summaryStatsTemplateFileMetadata.fileUploadId });
-                        this.setState({ ...this.state, summaryStatsTemplateFileName: summaryStatsTemplateFileMetadata.fileName });
-                    }
+                /**
+                 * Set data for Download Summary Stats template
+                 */
+                if (summaryStatsTemplateFileMetadata.fileUploadId !== undefined) {
+                    this.setState({ ...this.state, summaryStatsTemplateFileUploadId: summaryStatsTemplateFileMetadata.fileUploadId });
+                    this.setState({ ...this.state, summaryStatsTemplateFileName: summaryStatsTemplateFileMetadata.fileName });
                 }
             }
         }).catch(error => {
@@ -775,26 +767,11 @@ class SubmissionDetails extends Component {
                         <CircularProgress className={classes.progress} size={24} />
                     </Typography>
                 </Grid>
-        } else if (metadataStatus === 'NA' && publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-            metadata_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
-                    </Typography>
-                </Grid>
-        } else if (metadataStatus === 'NA' && publicationStatus === 'UNDER_SUBMISSION') {
+        } else {
             metadata_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
-                    </Typography>
-                </Grid>
-        }
-        else {
-            metadata_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
                     </Typography>
                 </Grid>
         }
@@ -810,7 +787,7 @@ class SubmissionDetails extends Component {
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
                     </Typography>
                 </Grid>
-        } else if (summaryStatisticsStatus === 'INVALID' || summaryStatisticsStatus === 'NA') {
+        } else if (summaryStatisticsStatus === 'INVALID') {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
@@ -828,7 +805,7 @@ class SubmissionDetails extends Component {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
+                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
                     </Typography>
                 </Grid>
         }
@@ -890,10 +867,6 @@ class SubmissionDetails extends Component {
                             <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     Catalog status: {transformedPublicationStatus}
-                                </Typography>
-                            </Grid><Grid item xs={12}>
-                                <Typography className={classes.publicationTextStyle}>
-                                    Summary statistics location: <i>To be added once data is available....</i>
                                 </Typography>
                             </Grid>
                         </Paper>

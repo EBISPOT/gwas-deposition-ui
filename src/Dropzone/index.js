@@ -69,6 +69,7 @@ class Dropzone extends Component {
                 onDragLeave={this.onDragLeave}
                 onDrop={this.onDrop}
                 onClick={this.openFileDialog}
+                onLoad={this.openFileDialog}
                 style={{ cursor: this.props.disabled ? 'default' : 'pointer' }}
             >
                 <input
@@ -78,6 +79,7 @@ class Dropzone extends Component {
                     accept=".xlsx"
                     onChange={this.onFilesAdded}
                 />
+
                 <img
                     alt="upload"
                     className="Icon"

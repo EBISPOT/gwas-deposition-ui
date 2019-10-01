@@ -3,6 +3,7 @@ import Dropzone from '../Dropzone'
 import Progress from '../Progress'
 import './upload.css'
 import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -11,13 +12,29 @@ const UPLOAD_TEMPLATE_URL_BASE = process.env.REACT_APP_LOCAL_BASE_URI;
 
 const styles = theme => ({
     button: {
+        marginTop: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        padding: theme.spacing(1),
         color: '#333',
         background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
         borderRadius: 4,
         border: '1px solid #ccc',
         fontWeight: 'bold',
         textShadow: '0 1px 0 #fff',
-    },
+        textTransform: 'none',
+        '&:disabled': {
+            textShadow: 'none',
+        },
+    }
+    // button: {
+    //     color: '#333',
+    //     background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
+    //     borderRadius: 4,
+    //     border: '1px solid #ccc',
+    //     fontWeight: 'bold',
+    //     textShadow: '0 1px 0 #fff',
+    // },
 });
 
 
@@ -72,40 +89,40 @@ class Upload extends Component {
     renderActions() {
         const { classes } = this.props;
 
-        if (this.state.successfullUploaded) {
-            return (
-                <Fragment>
-                    <Grid item xs={3}>
-                        <button className={classes.button}
-                            onClick={this.hideUploadComponent}>
-                            Complete
-                        </button>
-                    </Grid>
-                </Fragment>
-            );
-        } else {
-            return (
-                <Fragment>
-                    <Grid item xs={3}>
-                        <button variant="contained" color="secondary" size="small" className={classes.button}
-                            disabled={this.state.files.length <= 0 || this.state.uploading}
-                            onClick={this.uploadFiles}>
-                            Upload File
-                    </button>
-                    </Grid>
-                    <Grid item xs={3}>
-                        <button variant="contained" color="secondary" size="small" className={classes.button}
-                            disabled={this.state.files.length <= 0 || this.state.uploading}
-                            onClick={() =>
-                                this.setState({ files: [], successfullUploaded: false })
-                            }>
-                            Clear
-                    </button>
-                    </Grid>
-                </Fragment>
-            );
-        }
+        // if (this.state.successfullUploaded) {
+        //     return (
+        //         <Fragment>
+        //             <Grid item xs={3}>
+        //                 <Button className={classes.button}
+        //                     onClick={this.hideUploadComponent}>
+        //                     Complete
+        //                 </Button>
+        //             </Grid>
+        //         </Fragment>
+        //     );
+        // } else {
+        return (
+            <Fragment>
+                <Grid item xs={3}>
+                    <Button className={classes.button} variant="outlined"
+                        disabled={this.state.files.length <= 0 || this.state.uploading}
+                        onClick={this.uploadFiles}>
+                        Upload File
+                        </Button>
+                </Grid>
+                <Grid item xs={3}>
+                    <Button className={classes.button} variant="outlined"
+                        disabled={this.state.files.length <= 0 || this.state.uploading}
+                        onClick={() =>
+                            this.setState({ files: [], successfullUploaded: false })
+                        }>
+                        Clear
+                        </Button>
+                </Grid>
+            </Fragment>
+        );
     }
+    // }
 
     hideUploadComponent() {
         window.location.reload();
@@ -117,17 +134,16 @@ class Upload extends Component {
         const promises = [];
         this.state.files.forEach(file => {
             promises.push(this.sendRequest(file));
-            console.log('** File Name: ' + file.name);
         });
 
         try {
             await Promise.all(promises);
             this.setState({ successfullUploaded: true, uploading: false });
+            this.hideUploadComponent();
 
         } catch (e) {
             // TODO: Add error handling for file upload failure
             this.setState({ successfullUploaded: false, uploading: false });
-            console.log('** File upload error: ' + e);
         }
     }
 
@@ -162,10 +178,6 @@ class Upload extends Component {
 
             const formData = new FormData();
             formData.append("file", file);
-            console.log("** Upload Filename: ", file.name);
-
-            // TODO: Before posting file, check if any previous files exist
-            // and delete since file upload versioning is not implemented
 
             // Post file to GWAS Backend app
             let file_upload_url = UPLOAD_TEMPLATE_URL_BASE + "submissions/" + this.state.SUBMISSION_ID + "/uploads";
