@@ -168,7 +168,8 @@ class SubmissionDetails extends Component {
             if (this.state.submissionStatus === 'VALID' || this.state.submissionStatus === 'INVALID'
                 || this.state.submissionStatus === 'CURATION_COMPLETE'
                 || this.state.submissionStatus === 'COMPLETE'
-                || this.state.submissionStatus === 'STARTED') {
+                || this.state.submissionStatus === 'STARTED'
+                || this.state.submissionStatus === 'SUBMITTED') {
                 // console.log("** Result found!", this.state.submissionStatus);
                 clearInterval(this.timer)
             } else {
