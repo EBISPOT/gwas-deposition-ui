@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Container from '@material-ui/core/Container';
 
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
@@ -50,6 +49,10 @@ const styles = theme => ({
     publicationCatalogStatusTextStyle: {
         fontSize: 18,
         marginTop: 32,
+    },
+    closedMessageTextStyle: {
+        fontSize: 14,
+        fontStyle: 'italic'
     },
     button: {
         marginTop: theme.spacing(1),
@@ -198,13 +201,16 @@ class PublicationDetails extends Component {
 
     render() {
         const { classes } = this.props;
-        const { createSubmissionError } = this.state;
+        // const { createSubmissionError } = this.state;
         const { redirectError } = this.state;
         const { publicationStatus } = this.state;
         const { transformedPublicationStatus } = this.state;
 
         let create_submission_button;
         let showSubmissionDetailsButton;
+        const gwasInfoEmail = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
+        const gwasSubsEmail = <a href="mailto:gwas-subs@ebi.ac.uk">gwas-subs@ebi.ac.uk</a>;
+        let closedMessage;
 
 
         // Show Create Submission button
@@ -227,15 +233,26 @@ class PublicationDetails extends Component {
                     View Submission Details
                 </Button>
         }
-        // if (publicationStatus === 'UNDER_SUBMISSION' || publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION'
-        //     || publicationStatus === 'PUBLISHED_WITH_SS'
-        // ) {
-        //     showSubmissionDetailsButton =
-        //         showSubmissionDetailsButton =
-        //         <Button disabled variant="outlined" className={classes.button}>
-        //             View Submission Details
-        //         </Button>
-        // }
+
+        // Show reason why Publication status is CLOSED
+        if (publicationStatus === 'UNDER_SUBMISSION' || publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
+            closedMessage =
+                <span>
+                    This publication is currently under submission. Please check back
+                    for updates or email {gwasInfoEmail} for additional information.
+                </span>
+        }
+        if (publicationStatus === 'PUBLISHED_WITH_SS') {
+            closedMessage =
+                <span>
+                    This publication and associated summary statistics are already available in the GWAS Catalog.
+                    If you would like to submit additional data or request a change to the GWAS Catalog entry
+                    please email {gwasSubsEmail}.
+                </span>
+        }
+
+
+
 
         return (
             <div className={classes.root}>
@@ -279,11 +296,18 @@ class PublicationDetails extends Component {
                                 </Typography>
                             </Grid>
 
+                            {/* <Grid container item xs={12}> */}
                             <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     Catalog status: {transformedPublicationStatus}
                                 </Typography>
                             </Grid>
+                            <Grid item xs={6}>
+                                <Typography className={classes.closedMessageTextStyle}>
+                                    {closedMessage}
+                                </Typography>
+                            </Grid>
+                            {/* </Grid> */}
 
                             {create_submission_button}
 
