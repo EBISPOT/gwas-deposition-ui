@@ -513,11 +513,16 @@ class SubmissionDetails extends Component {
 
         const { publicationStatus } = this.state;
         let transformedPublicationStatus;
-        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-            transformedPublicationStatus = 'OPEN FOR SUMMARY STATISTICS SUBMISSION';
+
+        if (publicationStatus === 'UNDER_SUBMISSION' || publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION'
+            || publicationStatus === 'PUBLISHED_WITH_SS') {
+            transformedPublicationStatus = 'CLOSED'
         }
-        else {
-            transformedPublicationStatus = 'OPEN FOR SUBMISSION';
+        if (publicationStatus === 'ELIGIBLE') {
+            transformedPublicationStatus = 'OPEN FOR SUBMISSION'
+        }
+        if (publicationStatus === 'PUBLISHED') {
+            transformedPublicationStatus = 'OPEN FOR SUMMARY STATISTICS SUBMISSION'
         }
 
         const { submissionStatus } = this.state;
