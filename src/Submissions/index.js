@@ -56,6 +56,12 @@ class Submissions extends React.Component {
         this.API_CLIENT = new API_CLIENT();
     }
 
+    transformDateFormat(timestamp) {
+        let createdTimestamp = new Date(timestamp);
+        createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
+        return createdTimestamp
+    }
+
     render() {
         return (
             <Container>
@@ -69,14 +75,16 @@ class Submissions extends React.Component {
                                 pathname: `${process.env.PUBLIC_URL}/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
                             }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
                         },
-                        { title: 'PubMedID', field: 'publication.pmid', sorting: false },
-                        { title: 'First author', field: 'publication.firstAuthor', sorting: false },
-                        { title: 'Submission Status', field: 'submission_status', sorting: false },
-                        { title: 'Metadata Status', field: 'metadata_status', sorting: false },
-                        { title: 'Summary statistics Status', field: 'summary_statistics_status', sorting: false },
-                        { title: 'Submitter', field: 'created.user.name', sorting: false },
-                        { title: 'Date submission started', field: 'created.timestamp', sorting: false },
-                        { title: 'Date submitted', field: 'date_submitted', sorting: false },
+                        { title: 'PubMedID', field: 'publication.pmid', sorting: true },
+                        { title: 'First author', field: 'publication.firstAuthor', sorting: true },
+                        { title: 'Submission Status', field: 'submission_status', sorting: true },
+                        { title: 'Metadata Status', field: 'metadata_status', sorting: true },
+                        { title: 'Summary statistics Status', field: 'summary_statistics_status', sorting: true },
+                        { title: 'Submitter', field: 'created.user.name', sorting: true },
+                        {
+                            title: 'Date submission started', field: 'created.timestamp', sorting: true,
+                            render: rowData => (this.transformDateFormat(rowData.created.timestamp))
+                        },
                     ]}
                     data={query =>
                         new Promise((resolve, reject) => {
