@@ -32,6 +32,9 @@ const styles = theme => ({
     headerTextStyle: {
         fontWeight: 500,
     },
+    pageHeader: {
+        height: 52,
+    },
     publicationTitleTextStyle: {
         fontSize: 20,
         fontStyle: 'italic',
@@ -132,7 +135,7 @@ class SubmissionDetails extends Component {
             submissionError: null,
             deleteFileError: null,
             downloadSummaryStatsFileError: null,
-            submissionStatus: null,
+            submissionStatus: 'NA',
             metadataStatus: null,
             summaryStatisticsStatus: null,
             publicationStatus: null,
@@ -165,7 +168,13 @@ class SubmissionDetails extends Component {
         this._isMounted = true;
 
         this.timer = setInterval(() => {
-            if (this.state.submissionStatus === 'VALID' || this.state.submissionStatus === 'INVALID') {
+            if (this.state.submissionStatus === null
+                || this.state.submissionStatus === 'VALID'
+                || this.state.submissionStatus === 'INVALID'
+                || this.state.submissionStatus === 'CURATION_COMPLETE'
+                || this.state.submissionStatus === 'COMPLETE'
+                || this.state.submissionStatus === 'STARTED'
+                || this.state.submissionStatus === 'SUBMITTED') {
                 // console.log("** Result found!", this.state.submissionStatus);
                 clearInterval(this.timer)
             } else {
@@ -511,11 +520,16 @@ class SubmissionDetails extends Component {
 
         const { publicationStatus } = this.state;
         let transformedPublicationStatus;
-        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-            transformedPublicationStatus = 'OPEN FOR SUMMARY STATISTICS SUBMISSION';
+
+        if (publicationStatus === 'UNDER_SUBMISSION' || publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION'
+            || publicationStatus === 'PUBLISHED_WITH_SS') {
+            transformedPublicationStatus = 'CLOSED'
         }
-        else {
-            transformedPublicationStatus = 'OPEN FOR SUBMISSION';
+        if (publicationStatus === 'ELIGIBLE') {
+            transformedPublicationStatus = 'OPEN FOR SUBMISSION'
+        }
+        if (publicationStatus === 'PUBLISHED') {
+            transformedPublicationStatus = 'OPEN FOR SUMMARY STATISTICS SUBMISSION'
         }
 
         const { submissionStatus } = this.state;
@@ -864,8 +878,8 @@ class SubmissionDetails extends Component {
                         spacing={4}
                     >
                         <Paper className={classes.paper}>
-                            <Grid item xs={12}>
-                                <Typography gutterBottom variant="h5" className={classes.headerTextStyle}>
+                            <Grid item xs={12} className={classes.pageHeader}>
+                                <Typography variant="h5" className={classes.headerTextStyle}>
                                     Publication details for PMID: {this.state.publication_obj.pmid}
                                 </Typography>
                             </Grid>
@@ -887,12 +901,13 @@ class SubmissionDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            <Grid item xs={12}>
+                            {/* <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     Catalog status: {transformedPublicationStatus}
                                 </Typography>
-                            </Grid><Grid item xs={12}>
-                                <Typography className={classes.publicationTextStyle}>
+                            </Grid> */}
+                            <Grid item xs={12}>
+                                <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     Summary statistics location: <i>To be added once data is available....</i>
                                 </Typography>
                             </Grid>
