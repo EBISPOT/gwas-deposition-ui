@@ -32,6 +32,9 @@ const styles = theme => ({
     headerTextStyle: {
         fontWeight: 500,
     },
+    pageHeader: {
+        height: 52,
+    },
     publicationTitleTextStyle: {
         fontSize: 20,
         fontStyle: 'italic',
@@ -132,7 +135,7 @@ class SubmissionDetails extends Component {
             submissionError: null,
             deleteFileError: null,
             downloadSummaryStatsFileError: null,
-            submissionStatus: null,
+            submissionStatus: 'NA',
             metadataStatus: null,
             summaryStatisticsStatus: null,
             publicationStatus: null,
@@ -875,8 +878,8 @@ class SubmissionDetails extends Component {
                         spacing={4}
                     >
                         <Paper className={classes.paper}>
-                            <Grid item xs={12}>
-                                <Typography gutterBottom variant="h5" className={classes.headerTextStyle}>
+                            <Grid item xs={12} className={classes.pageHeader}>
+                                <Typography variant="h5" className={classes.headerTextStyle}>
                                     Publication details for PMID: {this.state.publication_obj.pmid}
                                 </Typography>
                             </Grid>
@@ -898,12 +901,13 @@ class SubmissionDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            <Grid item xs={12}>
+                            {/* <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     Catalog status: {transformedPublicationStatus}
                                 </Typography>
-                            </Grid><Grid item xs={12}>
-                                <Typography className={classes.publicationTextStyle}>
+                            </Grid> */}
+                            <Grid item xs={12}>
+                                <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     Summary statistics location: <i>To be added once data is available....</i>
                                 </Typography>
                             </Grid>

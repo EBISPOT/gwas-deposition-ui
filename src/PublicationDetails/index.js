@@ -38,6 +38,9 @@ const styles = theme => ({
     headerTextStyle: {
         fontWeight: 500,
     },
+    pageHeader: {
+        height: 52,
+    },
     publicationTitleTextStyle: {
         fontSize: 20,
         fontStyle: 'italic',
@@ -219,12 +222,13 @@ class PublicationDetails extends Component {
                 <Button onClick={this.createSubmission} className={classes.button}>
                     Create Submission
                 </Button>
-        } else {
-            create_submission_button =
-                <Button disabled variant="outlined" className={classes.button}>
-                    Create Submission
-                </Button>
         }
+        // else {
+        //     create_submission_button =
+        //         <Button disabled variant="outlined" className={classes.button}>
+        //             Create Submission
+        //         </Button>
+        // }
 
         // Show View Submission details button
         if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' || publicationStatus === 'UNDER_SUBMISSION') {
@@ -270,7 +274,7 @@ class PublicationDetails extends Component {
                                 justify="flex-start"
                                 alignItems="flex-start"
                             >
-                                <Grid item xs={8}>
+                                <Grid item xs={8} className={classes.pageHeader}>
                                     <Typography variant="h5" className={classes.headerTextStyle}>
                                         Publication details for PMID: {this.PUBMED_ID}
                                     </Typography>
@@ -296,18 +300,16 @@ class PublicationDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            {/* <Grid container item xs={12}> */}
                             <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     Catalog status: {transformedPublicationStatus}
                                 </Typography>
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={12}>
                                 <Typography className={classes.closedMessageTextStyle}>
                                     {closedMessage}
                                 </Typography>
                             </Grid>
-                            {/* </Grid> */}
 
                             {create_submission_button}
 
