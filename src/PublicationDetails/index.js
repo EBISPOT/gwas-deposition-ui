@@ -53,8 +53,8 @@ const styles = theme => ({
         fontSize: 18,
         marginTop: 32,
     },
-    closedMessageTextStyle: {
-        fontSize: 14,
+    statusExplanationMessageTextStyle: {
+        fontSize: 18,
         fontStyle: 'italic'
     },
     button: {
@@ -81,6 +81,9 @@ const styles = theme => ({
     },
     errorText: {
         color: 'red',
+    },
+    bold: {
+        fontWeight: 600,
     },
 });
 
@@ -213,8 +216,9 @@ class PublicationDetails extends Component {
         let showSubmissionDetailsButton;
         const gwasInfoEmail = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
         const gwasSubsEmail = <a href="mailto:gwas-subs@ebi.ac.uk">gwas-subs@ebi.ac.uk</a>;
-        let closedMessage;
-
+        let statusExplanationMessageText;
+        const eligibleBoldText = <span className={classes.bold}>submit both summary statistics and supporting metadata</span>
+        const publishedBoldText = <span className={classes.bold}>submit summary statistics</span>
 
         // Show Create Submission button
         if (publicationStatus === 'ELIGIBLE' || publicationStatus === 'PUBLISHED') {
@@ -238,20 +242,38 @@ class PublicationDetails extends Component {
                 </Button>
         }
 
-        // Show reason why Publication status is CLOSED
+        // Show message to explain status
         if (publicationStatus === 'UNDER_SUBMISSION' || publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-            closedMessage =
+            statusExplanationMessageText =
                 <span>
                     This publication is currently under submission. Please check back
                     for updates or email {gwasInfoEmail} for additional information.
                 </span>
         }
         if (publicationStatus === 'PUBLISHED_WITH_SS') {
-            closedMessage =
+            statusExplanationMessageText =
                 <span>
                     This publication and associated summary statistics are already available in the GWAS Catalog.
                     If you would like to submit additional data or request a change to the GWAS Catalog entry
                     please email {gwasSubsEmail}.
+                </span>
+        }
+        if (publicationStatus === 'ELIGIBLE') {
+            statusExplanationMessageText =
+                <span>
+                    Data describing this publication is not yet available in the GWAS Catalog. If you are an
+                    author of this publication please {eligibleBoldText}
+                    [link to section in documentation].
+                </span>
+        }
+        if (publicationStatus === 'PUBLISHED') {
+            statusExplanationMessageText =
+                <span>
+                    Data describing this publication is available in the GWAS Catalog. You are provided with a
+                    pre-filled template containing the metadata. You can {publishedBoldText}
+                    [link to section in documentation] and let us know which file belongs to each study.
+                    If you think there is a mistake in the pre-filled spreadsheet containing the data currently
+                    in the Catalog (e.g. an incorrect number of studies for your publication), please contact {gwasInfoEmail}.
                 </span>
         }
 
@@ -306,8 +328,8 @@ class PublicationDetails extends Component {
                                 </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <Typography className={classes.closedMessageTextStyle}>
-                                    {closedMessage}
+                                <Typography className={classes.statusExplanationMessageTextStyle}>
+                                    {statusExplanationMessageText}
                                 </Typography>
                             </Grid>
 
