@@ -132,8 +132,9 @@ class SubmissionDetails extends Component {
             publication_obj: [],
             file_upload_error: null,
             isNotValid: true,
-            submissionError: null,
+            submitDataError: null,
             deleteFileError: null,
+            reviewLatestFileError: null,
             downloadSummaryStatsFileError: null,
             submissionStatus: 'NA',
             metadataStatus: null,
@@ -173,7 +174,7 @@ class SubmissionDetails extends Component {
                 || this.state.submissionStatus === 'INVALID'
                 || this.state.submissionStatus === 'CURATION_COMPLETE'
                 || this.state.submissionStatus === 'COMPLETE'
-                || this.state.submissionStatus === 'STARTED'
+                // || this.state.submissionStatus === 'STARTED'
                 || this.state.submissionStatus === 'SUBMITTED') {
                 // console.log("** Result found!", this.state.submissionStatus);
                 clearInterval(this.timer)
@@ -368,14 +369,33 @@ class SubmissionDetails extends Component {
 
 
     /**
-     * Download data file for submission
+     * Download and review latest file for submission
      */
     downloadDataFile() {
         let submissionId = this.SUBMISSION_ID;
         let fileId = this.state.fileUploadId;
         let fileName = this.state.fileName;
 
-        this.API_CLIENT.downloadDataFile(submissionId, fileId, fileName);
+        // this.API_CLIENT.downloadDataFile(submissionId, fileId, fileName)
+
+        const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
+        if (!fileName) {
+            fileName = "template.xlsx";
+        }
+        axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + fileId + '/download',
+            {
+                responseType: 'blob',
+            }
+        ).then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+        }).catch((error) => {
+            this.setState({ reviewLatestFileError: 'Error: ' + error.message })
+        })
     }
 
     downloadMetadataTemplate() {
@@ -407,6 +427,7 @@ class SubmissionDetails extends Component {
             link.click();
         }
         ).catch((error) => {
+            console.log("** DL SS Template error: ", error)
             let downloadSSTemplateErrorLabel = "Error: File not found."
             this.setState({ downloadSummaryStatsFileError: downloadSSTemplateErrorLabel });
         })
@@ -459,7 +480,7 @@ class SubmissionDetails extends Component {
             this.API_CLIENT.deleteFileUpload(submissionId, fileId).then(response => {
                 this.setState(() => ({
                     submissionStatus: 'STARTED',
-                    deleteFileError: false,
+                    deleteFileError: null,
                     fileUploadId: null,
                     fileValidationErrorMessage: null,
                     displaySummaryStatsSection: false,
@@ -467,8 +488,8 @@ class SubmissionDetails extends Component {
                     summaryStatisticsStatus: 'NA',
                 }));
             }).catch(error => {
-                this.setState(() => ({ deleteFileError: true }));
-                alert("There was an error deleting the file")
+                let deleteFileErrorLabel = "Error: There was an error deleting the file."
+                this.setState({ deleteFileError: deleteFileErrorLabel });
             })
         }
         else {
@@ -488,17 +509,17 @@ class SubmissionDetails extends Component {
         if (localStorage.getItem('id_token')) {
             let JWTToken = localStorage.getItem('id_token')
             this.API_CLIENT.submitSubmission(submissionId, JWTToken).then(response => {
-                // this.setState(() => ({ submissionError: false }));
+                // Redirect to My Submissions page, NOTE: If using redirect, can't set state here
+                history.push(`${process.env.PUBLIC_URL}/submissions`);
             })
                 .catch(error => {
-                    // this.setState(() => ({ submissionError: true }));
-                    alert("There was an error creating the submission")
+                    this.setState(() => ({ submitDataError: "Error: " + error.message }));
                 })
             // Issue: This reloads the page before the submission is submitted
             // window.location.reload();
 
             // Redirect to My Submissions page, NOTE: If using redirect, can't set state here
-            history.push(`${process.env.PUBLIC_URL}/submissions`);
+            // history.push(`${process.env.PUBLIC_URL}/submissions`);
         }
         else {
             alert("Please login to create a submission")
@@ -510,7 +531,7 @@ class SubmissionDetails extends Component {
     render() {
         const { classes } = this.props;
         const { error } = this.state;
-        const { submissionError } = this.state;
+        const { submitDataError } = this.state;
         // const bull = <span className={classes.bullet}>•</span>;
 
         const OVERALL_STATUS_STARTED = 'STARTED';
@@ -669,7 +690,7 @@ class SubmissionDetails extends Component {
                             Download template
                         </Button>
                         <Typography variant="body2" gutterBottom className={classes.inputCenter}>
-                            {/* {this.state.downloadSummaryStatsFileError} */}
+                            {this.state.downloadSummaryStatsFileError}
                         </Typography>
                     </Fragment>
             }
@@ -677,7 +698,7 @@ class SubmissionDetails extends Component {
         else {
             download_template =
                 <Fragment>
-                    <Button fullWidth className={classes.button} disabled style={{ visibility: this.state.showButtonVisibility }} variant="outlined">
+                    <Button disabled fullWidth className={classes.button} variant="outlined">
                         Download template
                     </Button>
                 </Fragment>
@@ -693,9 +714,6 @@ class SubmissionDetails extends Component {
                     <Button fullWidth onClick={this.displayUploadComponent} className={classes.button} variant="outlined">
                         Upload template
                     </Button>
-                    <Typography variant="body2" gutterBottom className={classes.inputCenter}>
-                        {   /* TODO: Add upload Error: {this.state.downloadSummaryStatsFileError} */}
-                    </Typography>
                 </Fragment>
         } else {
             select_upload_file_button =
@@ -723,6 +741,9 @@ class SubmissionDetails extends Component {
                     <Button onClick={this.submitData} fullWidth className={classes.button}>
                         Submit
                     </Button>
+                    <Typography variant="body2" gutterBottom className={classes.inputCenter}>
+                        {this.state.submitDataError}
+                    </Typography>
                 </Fragment>
         }
 
@@ -737,6 +758,9 @@ class SubmissionDetails extends Component {
                     <Button onClick={this.downloadDataFile} fullWidth className={classes.button}>
                         Review latest file
                     </Button>
+                    <Typography variant="body2" gutterBottom className={classes.inputCenter}>
+                        {this.state.reviewLatestFileError}
+                    </Typography>
                 </Fragment>
         } else {
             download_data_file_button =
@@ -754,14 +778,21 @@ class SubmissionDetails extends Component {
          */
         if ((submissionStatus === 'VALID' || submissionStatus === 'INVALID') && this.state.fileUploadId !== null) {
             delete_file_button =
-                <Button onClick={this.deleteData} fullWidth className={classes.button}>
-                    Delete latest file
-                </Button>
+                <Fragment>
+                    <Button onClick={this.deleteData} fullWidth className={classes.button}>
+                        Delete latest file
+                    </Button>
+                    <Typography variant="body2" gutterBottom className={classes.inputCenter}>
+                        {this.state.deleteFileError}
+                    </Typography>
+                </Fragment>
         } else {
             delete_file_button =
-                <Button disabled fullWidth className={classes.button} variant="outlined">
-                    Delete latest file
+                <Fragment>
+                    <Button disabled fullWidth className={classes.button} variant="outlined">
+                        Delete latest file
                 </Button>
+                </Fragment>
         }
 
 
