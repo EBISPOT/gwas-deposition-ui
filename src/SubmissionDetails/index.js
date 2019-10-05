@@ -173,7 +173,7 @@ class SubmissionDetails extends Component {
                 || this.state.submissionStatus === 'INVALID'
                 || this.state.submissionStatus === 'CURATION_COMPLETE'
                 || this.state.submissionStatus === 'COMPLETE'
-                || this.state.submissionStatus === 'STARTED'
+                // || this.state.submissionStatus === 'STARTED'
                 || this.state.submissionStatus === 'SUBMITTED') {
                 // console.log("** Result found!", this.state.submissionStatus);
                 clearInterval(this.timer)
@@ -669,7 +669,7 @@ class SubmissionDetails extends Component {
                             Download template
                         </Button>
                         <Typography variant="body2" gutterBottom className={classes.inputCenter}>
-                            {/* {this.state.downloadSummaryStatsFileError} */}
+                            {this.state.downloadSummaryStatsFileError}
                         </Typography>
                     </Fragment>
             }
@@ -677,7 +677,7 @@ class SubmissionDetails extends Component {
         else {
             download_template =
                 <Fragment>
-                    <Button fullWidth className={classes.button} disabled style={{ visibility: this.state.showButtonVisibility }} variant="outlined">
+                    <Button disabled fullWidth className={classes.button} variant="outlined">
                         Download template
                     </Button>
                 </Fragment>
