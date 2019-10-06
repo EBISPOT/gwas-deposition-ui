@@ -6,9 +6,6 @@ import history from "../history";
 
 import { Link } from 'react-router-dom'
 
-import Container from '@material-ui/core/Container';
-
-
 import { forwardRef } from 'react';
 
 import AddBox from '@material-ui/icons/AddBox';
@@ -26,6 +23,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { Container } from '@material-ui/core';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -64,25 +62,25 @@ class Submissions extends React.Component {
 
     render() {
         return (
-            <Container>
+            <Container maxWidth="xl">
                 <MaterialTable
                     icons={tableIcons}
                     title="My Submissions"
                     columns={[
+                        { title: 'PubMedID', field: 'publication.pmid', sorting: true },
                         {
-                            title: 'ID', field: 'submissionId',
+                            title: 'Submission ID', field: 'submissionId',
                             render: rowData => (<Link to={{
                                 pathname: `${process.env.PUBLIC_URL}/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
                             }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
                         },
-                        { title: 'PubMedID', field: 'publication.pmid', sorting: true },
                         { title: 'First author', field: 'publication.firstAuthor', sorting: true },
                         { title: 'Submission Status', field: 'submission_status', sorting: true },
                         { title: 'Metadata Status', field: 'metadata_status', sorting: true },
                         { title: 'Summary statistics Status', field: 'summary_statistics_status', sorting: true },
                         { title: 'Submitter', field: 'created.user.name', sorting: true },
                         {
-                            title: 'Date submission started', field: 'created.timestamp', sorting: true,
+                            title: 'Date submission started', field: 'created.timestamp', sorting: true, defaultSort: 'desc',
                             render: rowData => (this.transformDateFormat(rowData.created.timestamp))
                         },
                     ]}
@@ -131,9 +129,11 @@ class Submissions extends React.Component {
                                 // Handle sorting all results
                                 if (query.orderBy) {
                                     let sortOrder = query.orderDirection;
-                                    //Sorting for submissions is only supported for submissionId
+                                    // Server-side Sorting for submissions is only supported for submissionId
                                     url += '&sort=' + query.orderBy.field + ',' + sortOrder
                                 }
+
+                                console.log("** URL: ", url)
 
                                 fetch(url)
                                     .then(response => response.json())
@@ -160,13 +160,14 @@ class Submissions extends React.Component {
                         pageSize: 10,
                         pageSizeOptions: [10, 20, 50],
                         searchFieldStyle: {
-                            width: 340,
+                            width: 410,
                         },
                         sorting: true,
+                        debounceInterval: 3000,
                     }}
                     localization={{
                         toolbar: {
-                            searchPlaceholder: 'Search by PubMedID or ID',
+                            searchPlaceholder: 'Search by PubMedID or Submission ID',
                         }
                     }}
                 />
