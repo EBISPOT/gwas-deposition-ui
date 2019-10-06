@@ -26,6 +26,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { decomposeColor } from '@material-ui/core/styles';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -82,7 +83,7 @@ class Submissions extends React.Component {
                         { title: 'Summary statistics Status', field: 'summary_statistics_status', sorting: true },
                         { title: 'Submitter', field: 'created.user.name', sorting: true },
                         {
-                            title: 'Date submission started', field: 'created.timestamp', sorting: true,
+                            title: 'Date submission started', field: 'created.timestamp', sorting: true, defaultSort: 'desc',
                             render: rowData => (this.transformDateFormat(rowData.created.timestamp))
                         },
                     ]}
@@ -131,9 +132,11 @@ class Submissions extends React.Component {
                                 // Handle sorting all results
                                 if (query.orderBy) {
                                     let sortOrder = query.orderDirection;
-                                    //Sorting for submissions is only supported for submissionId
+                                    // Server-side Sorting for submissions is only supported for submissionId
                                     url += '&sort=' + query.orderBy.field + ',' + sortOrder
                                 }
+
+                                console.log("** URL: ", url)
 
                                 fetch(url)
                                     .then(response => response.json())
