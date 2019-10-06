@@ -6,9 +6,6 @@ import history from "../history";
 
 import { Link } from 'react-router-dom'
 
-import Container from '@material-ui/core/Container';
-
-
 import { forwardRef } from 'react';
 
 import AddBox from '@material-ui/icons/AddBox';
@@ -26,6 +23,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { Container } from '@material-ui/core';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -64,7 +62,7 @@ class Submissions extends React.Component {
 
     render() {
         return (
-            <Container>
+            <Container maxWidth="xl">
                 <MaterialTable
                     icons={tableIcons}
                     title="My Submissions"
@@ -165,6 +163,7 @@ class Submissions extends React.Component {
                             width: 410,
                         },
                         sorting: true,
+                        debounceInterval: 3000,
                     }}
                     localization={{
                         toolbar: {
