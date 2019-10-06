@@ -26,7 +26,6 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import { decomposeColor } from '@material-ui/core/styles';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -70,13 +69,13 @@ class Submissions extends React.Component {
                     icons={tableIcons}
                     title="My Submissions"
                     columns={[
+                        { title: 'PubMedID', field: 'publication.pmid', sorting: true },
                         {
-                            title: 'ID', field: 'submissionId',
+                            title: 'Submission ID', field: 'submissionId',
                             render: rowData => (<Link to={{
                                 pathname: `${process.env.PUBLIC_URL}/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
                             }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
                         },
-                        { title: 'PubMedID', field: 'publication.pmid', sorting: true },
                         { title: 'First author', field: 'publication.firstAuthor', sorting: true },
                         { title: 'Submission Status', field: 'submission_status', sorting: true },
                         { title: 'Metadata Status', field: 'metadata_status', sorting: true },
@@ -163,13 +162,13 @@ class Submissions extends React.Component {
                         pageSize: 10,
                         pageSizeOptions: [10, 20, 50],
                         searchFieldStyle: {
-                            width: 340,
+                            width: 410,
                         },
                         sorting: true,
                     }}
                     localization={{
                         toolbar: {
-                            searchPlaceholder: 'Search by PubMedID or ID',
+                            searchPlaceholder: 'Search by PubMedID or Submission ID',
                         }
                     }}
                 />
