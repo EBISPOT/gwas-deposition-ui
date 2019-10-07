@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import Container from '@material-ui/core/Container';
 
 import { UserConsumer } from '../user-context';
@@ -23,7 +23,7 @@ class Home extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-            <Container>
+            <Fragment>
                 <Grid container
                     direction="column"
                     justify="space-evenly"
@@ -39,7 +39,7 @@ class Home extends React.Component {
                         justify="center"
                         alignItems="center"
                     >
-                        <Grid item xs={11}>
+                        <Grid item xs={9}>
                             <Typography gutterBottom variant="body1">
                                 In the search bar below, you can search all GWAS Catalog publications,
                                 including those in the curation queue. If you are an author of the publication
@@ -66,7 +66,7 @@ class Home extends React.Component {
                     <PublicationsMatTable />
 
                 </Grid>
-            </Container>
+            </Fragment>
         )
     }
 }

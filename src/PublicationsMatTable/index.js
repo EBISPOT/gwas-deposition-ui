@@ -87,6 +87,7 @@ class PublicationsMatTable extends React.Component {
 
         this.state = ({
             value: '',
+            searchValue: '',
         });
         this.handleChange = this.handleChange.bind(this);
         this.getUserFriendlyStatusLabels = this.getUserFriendlyStatusLabels.bind(this);
@@ -103,9 +104,13 @@ class PublicationsMatTable extends React.Component {
         // clear value
         this.setState({
             value: '',
+            searchValue: '',
         })
+
         // refresh table
-        this.tableRef.current.onQueryChange();
+        if (this.tableRef.current) {
+            this.tableRef.current.onQueryChange();
+        }
     }
 
 
@@ -130,11 +135,12 @@ class PublicationsMatTable extends React.Component {
         const { classes } = this.props;
         const emailContact = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
         const noResultsMessage = <span className={classes.noResultsTextStyle}>No results were found. Please email {emailContact} to request an eligibility review of your publication.</span>;
-        const { value } = this.state;
-        let searchTextValue = value.trim();
+
+        let { searchValue } = this.state;
+        let searchTextValue = searchValue.trim();
 
         return (
-            <Container className={classes.publicationContainer}>
+            <Container maxWidth="xl" className={classes.publicationContainer}>
 
                 <Grid container
                     direction="row"
@@ -155,8 +161,8 @@ class PublicationsMatTable extends React.Component {
                             onKeyPress={(event) => {
                                 if (event.key === 'Enter') {
                                     event.preventDefault();
-                                    this.setState({ value: event.target.value });
-                                    this.tableRef.current.onQueryChange();
+                                    this.setState({ value: event.target.value, searchValue: event.target.value });
+                                    this.tableRef.current && this.tableRef.current.onQueryChange();
                                 }
                             }}
                         />
@@ -164,65 +170,113 @@ class PublicationsMatTable extends React.Component {
                     </Grid>
                 </Grid>
 
-                <MaterialTable
-                    tableRef={this.tableRef}
-                    icons={tableIcons}
-                    columns={[
-                        {
-                            title: 'PubMedID', field: 'pmid',
-                            render: rowData => (<Link to={{
-                                pathname: `${process.env.PUBLIC_URL}/publication/${rowData.pmid}`,
-                                state: { pmid: rowData.pmid }
-                            }}
-                                style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
-                        },
-                        { title: 'First author', field: 'firstAuthor', },
-                        { title: 'Publication', field: 'title' },
-                        { title: 'Journal', field: 'journal' },
-                        {
-                            title: 'Status', field: 'status',
-                            render: rowData => (this.getUserFriendlyStatusLabels(rowData.status))
-                        },
-                    ]}
-                    data={query =>
-                        new Promise((resolve, reject) => {
-                            // Replace search text value in Query object with input from TextField
-                            query.search = searchTextValue;
-
-                            let url = GET_PUBLICATIONS_URL
-
-                            // Handle search by PubMedID
-                            let onlyNumbers = /^\d+$/;
-
-                            if (query.search) {
-                                if (onlyNumbers.test(query.search)) {
-                                    url += '/' + query.search + '?pmid=true'
-                                    fetch(url)
-                                        .then(response => response.json())
-                                        .then(result => {
-                                            resolve({
-                                                data: [result],
-                                                page: 0,
-                                                totalCount: 1,
-                                            })
-                                        }).catch(error => {
-                                        })
+                {searchTextValue && (
+                    <MaterialTable
+                        tableRef={this.tableRef}
+                        icons={tableIcons}
+                        columns={[
+                            {
+                                title: 'PubMedID', field: 'pmid',
+                                render: rowData => (<Link to={{
+                                    pathname: `${process.env.PUBLIC_URL}/publication/${rowData.pmid}`,
+                                    state: { pmid: rowData.pmid }
+                                }}
+                                    style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
+                            },
+                            { title: 'First author', field: 'firstAuthor', },
+                            { title: 'Publication', field: 'title' },
+                            { title: 'Journal', field: 'journal' },
+                            {
+                                title: 'Status', field: 'status',
+                                render: rowData => (this.getUserFriendlyStatusLabels(rowData.status))
+                            },
+                        ]}
+                        data={query =>
+                            new Promise((resolve, reject) => {
+                                // Re-set search page for new query
+                                if (query.search !== searchTextValue) {
+                                    query.page = 0
                                 }
-                                // Handle search by Author
+
+                                // Replace search text value in Query object with input from TextField
+                                query.search = searchTextValue;
+
+                                let url = GET_PUBLICATIONS_URL
+
+                                // Handle search by PubMedID
+                                let onlyNumbers = /^\d+$/;
+
+                                if (query.search) {
+                                    if (onlyNumbers.test(query.search)) {
+                                        url += '/' + query.search + '?pmid=true'
+                                        fetch(url)
+                                            .then(response => response.json())
+                                            .then(result => {
+                                                resolve({
+                                                    data: [result],
+                                                    page: 0,
+                                                    totalCount: 1,
+                                                })
+                                            }).catch(error => {
+                                            })
+                                    }
+                                    // Handle search by Author
+                                    else {
+                                        url += '?author=' + query.search
+                                        url += '&size=' + query.pageSize
+                                        url += '&page=' + (query.page)
+
+                                        // Handle sorting search by Author results
+                                        if (query.orderBy) {
+                                            let modifiedSortField;
+                                            let fields_to_modify = ['title', 'journal', 'status', 'firstAuthor'];
+
+                                            // Update to use Solr requires these fields be appended with "_str"
+                                            if (fields_to_modify.includes(query.orderBy.field)) {
+                                                modifiedSortField = query.orderBy.field + '_str'
+                                                url += '&sort=' + modifiedSortField + ',' + query.orderDirection
+                                            }
+                                            else {
+                                                url += '&sort=' + query.orderBy.field + ',' + query.orderDirection
+                                            }
+                                        }
+                                        else {
+                                            // Sort search by Author results asc by default
+                                            // Note: Sorting is supported for only 1 column at a time
+                                            url += '&sort=firstAuthor_str,asc'
+                                        }
+
+                                        fetch(url)
+                                            .then(response => response.json())
+                                            .then(result => {
+                                                resolve({
+                                                    data: result._embedded.publications,
+                                                    page: result.page.number,
+                                                    totalCount: result.page.totalElements,
+                                                })
+                                            }).catch(error => {
+                                            })
+                                    }
+                                }
+                                // Display all results if table not hidden and
+                                // there is no search term (initial version)
                                 else {
-                                    url += '?author=' + query.search
-                                    url += '&size=' + query.pageSize
+                                    url += '?size=' + query.pageSize
                                     url += '&page=' + (query.page)
 
-                                    // Handle sorting search by Author results
+                                    // Handle sorting all results
                                     if (query.orderBy) {
-                                        let sortOrder = query.orderDirection;
-                                        url += '&sort=' + query.orderBy.field + ',' + sortOrder
-                                    }
-                                    else {
-                                        // Sort search by Author results asc by default
-                                        // Note: Sorting is supported for only 1 column
-                                        url += '&sort=firstAuthor,asc'
+                                        let modifiedSortField;
+                                        let fields_to_modify = ['title', 'journal', 'status', 'firstAuthor'];
+
+                                        // Update to use Solr requires these fields be appended with "_str"
+                                        if (fields_to_modify.includes(query.orderBy.field)) {
+                                            modifiedSortField = query.orderBy.field + '_str'
+                                            url += '&sort=' + modifiedSortField + ',' + query.orderDirection
+                                        }
+                                        else {
+                                            url += '&sort=' + query.orderBy.field + ',' + query.orderDirection
+                                        }
                                     }
 
                                     fetch(url)
@@ -236,50 +290,28 @@ class PublicationsMatTable extends React.Component {
                                         }).catch(error => {
                                         })
                                 }
-                            }
-                            // Display all results
-                            else {
-                                url += '?size=' + query.pageSize
-                                url += '&page=' + (query.page)
-
-                                // Handle sorting all results
-                                if (query.orderBy) {
-                                    let sortOrder = query.orderDirection;
-                                    url += '&sort=' + query.orderBy.field + ',' + sortOrder
-                                }
-
-                                fetch(url)
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        resolve({
-                                            data: result._embedded.publications,
-                                            page: result.page.number,
-                                            totalCount: result.page.totalElements,
-                                        })
-                                    }).catch(error => {
-                                    })
-                            }
-                            setTimeout(() => {
-                                resolve({
-                                    data: [],
-                                    page: 0,
-                                    totalCount: 0,
-                                });
-                            }, 5000);
-                        })
-                    }
-                    options={{
-                        pageSize: 10,
-                        pageSizeOptions: [10, 20, 50],
-                        debounceInterval: 250,
-                        toolbar: false,
-                    }}
-                    localization={{
-                        body: {
-                            emptyDataSourceMessage: noResultsMessage
+                                setTimeout(() => {
+                                    resolve({
+                                        data: [],
+                                        page: 0,
+                                        totalCount: 0,
+                                    });
+                                }, 3000);
+                            })
                         }
-                    }}
-                />
+                        options={{
+                            pageSize: 10,
+                            pageSizeOptions: [10, 20, 50],
+                            debounceInterval: 250,
+                            toolbar: false,
+                        }}
+                        localization={{
+                            body: {
+                                emptyDataSourceMessage: noResultsMessage
+                            }
+                        }}
+                    />
+                )}
             </Container>
         )
     }
