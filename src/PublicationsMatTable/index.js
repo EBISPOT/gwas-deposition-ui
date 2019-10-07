@@ -140,7 +140,7 @@ class PublicationsMatTable extends React.Component {
         let searchTextValue = searchValue.trim();
 
         return (
-            <Container className={classes.publicationContainer}>
+            <Container maxWidth="xl" className={classes.publicationContainer}>
 
                 <Grid container
                     direction="row"
@@ -227,17 +227,24 @@ class PublicationsMatTable extends React.Component {
                                         url += '&page=' + (query.page)
 
                                         // Handle sorting search by Author results
-                                        // if (query.orderBy) {
-                                        //     let sortOrder = query.orderDirection;
-                                        //     url += '&sort=' + query.orderBy.field + ',' + sortOrder
-                                        // }
-                                        // else {
-                                        // Sort search by Author results asc by default
-                                        // Note: Sorting is supported for only 1 column
-                                        // url += '&sort=firstAuthor,asc'
-                                        // TODO: Check if sorting is still supported
-                                        // url = url
-                                        // }
+                                        if (query.orderBy) {
+                                            let modifiedSortField;
+                                            let fields_to_modify = ['title', 'journal', 'status', 'firstAuthor'];
+
+                                            // Update to use Solr requires these fields be appended with "_str"
+                                            if (fields_to_modify.includes(query.orderBy.field)) {
+                                                modifiedSortField = query.orderBy.field + '_str'
+                                                url += '&sort=' + modifiedSortField + ',' + query.orderDirection
+                                            }
+                                            else {
+                                                url += '&sort=' + query.orderBy.field + ',' + query.orderDirection
+                                            }
+                                        }
+                                        else {
+                                            // Sort search by Author results asc by default
+                                            // Note: Sorting is supported for only 1 column at a time
+                                            url += '&sort=firstAuthor_str,asc'
+                                        }
 
                                         fetch(url)
                                             .then(response => response.json())
@@ -251,15 +258,25 @@ class PublicationsMatTable extends React.Component {
                                             })
                                     }
                                 }
-                                // Display all results
+                                // Display all results if table not hidden and
+                                // there is no search term (initial version)
                                 else {
                                     url += '?size=' + query.pageSize
                                     url += '&page=' + (query.page)
 
                                     // Handle sorting all results
                                     if (query.orderBy) {
-                                        let sortOrder = query.orderDirection;
-                                        url += '&sort=' + query.orderBy.field + ',' + sortOrder
+                                        let modifiedSortField;
+                                        let fields_to_modify = ['title', 'journal', 'status', 'firstAuthor'];
+
+                                        // Update to use Solr requires these fields be appended with "_str"
+                                        if (fields_to_modify.includes(query.orderBy.field)) {
+                                            modifiedSortField = query.orderBy.field + '_str'
+                                            url += '&sort=' + modifiedSortField + ',' + query.orderDirection
+                                        }
+                                        else {
+                                            url += '&sort=' + query.orderBy.field + ',' + query.orderDirection
+                                        }
                                     }
 
                                     fetch(url)
