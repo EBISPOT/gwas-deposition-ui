@@ -18,6 +18,7 @@ import API_CLIENT from '../apiClient';
 import history from "../history";
 
 import axios from 'axios';
+import { red } from '@material-ui/core/colors';
 
 const styles = theme => ({
     root: {
@@ -70,6 +71,9 @@ const styles = theme => ({
     },
     error_icon: {
         fill: 'red',
+    },
+    errorText: {
+        color: 'red',
     },
     button: {
         marginTop: theme.spacing(1),
@@ -166,6 +170,8 @@ class SubmissionDetails extends Component {
     }
 
     componentDidMount() {
+        this.getSubmissionDetails();
+
         this._isMounted = true;
 
         this.timer = setInterval(() => {
@@ -174,14 +180,13 @@ class SubmissionDetails extends Component {
                 || this.state.submissionStatus === 'INVALID'
                 || this.state.submissionStatus === 'CURATION_COMPLETE'
                 || this.state.submissionStatus === 'COMPLETE'
-                // || this.state.submissionStatus === 'STARTED'
+                || this.state.submissionStatus === 'STARTED'
                 || this.state.submissionStatus === 'SUBMITTED') {
-                // console.log("** Result found!", this.state.submissionStatus);
                 clearInterval(this.timer)
             } else {
                 this.getSubmissionDetails();
             }
-        }, 200)
+        }, 30000)
     }
 
     componentWillUnmount() {
@@ -193,68 +198,75 @@ class SubmissionDetails extends Component {
      * Get Submission details and update state
      */
     getSubmissionDetails() {
-        // async componentDidMount() {
-        this.API_CLIENT.getSubmission(this.SUBMISSION_ID).then((data) => {
+        // this.API_CLIENT.getSubmission(this.SUBMISSION_ID).then((data) => {
 
-            // Only update state if component still mounted
-            if (this._isMounted) {
+        const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
+        axios.get(BASE_URI + 'submissions/' + this.SUBMISSION_ID)
+            .then((response) => {
 
-                this.setState({ ...this.state, submission_data: data });
-                this.setState({ ...this.state, submissionStatus: data.submission_status });
-                this.setState({ ...this.state, metadataStatus: data.metadata_status });
-                this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
-                this.setState({ ...this.state, publication_obj: data.publication });
-                this.setState({ ...this.state, publicationStatus: data.publication.status });
+                let data = response.data
 
-                if (data.created.user.name) {
-                    this.setState({ ...this.state, userName: data.created.user.name });
-                }
+                // Only update state if component still mounted
+                if (this._isMounted) {
 
-                if (data.created.timestamp) {
-                    // Format timeStamp for display
-                    let createdTimestamp = new Date(data.created.timestamp);
-                    createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
-                    this.setState({ ...this.state, submissionCreatedDate: createdTimestamp });
-                }
+                    this.setState({ ...this.state, submission_data: data });
+                    this.setState({ ...this.state, submissionStatus: data.submission_status });
+                    this.setState({ ...this.state, metadataStatus: data.metadata_status });
+                    this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
+                    this.setState({ ...this.state, publication_obj: data.publication });
+                    this.setState({ ...this.state, publicationStatus: data.publication.status });
 
-                if (data.status === 'VALID_METADATA') {
-                    this.setState({ ...this.state, isNotValid: false });
-                }
-
-                if (data.files.length > 0) {
-                    /** 
-                     * Parse file metadata
-                    */
-                    const { summaryStatsFileMetadata,
-                        metadataFileMetadata,
-                        summaryStatsTemplateFileMetadata } = this.parseFileMetadata(data.files);
-
-                    /**
-                     * Set state based on type of file uploaded
-                     */
-                    if (summaryStatsFileMetadata.fileUploadId !== undefined) {
-                        this.setState({ ...this.state, fileUploadId: summaryStatsFileMetadata.fileUploadId })
-                        this.setState({ ...this.state, fileName: summaryStatsFileMetadata.fileName })
-                        this.setState({ ...this.state, fileValidationErrorMessage: summaryStatsFileMetadata.summary_stats_errors });
-                    }
-                    else {
-                        this.setState({ ...this.state, fileUploadId: metadataFileMetadata.fileUploadId })
-                        this.setState({ ...this.state, fileName: metadataFileMetadata.fileName })
-                        this.setState({ ...this.state, fileValidationErrorMessage: metadataFileMetadata.metadata_errors });
+                    if (data.created.user.name) {
+                        this.setState({ ...this.state, userName: data.created.user.name });
                     }
 
-                    /**
-                     * Set data for Download Summary Stats template
-                     */
-                    if (summaryStatsTemplateFileMetadata.fileUploadId !== undefined) {
-                        this.setState({ ...this.state, summaryStatsTemplateFileUploadId: summaryStatsTemplateFileMetadata.fileUploadId });
-                        this.setState({ ...this.state, summaryStatsTemplateFileName: summaryStatsTemplateFileMetadata.fileName });
+                    if (data.created.timestamp) {
+                        // Format timeStamp for display
+                        let createdTimestamp = new Date(data.created.timestamp);
+                        createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
+                        this.setState({ ...this.state, submissionCreatedDate: createdTimestamp });
+                    }
+
+                    if (data.status === 'VALID_METADATA') {
+                        this.setState({ ...this.state, isNotValid: false });
+                    }
+
+                    if (data.files.length > 0) {
+                        /**
+                         * Parse file metadata
+                        */
+                        const { summaryStatsFileMetadata,
+                            metadataFileMetadata,
+                            summaryStatsTemplateFileMetadata } = this.parseFileMetadata(data.files);
+
+                        /**
+                         * Set state based on type of file uploaded
+                         */
+                        if (summaryStatsFileMetadata.fileUploadId !== undefined) {
+                            this.setState({ ...this.state, fileUploadId: summaryStatsFileMetadata.fileUploadId })
+                            this.setState({ ...this.state, fileName: summaryStatsFileMetadata.fileName })
+                            this.setState({ ...this.state, fileValidationErrorMessage: summaryStatsFileMetadata.summary_stats_errors });
+                        }
+                        else {
+                            this.setState({ ...this.state, fileUploadId: metadataFileMetadata.fileUploadId })
+                            this.setState({ ...this.state, fileName: metadataFileMetadata.fileName })
+                            this.setState({ ...this.state, fileValidationErrorMessage: metadataFileMetadata.metadata_errors });
+                        }
+
+                        /**
+                         * Set data for Download Summary Stats template
+                         */
+                        if (summaryStatsTemplateFileMetadata.fileUploadId !== undefined) {
+                            this.setState({ ...this.state, summaryStatsTemplateFileUploadId: summaryStatsTemplateFileMetadata.fileUploadId });
+                            this.setState({ ...this.state, summaryStatsTemplateFileName: summaryStatsTemplateFileMetadata.fileName });
+                        }
                     }
                 }
-            }
-        }).catch(error => {
-            console.log("** Error: ", error);
-        });
+            }).catch(error => {
+                console.log("** Error: ", error);
+                // Stop polling if error returned
+                this.setState({ submissionStatus: null })
+            });
     }
 
 
@@ -824,14 +836,22 @@ class SubmissionDetails extends Component {
             metadata_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
+                        {metadataStatus}
                     </Typography>
                 </Grid>
         } else if (metadataStatus === 'NA' && publicationStatus === 'UNDER_SUBMISSION') {
             metadata_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
+                        {metadataStatus}
+                    </Typography>
+                </Grid>
+        }
+        else if (submissionStatus === null) {
+            metadata_status_icon =
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.errorText}>
+                        Error retrieving data.
                     </Typography>
                 </Grid>
         }
@@ -839,7 +859,7 @@ class SubmissionDetails extends Component {
             metadata_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
+                        <CircularProgress className={classes.progress} size={24} />
                     </Typography>
                 </Grid>
         }
@@ -855,25 +875,32 @@ class SubmissionDetails extends Component {
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
                     </Typography>
                 </Grid>
-        } else if (summaryStatisticsStatus === 'INVALID' || summaryStatisticsStatus === 'NA') {
+        } else if (summaryStatisticsStatus === 'INVALID') {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
                     </Typography>
                 </Grid>
-        } else if (summaryStatisticsStatus === 'VALIDATING') {
+        } else if (summaryStatisticsStatus === 'NA') {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <CircularProgress className={classes.progress} size={24} />
+                        {summaryStatisticsStatus}
+                    </Typography>
+                </Grid>
+        } else if (submissionStatus === null) {
+            summary_statistics_status_icon =
+                <Grid item xs={8}>
+                    <Typography variant="h6" className={classes.errorText}>
+                        Error retrieving data.
                     </Typography>
                 </Grid>
         } else {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
+                        <CircularProgress className={classes.progress} size={24} />
                     </Typography>
                 </Grid>
         }
@@ -895,7 +922,6 @@ class SubmissionDetails extends Component {
                         </Button> : null}
                 </Grid>
             </Fragment>
-
 
 
         return (
@@ -1050,14 +1076,14 @@ class SubmissionDetails extends Component {
                                             <Grid item container xs={6}>
                                                 <Grid item xs={4}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        Metadata valid
+                                                        Metadata valid:
                                                     </Typography>
                                                 </Grid>
                                                 {metadata_status_icon}
 
                                                 <Grid item xs={4}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        SumStats valid
+                                                        SumStats valid:
                                                     </Typography>
                                                 </Grid>
                                                 {summary_statistics_status_icon}
