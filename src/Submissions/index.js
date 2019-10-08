@@ -133,8 +133,6 @@ class Submissions extends React.Component {
                                     url += '&sort=' + query.orderBy.field + ',' + sortOrder
                                 }
 
-                                console.log("** URL: ", url)
-
                                 fetch(url)
                                     .then(response => response.json())
                                     .then(result => {
