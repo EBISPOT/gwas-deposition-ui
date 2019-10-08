@@ -44,9 +44,13 @@ class Home extends React.Component {
                                 In the search bar below, you can search all GWAS Catalog publications,
                                 including those in the curation queue. If you are an author of the publication
                                 and have available summary statistics, please click on the PubMed ID to a
-                                create submission. <br /><br />
-                                For additional information please read the documentation. If you cannot find your
-                                publication, or need further help, please e-mail <a href="mailto:gwas-info@ebi.ac.uk?subject=Deposition submission help request">gwas-info@ebi.ac.uk</a>.
+                                create submission. Before submission, please ensure your files conform to our
+                                standard format [Link to relevant doc]. You will then have the option of
+                                mounting them on the GWAS Catalog ftp or providing them through a publicly
+                                accessible website.<br /><br />
+                                For additional information please read the documentation [Link to relevant doc].
+                                If you cannot find your publication, or need further help,
+                                please e-mail <a href="mailto:gwas-info@ebi.ac.uk?subject=Deposition submission help request">gwas-info@ebi.ac.uk</a>.
                             </Typography>
                         </Grid>
                     </Grid>
