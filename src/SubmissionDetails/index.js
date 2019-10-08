@@ -166,6 +166,8 @@ class SubmissionDetails extends Component {
     }
 
     componentDidMount() {
+        this.getSubmissionDetails();
+
         this._isMounted = true;
 
         this.timer = setInterval(() => {
@@ -174,14 +176,13 @@ class SubmissionDetails extends Component {
                 || this.state.submissionStatus === 'INVALID'
                 || this.state.submissionStatus === 'CURATION_COMPLETE'
                 || this.state.submissionStatus === 'COMPLETE'
-                // || this.state.submissionStatus === 'STARTED'
+                || this.state.submissionStatus === 'STARTED'
                 || this.state.submissionStatus === 'SUBMITTED') {
-                // console.log("** Result found!", this.state.submissionStatus);
                 clearInterval(this.timer)
             } else {
                 this.getSubmissionDetails();
             }
-        }, 200)
+        }, 30000)
     }
 
     componentWillUnmount() {
@@ -193,7 +194,6 @@ class SubmissionDetails extends Component {
      * Get Submission details and update state
      */
     getSubmissionDetails() {
-        // async componentDidMount() {
         this.API_CLIENT.getSubmission(this.SUBMISSION_ID).then((data) => {
 
             // Only update state if component still mounted
@@ -824,14 +824,14 @@ class SubmissionDetails extends Component {
             metadata_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
+                        {metadataStatus}
                     </Typography>
                 </Grid>
         } else if (metadataStatus === 'NA' && publicationStatus === 'UNDER_SUBMISSION') {
             metadata_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
+                        {metadataStatus}
                     </Typography>
                 </Grid>
         }
@@ -839,7 +839,7 @@ class SubmissionDetails extends Component {
             metadata_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
+                        <CircularProgress className={classes.progress} size={24} />
                     </Typography>
                 </Grid>
         }
@@ -855,25 +855,25 @@ class SubmissionDetails extends Component {
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
                     </Typography>
                 </Grid>
-        } else if (summaryStatisticsStatus === 'INVALID' || summaryStatisticsStatus === 'NA') {
+        } else if (summaryStatisticsStatus === 'INVALID') {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
                     </Typography>
                 </Grid>
-        } else if (summaryStatisticsStatus === 'VALIDATING') {
+        } else if (summaryStatisticsStatus === 'NA') {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <CircularProgress className={classes.progress} size={24} />
+                        {summaryStatisticsStatus}
                     </Typography>
                 </Grid>
         } else {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
+                        <CircularProgress className={classes.progress} size={24} />
                     </Typography>
                 </Grid>
         }
@@ -895,7 +895,6 @@ class SubmissionDetails extends Component {
                         </Button> : null}
                 </Grid>
             </Fragment>
-
 
 
         return (
@@ -1050,14 +1049,14 @@ class SubmissionDetails extends Component {
                                             <Grid item container xs={6}>
                                                 <Grid item xs={4}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        Metadata valid
+                                                        Metadata valid:
                                                     </Typography>
                                                 </Grid>
                                                 {metadata_status_icon}
 
                                                 <Grid item xs={4}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        SumStats valid
+                                                        SumStats valid:
                                                     </Typography>
                                                 </Grid>
                                                 {summary_statistics_status_icon}
