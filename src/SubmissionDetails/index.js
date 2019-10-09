@@ -578,7 +578,7 @@ class SubmissionDetails extends Component {
 
         const { submissionStatus } = this.state;
         const { metadataStatus } = this.state;
-        let metadata_status_icon;
+        let metadata_status_section;
         const { summaryStatisticsStatus } = this.state;
         let summary_statistics_status_icon;
 
@@ -820,59 +820,79 @@ class SubmissionDetails extends Component {
 
 
         /** 
-         * Manage display of Metadata status image
+         * Manage display of Metadata status field and value. Only display this field
+         * for publications with status UNDER_SUBMISSION, i.e. those where
+         * the metadata template is submitted.
          */
-        if (metadataStatus === 'VALID') {
-            metadata_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
-                    </Typography>
-                </Grid>
-        } else if (metadataStatus === 'INVALID') {
-            metadata_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
-                    </Typography>
-                </Grid>
-        } else if (metadataStatus === 'VALIDATING') {
-            metadata_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <CircularProgress className={classes.progress} size={24} />
-                    </Typography>
-                </Grid>
-        } else if (metadataStatus === 'NA' && publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-            metadata_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        {metadataStatus}
-                    </Typography>
-                </Grid>
-        } else if (metadataStatus === 'NA' && publicationStatus === 'UNDER_SUBMISSION') {
-            metadata_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        {metadataStatus}
-                    </Typography>
-                </Grid>
-        }
-        else if (submissionStatus === null) {
-            metadata_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.errorText}>
-                        Error retrieving data.
-                    </Typography>
-                </Grid>
-        }
-        else {
-            metadata_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <CircularProgress className={classes.progress} size={24} />
-                    </Typography>
-                </Grid>
+        let metadata_field_label =
+            <Grid item xs={4}>
+                <Typography variant="h6" className={classes.submissionTextStyle}>
+                    Metadata valid:
+                </Typography>
+            </Grid>
+
+        if (publicationStatus === "UNDER_SUBMISSION") {
+            if (metadataStatus === 'VALID') {
+                metadata_status_section =
+                    <Fragment>
+                        {metadata_field_label}
+                        <Grid item xs={8}>
+                            <Typography variant="h6" className={classes.submissionTextStyle}>
+                                <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
+                            </Typography>
+                        </Grid>
+                    </Fragment>
+            } else if (metadataStatus === 'INVALID') {
+                metadata_status_section =
+                    <Fragment>
+                        {metadata_field_label}
+                        <Grid item xs={8}>
+                            <Typography variant="h6" className={classes.submissionTextStyle}>
+                                <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
+                            </Typography>
+                        </Grid>
+                    </Fragment>
+            } else if (metadataStatus === 'VALIDATING') {
+                metadata_status_section =
+                    <Fragment>
+                        {metadata_field_label}
+                        < Grid item xs={8} >
+                            <Typography variant="h6" className={classes.submissionTextStyle}>
+                                <CircularProgress className={classes.progress} size={24} />
+                            </Typography>
+                        </Grid >
+                    </Fragment >
+            } else if (metadataStatus === 'NA') {
+                metadata_status_section =
+                    <Fragment>
+                        {metadata_field_label}
+                        <Grid item xs={8}>
+                            <Typography variant="h6" className={classes.submissionTextStyle}>
+                                {metadataStatus}
+                            </Typography>
+                        </Grid>
+                    </Fragment>
+            } else if (submissionStatus === null) {
+                metadata_status_section =
+                    <Fragment>
+                        {metadata_field_label}
+                        <Grid item xs={8}>
+                            <Typography variant="h6" className={classes.errorText}>
+                                Error retrieving data.
+                             </Typography>
+                        </Grid>
+                    </Fragment>
+            } else {
+                metadata_status_section =
+                    <Fragment>
+                        {metadata_field_label}
+                        <Grid item xs={8}>
+                            <Typography variant="h6" className={classes.submissionTextStyle}>
+                                <CircularProgress className={classes.progress} size={24} />
+                            </Typography>
+                        </Grid>
+                    </Fragment>
+            }
         }
 
 
@@ -1085,12 +1105,8 @@ class SubmissionDetails extends Component {
                                             </Grid>
 
                                             <Grid item container xs={6}>
-                                                <Grid item xs={4}>
-                                                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        Metadata valid:
-                                                    </Typography>
-                                                </Grid>
-                                                {metadata_status_icon}
+
+                                                {metadata_status_section}
 
                                                 <Grid item xs={4}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
