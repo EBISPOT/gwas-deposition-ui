@@ -93,7 +93,7 @@ class Upload extends Component {
                     <Grid item xs={3}>
                         <Button className={classes.button}
                             onClick={this.hideUploadComponent}>
-                            Complete
+                            Start validation
                         </Button>
                     </Grid>
                 </Fragment>
