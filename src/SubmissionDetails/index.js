@@ -565,6 +565,17 @@ class SubmissionDetails extends Component {
             transformedPublicationStatus = 'OPEN FOR SUMMARY STATISTICS SUBMISSION'
         }
 
+
+        let userActionPublicationStatus;
+        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
+            userActionPublicationStatus = <i>You are able to submit summary statistics for this publication.</i>
+        }
+        if (publicationStatus === 'UNDER_SUBMISSION') {
+            userActionPublicationStatus = <i>You are able to submit summary statistics and study metadata for this publication.</i>
+        }
+
+
+
         const { submissionStatus } = this.state;
         const { metadataStatus } = this.state;
         let metadata_status_icon;
@@ -958,11 +969,11 @@ class SubmissionDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            {/* <Grid item xs={12}>
+                            <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                    Catalog status: {transformedPublicationStatus}
+                                    {userActionPublicationStatus}
                                 </Typography>
-                            </Grid> */}
+                            </Grid>
                             <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     Summary statistics location: <i>To be added once data is available....</i>
