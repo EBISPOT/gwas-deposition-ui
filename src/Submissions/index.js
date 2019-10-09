@@ -46,7 +46,7 @@ const tableIcons = {
 };
 
 const GET_SUBMISSIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'submissions';
-
+const auth = localStorage.getItem('id_token');
 
 class Submissions extends React.Component {
     constructor(props) {
@@ -133,7 +133,11 @@ class Submissions extends React.Component {
                                     url += '&sort=' + query.orderBy.field + ',' + sortOrder
                                 }
 
-                                fetch(url)
+                                fetch(url, {
+                                    headers: {
+                                        'Authorization': 'Bearer ' + auth,
+                                    },
+                                })
                                     .then(response => response.json())
                                     .then(result => {
                                         resolve({
