@@ -113,7 +113,6 @@ class PublicationDetails extends Component {
         })
         this.createSubmission = this.createSubmission.bind(this);
         this.redirectToSubmissionDetails = this.redirectToSubmissionDetails.bind(this);
-        // this.redirectToSubmissionDetailsNEW = this.redirectToSubmissionDetailsNEW.bind(this);
         this.getUserFriendlyStatusLabels = this.getUserFriendlyStatusLabels.bind(this);
     }
 
@@ -193,21 +192,6 @@ class PublicationDetails extends Component {
             this.setState(() => ({ redirectError: true }));
         });
     }
-
-
-    // async redirectToSubmissionDetailsNEW() {
-    //     let pmid = this.PUBMED_ID;
-
-    //     // Get SubmissionId
-    //     await this.API_CLIENT.getSubmissionId(pmid).then(response => {
-    //         let newSubmissionId = response.data._embedded.submissions[0].submissionId
-    //         return history.push(`${process.env.PUBLIC_URL}/submissionNEW/${newSubmissionId}`);
-    //     }).catch(error => {
-    //         console.log("There was an error getting the SubmissionID");
-    //         // Display redirect error message
-    //         this.setState(() => ({ redirectError: true }));
-    //     });
-    // }
 
 
     render() {
