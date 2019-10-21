@@ -5,7 +5,7 @@ const DOWNLOAD_TEMPLATE_URL = process.env.REACT_APP_TEMPLATE_DOWNLOAD_API_URL;
 
 const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
 
-const auth = localStorage.getItem('id_token');
+// const auth = localStorage.getItem('id_token');
 
 const client = axios.create({
     baseURL: BASE_URI,
@@ -14,7 +14,8 @@ const client = axios.create({
 
 class APIClient {
     constructor(accessToken) {
-        this.accessToken = auth;
+        // this.accessToken = auth;
+        this.accessToken = localStorage.getItem('id_token');
     }
 
     /**
@@ -173,6 +174,7 @@ class APIClient {
     getSubmissionId(pmid, token) {
         // Get token to pass to call
         let authToken;
+        // this.accessToken === null ? authToken = token : authToken = this.accessToken;
         this.accessToken === null ? authToken = token : authToken = this.accessToken;
 
         console.log("** PMID: ", pmid + "-- Token: ", authToken);
