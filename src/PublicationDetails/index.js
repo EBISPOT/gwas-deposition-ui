@@ -26,6 +26,7 @@ import Button from '@material-ui/core/Button';
 // }
 // export default PublicationDetails;
 
+// const auth = localStorage.getItem('id_token');
 
 const styles = theme => ({
     root: {
@@ -103,6 +104,7 @@ class PublicationDetails extends Component {
         }
 
         this.state = ({
+            auth: localStorage.getItem('id_token'),
             publication: [],
             publicationStatus: null,
             transformedPublicationStatus: null,
@@ -153,8 +155,8 @@ class PublicationDetails extends Component {
 
         // Check if user is logged in, Get token from local storage
         if (localStorage.getItem('id_token')) {
-            let JWTToken = localStorage.getItem('id_token')
-            this.API_CLIENT.createSubmission(pmid, JWTToken).then(response => {
+            // let JWTToken = localStorage.getItem('id_token')
+            this.API_CLIENT.createSubmission(pmid).then(response => {
                 this.setState(() => ({ createSubmissionError: false }));
 
                 // Display list of all submissions
@@ -177,11 +179,14 @@ class PublicationDetails extends Component {
 
     async redirectToSubmissionDetails() {
         let pmid = this.PUBMED_ID;
+        // let token = this.authToken;
+        let token = this.state.auth;
 
         // Get SubmissionId
-        await this.API_CLIENT.getSubmissionId(pmid).then(response => {
+        await this.API_CLIENT.getSubmissionId(pmid, token).then(response => {
             let newSubmissionId = response.data._embedded.submissions[0].submissionId
             return history.push(`${process.env.PUBLIC_URL}/submission/${newSubmissionId}`);
+            // return history.replace(`${process.env.PUBLIC_URL}/submission/${newSubmissionId}`);
         }).catch(error => {
             console.log("There was an error getting the SubmissionID");
             // Display redirect error message

@@ -4,6 +4,8 @@ import Button from '@material-ui/core/Button';
 import API_CLIENT from '../apiClient';
 import history from "../history";
 
+import axios from 'axios';
+
 import { Link } from 'react-router-dom'
 
 import { forwardRef } from 'react';
@@ -46,12 +48,18 @@ const tableIcons = {
 };
 
 const GET_SUBMISSIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'submissions';
-const auth = localStorage.getItem('id_token');
 
 class Submissions extends React.Component {
     constructor(props) {
         super(props);
-        this.API_CLIENT = new API_CLIENT();
+        this.auth = this.getToken.bind(this)
+    }
+
+    getToken() {
+        let auth = localStorage.getItem('id_token');
+        console.log("** Called getToken from SubmissionDetails...")
+        // TODO: Check if token is still valid, if not re-direct to login
+        return auth;
     }
 
     transformDateFormat(timestamp) {
@@ -89,13 +97,18 @@ class Submissions extends React.Component {
 
                             let url = GET_SUBMISSIONS_URL
 
+                            let myHeaders = new Headers();
+                            myHeaders.append('Authorization', 'Bearer ' + this.auth());
+
                             // Handle search by PubMedID
                             let onlyNumbers = /^\d+$/;
 
                             if (query.search) {
                                 if (onlyNumbers.test(query.search)) {
                                     url += '?pmid=' + query.search
-                                    fetch(url)
+                                    fetch(url, {
+                                        headers: myHeaders
+                                    })
                                         .then(response => response.json())
                                         .then(result => {
                                             resolve({
@@ -109,7 +122,9 @@ class Submissions extends React.Component {
                                 // Handle search by SubmissionID
                                 else {
                                     url += '/' + query.search
-                                    fetch(url)
+                                    fetch(url, {
+                                        headers: myHeaders
+                                    })
                                         .then(response => response.json())
                                         .then(result => {
                                             resolve({
@@ -129,14 +144,12 @@ class Submissions extends React.Component {
                                 // Handle sorting all results
                                 if (query.orderBy) {
                                     let sortOrder = query.orderDirection;
-                                    // Server-side Sorting for submissions is only supported for submissionId
+                                    // NOTE: Server-side Sorting for submissions is only supported for submissionId
                                     url += '&sort=' + query.orderBy.field + ',' + sortOrder
                                 }
 
                                 fetch(url, {
-                                    headers: {
-                                        'Authorization': 'Bearer ' + auth,
-                                    },
+                                    headers: myHeaders
                                 })
                                     .then(response => response.json())
                                     .then(result => {
