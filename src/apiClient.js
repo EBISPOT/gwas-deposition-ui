@@ -174,7 +174,6 @@ class APIClient {
     getSubmissionId(pmid, token) {
         // Get token to pass to call
         let authToken;
-        // this.accessToken === null ? authToken = token : authToken = this.accessToken;
         this.accessToken === null ? authToken = token : authToken = this.accessToken;
 
         console.log("** PMID: ", pmid + "-- Token: ", authToken);

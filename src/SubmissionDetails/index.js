@@ -298,6 +298,14 @@ class SubmissionDetails extends Component {
                 console.log("** Error: ", error);
                 // Stop polling if error returned
                 this.setState({ submissionStatus: null })
+
+                // Redirect if 4xx response returned, 404 returned from backend if not authorized
+                if (error.response && (error.response.status >= 404 && error.response.status < 500)) {
+                    return history.push(`${process.env.PUBLIC_URL}/error`);
+                }
+                if (error.response && (error.response.status >= 400 && error.response.status < 404)) {
+                    return history.push(`${process.env.PUBLIC_URL}/error`);
+                }
             });
     }
 

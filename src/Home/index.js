@@ -53,9 +53,9 @@ class Home extends React.Component {
                                 please e-mail <a href="mailto:gwas-info@ebi.ac.uk?subject=Deposition submission help request">gwas-info@ebi.ac.uk</a>.
                             </Typography>
                         </Grid>
-                        <Grid item xs={9}>
+                        {/* <Grid item xs={9}>
                             <h4> JWTToken: {this.props.token}</h4>
-                        </Grid>
+                        </Grid> */}
                     </Grid>
 
 

@@ -187,7 +187,6 @@ class PublicationDetails extends Component {
         await this.API_CLIENT.getSubmissionId(pmid, token).then(response => {
             let newSubmissionId = response.data._embedded.submissions[0].submissionId
             return history.push(`${process.env.PUBLIC_URL}/submission/${newSubmissionId}`);
-            // return history.replace(`${process.env.PUBLIC_URL}/submission/${newSubmissionId}`);
         }).catch(error => {
             if (error.response) {
                 if (error.response.status === 401) {
@@ -199,9 +198,15 @@ class PublicationDetails extends Component {
                     this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
                 }
             } else {
-                // Display all other error message
-                let errorMessage = error.message
-                this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                // Zero results returned if user "unauthorized", e.g. did not create the submission
+                if (error.message.includes("undefined")) {
+                    let errorMessage = "Error: You do not have permission to view this page."
+                    this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                } else {
+                    // Display all other error messages
+                    let errorMessage = error.message
+                    this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                }
             }
         });
     }
