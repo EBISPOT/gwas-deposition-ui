@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{.Values.service.name}}
+  namespace: {{.Values.k8Namespace}}
+spec:
+  replicas: {{.Values.replicaCount}}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: {{.Values.service.name}}
+    spec:
+      containers:
+        - name: {{.Values.service.name}}
+          image: "{{.Values.image.repository}}:{{.Values.image.tag}}"
+          imagePullPolicy: {{.Values.image.pullPolicy}}
+          resources:
+            requests:
+              cpu: {{.Values.resources.requests.cpu}}
+              memory: {{.Values.resources.requests.memory}}
+            limits:
+              cpu: {{.Values.resources.limits.cpu}}
+              memory: {{.Values.resources.limits.memory}}
+          ports:
+            - name: http
+              containerPort: {{.Values.image.containerPort}}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: {{.Values.service.name}}
+  name: {{.Values.service.name}}
+  namespace: {{.Values.k8Namespace}}
+spec:
+  type: {{.Values.service.type}}
+  ports:
+    - name: "application"
+      port: {{.Values.service.port}}
+      nodePort: {{.Values.service.nodePort}}
+  selector:
+    app: {{.Values.service.name}}
