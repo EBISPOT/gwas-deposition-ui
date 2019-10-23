@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "gwas-deposition-ui.fullname" . }}-test-connection"
+  labels:
+{{ include "gwas-deposition-ui.labels" . | indent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args:  ['{{ include "gwas-deposition-ui.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
