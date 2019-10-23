@@ -26,6 +26,7 @@ import Button from '@material-ui/core/Button';
 // }
 // export default PublicationDetails;
 
+// const auth = localStorage.getItem('id_token');
 
 const styles = theme => ({
     root: {
@@ -81,6 +82,7 @@ const styles = theme => ({
     },
     errorText: {
         color: 'red',
+        marginRight: 8,
     },
     bold: {
         fontWeight: 600,
@@ -103,15 +105,16 @@ class PublicationDetails extends Component {
         }
 
         this.state = ({
+            auth: localStorage.getItem('id_token'),
             publication: [],
             publicationStatus: null,
             transformedPublicationStatus: null,
             createSubmissionError: false,
             redirectError: false,
+            redirectErrorMessage: null,
         })
         this.createSubmission = this.createSubmission.bind(this);
         this.redirectToSubmissionDetails = this.redirectToSubmissionDetails.bind(this);
-        // this.redirectToSubmissionDetailsNEW = this.redirectToSubmissionDetailsNEW.bind(this);
         this.getUserFriendlyStatusLabels = this.getUserFriendlyStatusLabels.bind(this);
     }
 
@@ -153,8 +156,8 @@ class PublicationDetails extends Component {
 
         // Check if user is logged in, Get token from local storage
         if (localStorage.getItem('id_token')) {
-            let JWTToken = localStorage.getItem('id_token')
-            this.API_CLIENT.createSubmission(pmid, JWTToken).then(response => {
+            // let JWTToken = localStorage.getItem('id_token')
+            this.API_CLIENT.createSubmission(pmid).then(response => {
                 this.setState(() => ({ createSubmissionError: false }));
 
                 // Display list of all submissions
@@ -177,38 +180,43 @@ class PublicationDetails extends Component {
 
     async redirectToSubmissionDetails() {
         let pmid = this.PUBMED_ID;
+        // let token = this.authToken;
+        let token = this.state.auth;
 
         // Get SubmissionId
-        await this.API_CLIENT.getSubmissionId(pmid).then(response => {
+        await this.API_CLIENT.getSubmissionId(pmid, token).then(response => {
             let newSubmissionId = response.data._embedded.submissions[0].submissionId
             return history.push(`${process.env.PUBLIC_URL}/submission/${newSubmissionId}`);
         }).catch(error => {
-            console.log("There was an error getting the SubmissionID");
-            // Display redirect error message
-            this.setState(() => ({ redirectError: true }));
+            if (error.response) {
+                if (error.response.status === 401) {
+                    let errorMessage = "You must login to view the submission details."
+                    this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                }
+                if (error.response.status === 403) {
+                    let errorMessage = "You do not have permission to view the submission details."
+                    this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                }
+            } else {
+                // Zero results returned if user "unauthorized", e.g. did not create the submission
+                if (error.message.includes("undefined")) {
+                    let errorMessage = "Error: You do not have permission to view this page."
+                    this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                } else {
+                    // Display all other error messages
+                    let errorMessage = error.message
+                    this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                }
+            }
         });
     }
-
-
-    // async redirectToSubmissionDetailsNEW() {
-    //     let pmid = this.PUBMED_ID;
-
-    //     // Get SubmissionId
-    //     await this.API_CLIENT.getSubmissionId(pmid).then(response => {
-    //         let newSubmissionId = response.data._embedded.submissions[0].submissionId
-    //         return history.push(`${process.env.PUBLIC_URL}/submissionNEW/${newSubmissionId}`);
-    //     }).catch(error => {
-    //         console.log("There was an error getting the SubmissionID");
-    //         // Display redirect error message
-    //         this.setState(() => ({ redirectError: true }));
-    //     });
-    // }
 
 
     render() {
         const { classes } = this.props;
         // const { createSubmissionError } = this.state;
         const { redirectError } = this.state;
+        const { redirectErrorMessage } = this.state;
         const { publicationStatus } = this.state;
         const { transformedPublicationStatus } = this.state;
 
@@ -227,12 +235,6 @@ class PublicationDetails extends Component {
                     Create Submission
                 </Button>
         }
-        // else {
-        //     create_submission_button =
-        //         <Button disabled variant="outlined" className={classes.button}>
-        //             Create Submission
-        //         </Button>
-        // }
 
         // Show View Submission details button
         if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' || publicationStatus === 'UNDER_SUBMISSION') {
@@ -300,13 +302,17 @@ class PublicationDetails extends Component {
                                     <Typography variant="h5" className={classes.headerTextStyle}>
                                         Publication details for PMID: {this.PUBMED_ID}
                                     </Typography>
+                                    <Grid><Typography>&nbsp;</Typography></Grid>
                                 </Grid>
 
                                 <Grid item xs={4} container alignItems="flex-start" justify="flex-end" direction="row">
                                     {showSubmissionDetailsButton}
-                                    <Typography variant="body2" gutterBottom className={classes.errorText}>
-                                        {redirectError ? "There was an error displaying the submission details." : null}
-                                    </Typography>
+
+                                    <Grid container alignItems="flex-start" justify="flex-end">
+                                        <Typography variant="body2" gutterBottom className={classes.errorText}>
+                                            {redirectError ? redirectErrorMessage : null}
+                                        </Typography>
+                                    </Grid>
                                 </Grid>
                             </Grid>
 

@@ -18,7 +18,8 @@ import API_CLIENT from '../apiClient';
 import history from "../history";
 
 import axios from 'axios';
-import { red } from '@material-ui/core/colors';
+
+// const auth = localStorage.getItem('id_token');
 
 const styles = theme => ({
     root: {
@@ -129,7 +130,9 @@ class SubmissionDetails extends Component {
             this.SUBMISSION_ID = this.props.location.pathname.split('/')[2];
         }
 
+
         this.state = ({
+            auth: localStorage.getItem('id_token'),
             submission_data: [],
             userName: null,
             submissionCreatedDate: null,
@@ -161,6 +164,10 @@ class SubmissionDetails extends Component {
         this.displayUploadComponent = this.displayUploadComponent.bind(this);
         this.hideUploadComponent = this.hideUploadComponent.bind(this);
         this.parseFileMetadata = this.parseFileMetadata.bind(this);
+
+
+        // Set token to use AuthConsumer props or localstorage if page refresh
+        this.props.token === null ? this.authToken = this.state.auth : this.authToken = this.props.token;
     }
 
 
@@ -201,7 +208,12 @@ class SubmissionDetails extends Component {
         // this.API_CLIENT.getSubmission(this.SUBMISSION_ID).then((data) => {
 
         const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
-        axios.get(BASE_URI + 'submissions/' + this.SUBMISSION_ID)
+        axios.get(BASE_URI + 'submissions/' + this.SUBMISSION_ID,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + this.authToken,
+                }
+            })
             .then((response) => {
 
                 let data = response.data
@@ -263,9 +275,17 @@ class SubmissionDetails extends Component {
                     }
                 }
             }).catch(error => {
-                console.log("** Error: ", error);
+                console.log("Error: ", error);
                 // Stop polling if error returned
                 this.setState({ submissionStatus: null })
+
+                // Redirect if 4xx response returned, 404 returned from backend if not authorized
+                if (error.response && (error.response.status >= 404 && error.response.status < 500)) {
+                    return history.push(`${process.env.PUBLIC_URL}/error`);
+                }
+                if (error.response && (error.response.status >= 400 && error.response.status < 404)) {
+                    return history.push(`${process.env.PUBLIC_URL}/error`);
+                }
             });
     }
 
@@ -396,6 +416,9 @@ class SubmissionDetails extends Component {
         }
         axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + fileId + '/download',
             {
+                headers: {
+                    'Authorization': 'Bearer ' + this.authToken,
+                },
                 responseType: 'blob',
             }
         ).then((response) => {
@@ -428,6 +451,9 @@ class SubmissionDetails extends Component {
 
         axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + summaryStatsTemplateFileId + '/download',
             {
+                headers: {
+                    'Authorization': 'Bearer ' + this.authToken,
+                },
                 responseType: 'blob',
             }
         ).then((response) => {
@@ -439,7 +465,7 @@ class SubmissionDetails extends Component {
             link.click();
         }
         ).catch((error) => {
-            console.log("** DL SS Template error: ", error)
+            console.log("Error: ", error)
             let downloadSSTemplateErrorLabel = "Error: File not found."
             this.setState({ downloadSummaryStatsFileError: downloadSSTemplateErrorLabel });
         })
@@ -519,8 +545,8 @@ class SubmissionDetails extends Component {
 
         // Check if user is logged in, Get token from local storage
         if (localStorage.getItem('id_token')) {
-            let JWTToken = localStorage.getItem('id_token')
-            this.API_CLIENT.submitSubmission(submissionId, JWTToken).then(response => {
+            // let JWTToken = localStorage.getItem('id_token')
+            this.API_CLIENT.submitSubmission(submissionId).then(response => {
                 // Redirect to My Submissions page, NOTE: If using redirect, can't set state here
                 history.push(`${process.env.PUBLIC_URL}/submissions`);
             })

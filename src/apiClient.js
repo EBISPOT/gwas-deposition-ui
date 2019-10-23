@@ -12,7 +12,7 @@ const client = axios.create({
 
 class APIClient {
     constructor(accessToken) {
-        this.accessToken = accessToken;
+        this.accessToken = localStorage.getItem('id_token');
     }
 
     /**
@@ -41,8 +41,8 @@ class APIClient {
 
         axios.post(DOWNLOAD_TEMPLATE_URL, payload,
             {
-                headers:
-                {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
                     'Content-Disposition': "attachment; filename=new_template.xlsx",
                     'Content-Type': 'application/json'
                 },
@@ -104,9 +104,7 @@ class APIClient {
     /**
      * Get details for Publication by PMID
      * @param {*} pmid PubMedId
-     * @param {*} JWTToken Authorization token
      */
-    // TODO: Add JWTToken to Authorization header
     getPublication(pmid) {
         return this.perform('get', '/publications/' + pmid + '?pmid=true');
     }
@@ -115,11 +113,13 @@ class APIClient {
     /**
      * Get Submission by Id
      * @param {} submissionId
-     * @param {*} JWTToken 
      */
-    // TODO: Add JWTToken to Authorization header
     getSubmission(submissionId) {
-        return this.perform('get', '/submissions/' + submissionId);
+        return this.perform('get', '/submissions/' + submissionId, {
+            headers: {
+                'Authorization': 'Bearer ' + this.accessToken,
+            }
+        })
     }
 
 
@@ -127,32 +127,30 @@ class APIClient {
      * Delete file upload
      * @param {*} submissionId
      * @param {*} fileId
-     * @param {*} JWTToken
      */
     deleteFileUpload(submissionId, fileId) {
-        console.log("** Trying to delete a file...")
-        return this.perform('delete', 'submissions/' + submissionId + '/uploads/' + fileId);
+        return axios.delete(BASE_URI + 'submissions/' + submissionId + '/uploads/' + fileId,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                }
+            })
     }
 
 
     /**
      * API call to backend app to create a submission
      *  @param {String} pmid PubMedId
-     *  @param {String} JWTToken Authorization token
      */
-    // TODO: Add JWTToken to Authorization header
-    createSubmission(pmid, JWTToken) {
-        console.log("** Trying to create a submission...")
+    createSubmission(pmid) {
         let pmid_data = { publication: { pmid: pmid } };
-        console.log("** Pub Data: ", pmid_data);
 
-        return axios.post(BASE_URI + 'submissions', pmid_data
-            // {
-            //     headers:
-            //     {
-            //         'Authorization': `Bearer ${JWTToken}`
-            //     },
-            // }
+        return axios.post(BASE_URI + 'submissions', pmid_data,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                }
+            }
         )
         // WORKS - BUT CATCH ERROR IN COMPONENT TO PROVIDE ALERT DIALOG
         // .then((response) => { console.log(response) })
@@ -166,21 +164,34 @@ class APIClient {
     /**
      * Get Submission ID from PMID
      * @param {*} pmid
+     * @param {*} token
      */
-    getSubmissionId(pmid) {
-        return axios.get(BASE_URI + 'submissions?pmid=' + pmid)
+    getSubmissionId(pmid, token) {
+        // Get token to pass to call
+        let authToken;
+        this.accessToken === null ? authToken = token : authToken = this.accessToken;
+
+        return axios.get(BASE_URI + 'submissions?pmid=' + pmid,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + authToken,
+                    // 'Authorization': 'Bearer ' + this.accessToken,
+                }
+            })
     }
 
 
     /**
      *
-     * @param {*} PUT
      * @param {*} submissionId
-     * @param {*} JWTToken
      */
     submitSubmission(submissionId) {
-        console.log("** Trying to submit a submission...");
-        return axios.put(BASE_URI + '/submissions/' + submissionId + '/submit');
+        return axios.put(BASE_URI + '/submissions/' + submissionId + '/submit', {},
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                }
+            })
     }
 
 

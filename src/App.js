@@ -7,12 +7,11 @@ import Submissions from './Submissions';
 import SubmissionDetails from './SubmissionDetails';
 import Footer from './Footer';
 import './App.css';
+import ErrorPage from './ErrorPage';
 
 import { Route } from "react-router-dom";
 
 import { withRouter } from "react-router";
-
-import SubmissionDetailsNEW from './SubmissionDetailsNEW';
 
 import {
   CssBaseline,
@@ -46,7 +45,7 @@ const App = ({ classes }) => (
             <Route path={`${process.env.PUBLIC_URL}/publication/:pmid`} exact render={props => <PublicationDetails {...props} />} />
             <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
             <Route path={`${process.env.PUBLIC_URL}/submission/:submission_id`} exact render={props => <SubmissionDetails {...props} />} />
-            <Route path={`${process.env.PUBLIC_URL}/submissionNEW/:submission_id`} exact render={props => <SubmissionDetailsNEW {...props} />} />
+            <Route path={`${process.env.PUBLIC_URL}/error`} component={ErrorPage} />
           </main>
         </div>
       </div>

@@ -10,6 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 const UPLOAD_TEMPLATE_URL_BASE = process.env.REACT_APP_LOCAL_BASE_URI;
 
+const auth = localStorage.getItem('id_token');
 
 const styles = theme => ({
     button: {
@@ -180,6 +181,7 @@ class Upload extends Component {
             // Post file to GWAS Backend app
             let file_upload_url = UPLOAD_TEMPLATE_URL_BASE + "submissions/" + this.state.SUBMISSION_ID + "/uploads";
             req.open("POST", file_upload_url);
+            req.setRequestHeader('Authorization', 'Bearer ' + auth);
             req.send(formData);
         });
     }
