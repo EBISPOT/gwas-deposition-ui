@@ -5,8 +5,6 @@ const DOWNLOAD_TEMPLATE_URL = process.env.REACT_APP_TEMPLATE_DOWNLOAD_API_URL;
 
 const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
 
-// const auth = localStorage.getItem('id_token');
-
 const client = axios.create({
     baseURL: BASE_URI,
     json: true
@@ -14,7 +12,6 @@ const client = axios.create({
 
 class APIClient {
     constructor(accessToken) {
-        // this.accessToken = auth;
         this.accessToken = localStorage.getItem('id_token');
     }
 
@@ -132,8 +129,6 @@ class APIClient {
      * @param {*} fileId
      */
     deleteFileUpload(submissionId, fileId) {
-        console.log("** Trying to delete a file...")
-        // return this.perform('delete', 'submissions/' + submissionId + '/uploads/' + fileId,
         return axios.delete(BASE_URI + 'submissions/' + submissionId + '/uploads/' + fileId,
             {
                 headers: {
@@ -176,7 +171,6 @@ class APIClient {
         let authToken;
         this.accessToken === null ? authToken = token : authToken = this.accessToken;
 
-        console.log("** PMID: ", pmid + "-- Token: ", authToken);
         return axios.get(BASE_URI + 'submissions?pmid=' + pmid,
             {
                 headers: {

@@ -131,23 +131,6 @@ class SubmissionDetails extends Component {
         }
 
 
-        // TEST
-        history.listen((location, action) => {
-            console.log(
-                `--- The current URL is ${location.pathname}${location.search}${location.hash}`
-            );
-            console.log(`The last navigation action was ${action}`);
-
-            if (location.state) {
-                console.log(`Location state object contents: ` + JSON.stringify(location.state))
-                console.log(`Location contents: ` + JSON.stringify(location) + "\nHistory contents: " + JSON.stringify(history))
-            }
-            if (history.state) {
-                console.log(`History state object contents: ` + JSON.stringify(history.state))
-            }
-        });
-
-
         this.state = ({
             auth: localStorage.getItem('id_token'),
             submission_data: [],
@@ -185,9 +168,6 @@ class SubmissionDetails extends Component {
 
         // Set token to use AuthConsumer props or localstorage if page refresh
         this.props.token === null ? this.authToken = this.state.auth : this.authToken = this.props.token;
-        console.log("** SD Token: ", this.authToken)
-        console.log("** AuthContext Token: ", this.props.token);
-        console.log("** LocalStorage Token: ", this.state.auth);
     }
 
 
@@ -295,7 +275,7 @@ class SubmissionDetails extends Component {
                     }
                 }
             }).catch(error => {
-                console.log("** Error: ", error);
+                console.log("Error: ", error);
                 // Stop polling if error returned
                 this.setState({ submissionStatus: null })
 
@@ -485,7 +465,7 @@ class SubmissionDetails extends Component {
             link.click();
         }
         ).catch((error) => {
-            console.log("** DL SS Template error: ", error)
+            console.log("Error: ", error)
             let downloadSSTemplateErrorLabel = "Error: File not found."
             this.setState({ downloadSummaryStatsFileError: downloadSSTemplateErrorLabel });
         })

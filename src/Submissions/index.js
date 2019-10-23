@@ -1,13 +1,6 @@
 import React from 'react';
 import MaterialTable from 'material-table';
-import Button from '@material-ui/core/Button';
-import API_CLIENT from '../apiClient';
-import history from "../history";
-
-import axios from 'axios';
-
 import { Link } from 'react-router-dom'
-
 import { forwardRef } from 'react';
 
 import AddBox from '@material-ui/icons/AddBox';
@@ -57,7 +50,6 @@ class Submissions extends React.Component {
 
     getToken() {
         let auth = localStorage.getItem('id_token');
-        console.log("** Called getToken from SubmissionDetails...")
         // TODO: Check if token is still valid, if not re-direct to login
         return auth;
     }

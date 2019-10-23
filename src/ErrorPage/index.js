@@ -24,7 +24,6 @@ class ErrorPage extends React.Component {
 
         // Set token to use AuthConsumer props or localstorage if page refresh
         this.props.token === null ? this.authToken = this.state.auth : this.authToken = this.props.token;
-        console.log("** Token: ", this.authToken)
     }
 
     render() {
