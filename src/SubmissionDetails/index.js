@@ -682,6 +682,9 @@ class SubmissionDetails extends Component {
             currentStatus = 'VALIDATING TEMPLATE...'
         } else if (submissionStatus === 'INVALID') {
             currentStatus = 'TEMPLATE INVALID'
+        }
+        else if (submissionStatus === 'COMPLETE' || submissionStatus === 'CURATION_COMPLETE') {
+            currentStatus = 'SUBMITTED'
         } else {
             currentStatus = submissionStatus;
         }
