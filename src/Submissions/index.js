@@ -2,6 +2,8 @@ import React from 'react';
 import MaterialTable from 'material-table';
 import { Link } from 'react-router-dom'
 import { forwardRef } from 'react';
+import ElixirAuthService from '../ElixirAuthService';
+import history from "../history";
 
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
@@ -43,21 +45,45 @@ const tableIcons = {
 const GET_SUBMISSIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'submissions';
 
 class Submissions extends React.Component {
+    _isMounted = false;
+
     constructor(props) {
         super(props);
-        this.auth = this.getToken.bind(this)
+        this.auth = this.getToken.bind(this);
+        this.ElixirAuthService = new ElixirAuthService();
     }
 
     getToken() {
         let auth = localStorage.getItem('id_token');
-        // TODO: Check if token is still valid, if not re-direct to login
-        return auth;
+
+        // Check if token exists
+        if (auth) {
+            // Check if token is still valid
+            if (this.ElixirAuthService.isTokenExpired(auth)) {
+                alert("Your session has expired, redirecting to login.")
+                setTimeout(() => {
+                    history.push(`${process.env.PUBLIC_URL}/login`);
+                }, 1000);
+
+            } else {
+                return auth;
+            }
+        } else {
+            alert("You must login to view submissions, redirecting to login.")
+            setTimeout(() => {
+                history.push(`${process.env.PUBLIC_URL}/login`);
+            }, 1000);
+        }
     }
 
     transformDateFormat(timestamp) {
         let createdTimestamp = new Date(timestamp);
         createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
         return createdTimestamp
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {
@@ -87,6 +113,8 @@ class Submissions extends React.Component {
                     data={query =>
                         new Promise((resolve, reject) => {
 
+                            this._isMounted = true;
+
                             let url = GET_SUBMISSIONS_URL
 
                             let myHeaders = new Headers();
@@ -103,11 +131,13 @@ class Submissions extends React.Component {
                                     })
                                         .then(response => response.json())
                                         .then(result => {
-                                            resolve({
-                                                data: result._embedded.submissions,
-                                                page: result.page.number,
-                                                totalCount: result.page.totalElements,
-                                            })
+                                            if (this._isMounted) {
+                                                resolve({
+                                                    data: result._embedded.submissions,
+                                                    page: result.page.number,
+                                                    totalCount: result.page.totalElements,
+                                                })
+                                            }
                                         }).catch(error => {
                                         })
                                 }
@@ -119,11 +149,13 @@ class Submissions extends React.Component {
                                     })
                                         .then(response => response.json())
                                         .then(result => {
-                                            resolve({
-                                                data: [result],
-                                                page: 0,
-                                                totalCount: 1,
-                                            })
+                                            if (this._isMounted) {
+                                                resolve({
+                                                    data: [result],
+                                                    page: 0,
+                                                    totalCount: 1,
+                                                })
+                                            }
                                         }).catch(error => {
                                         })
                                 }
@@ -145,20 +177,24 @@ class Submissions extends React.Component {
                                 })
                                     .then(response => response.json())
                                     .then(result => {
-                                        resolve({
-                                            data: result._embedded.submissions,
-                                            page: result.page.number,
-                                            totalCount: result.page.totalElements,
-                                        })
+                                        if (this._isMounted) {
+                                            resolve({
+                                                data: result._embedded.submissions,
+                                                page: result.page.number,
+                                                totalCount: result.page.totalElements,
+                                            })
+                                        }
                                     }).catch(error => {
                                     })
                             }
                             setTimeout(() => {
-                                resolve({
-                                    data: [],
-                                    page: 0,
-                                    totalCount: 0,
-                                });
+                                if (this._isMounted) {
+                                    resolve({
+                                        data: [],
+                                        page: 0,
+                                        totalCount: 0,
+                                    });
+                                }
                             }, 5000);
                         })
                     }
