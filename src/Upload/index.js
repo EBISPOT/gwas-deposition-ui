@@ -5,12 +5,12 @@ import './upload.css'
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import ElixirAuthService from '../ElixirAuthService';
+import history from "../history";
 
 import { withStyles } from '@material-ui/core/styles';
 
 const UPLOAD_TEMPLATE_URL_BASE = process.env.REACT_APP_LOCAL_BASE_URI;
-
-const auth = localStorage.getItem('id_token');
 
 const styles = theme => ({
     button: {
@@ -37,10 +37,11 @@ const styles = theme => ({
 
 
 class Upload extends Component {
+    _isMounted = false;
+
     constructor(props) {
         super(props)
-
-        // console.log("** SID: ", this.props.submission_id);
+        this.ElixirAuthService = new ElixirAuthService();
 
         this.state = {
             files: [],
@@ -57,6 +58,28 @@ class Upload extends Component {
         this.sendRequest = this.sendRequest.bind(this);
         this.renderActions = this.renderActions.bind(this);
         this.hideUploadComponent = this.hideUploadComponent.bind(this);
+    }
+
+    getToken() {
+        let auth = localStorage.getItem('id_token');
+        // Check if token exists
+        if (auth) {
+            // Check if token is still valid
+            if (this.ElixirAuthService.isTokenExpired(auth)) {
+                alert("Your session has expired, redirecting to login.")
+                setTimeout(() => {
+                    history.push(`${process.env.PUBLIC_URL}/login`);
+                }, 1000);
+
+            } else {
+                return auth;
+            }
+        } else {
+            alert("You must login to view submissions, redirecting to login.")
+            setTimeout(() => {
+                history.push(`${process.env.PUBLIC_URL}/login`);
+            }, 1000);
+        }
     }
 
     onFilesAdded(files) {
@@ -130,6 +153,10 @@ class Upload extends Component {
         window.location.reload();
     }
 
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
 
     async uploadFiles() {
         this.setState({ uploadProgress: {}, uploading: true });
@@ -148,6 +175,7 @@ class Upload extends Component {
 
     sendRequest(file) {
         return new Promise((resolve, reject) => {
+            this._isMounted = true;
             const req = new XMLHttpRequest();
 
             req.upload.addEventListener("progress", event => {
@@ -180,9 +208,25 @@ class Upload extends Component {
 
             // Post file to GWAS Backend app
             let file_upload_url = UPLOAD_TEMPLATE_URL_BASE + "submissions/" + this.state.SUBMISSION_ID + "/uploads";
-            req.open("POST", file_upload_url);
-            req.setRequestHeader('Authorization', 'Bearer ' + auth);
-            req.send(formData);
+            let token = localStorage.getItem('id_token');
+
+            if (this._isMounted) {
+                // Check if user is logged in and if token is still valid
+                if (token && !this.ElixirAuthService.isTokenExpired(token)) {
+                    req.open("POST", file_upload_url);
+                    req.setRequestHeader('Authorization', 'Bearer ' + token);
+                    req.send(formData);
+                }
+                // Check if token is expired
+                else if (token && this.ElixirAuthService.isTokenExpired(token)) {
+                    alert("Your session has expired, please login again.")
+                    history.push(`${process.env.PUBLIC_URL}/login`);
+                }
+                else {
+                    alert("Please login to create a submission.")
+                    history.push(`${process.env.PUBLIC_URL}/login`);
+                }
+            }
         });
     }
 
@@ -196,7 +240,6 @@ class Upload extends Component {
                     justify="flex-start"
                     alignItems="flex-start"
                     spacing={3}>
-
                     <Grid item xs={2}>
                         <Dropzone
                             onFilesAdded={this.onFilesAdded}
@@ -213,34 +256,9 @@ class Upload extends Component {
                             );
                         })}
                     </Grid>
-
                     {this.renderActions()}
-
                 </Grid>
             </div>
-
-            // <div className="Upload">
-            //     {/* <span className="Title">Upload Files</span> */}
-            //     <div className="Content">
-            //         <div>
-            //             <Dropzone
-            //                 onFilesAdded={this.onFilesAdded}
-            //                 disabled={this.state.uploading || this.state.successfullUploaded}
-            //             />
-            //         </div>
-            //         <div className="Files">
-            //             {this.state.files.map(file => {
-            //                 return (
-            //                     <div key={file.name} className="Row">
-            //                         <span className="Filename">{file.name}</span>
-            //                         {this.renderProgress(file)}
-            //                     </div>
-            //                 );
-            //             })}
-            //         </div>
-            //     </div>
-            //     <div className="Actions">{this.renderActions()}</div>
-            // </div>
         );
     }
 }

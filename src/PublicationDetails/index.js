@@ -14,6 +14,7 @@ import history from "../history";
 
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import ElixirAuthService from '../ElixirAuthService';
 
 
 // THIS WORKS
@@ -94,6 +95,7 @@ class PublicationDetails extends Component {
     constructor(props) {
         super(props)
         this.API_CLIENT = new API_CLIENT();
+        this.ElixirAuthService = new ElixirAuthService();
 
         // NOTE: PUBMED_ID is passed from location prop in Route pathname
         if (process.env.PUBLIC_URL) {
@@ -116,6 +118,7 @@ class PublicationDetails extends Component {
         this.createSubmission = this.createSubmission.bind(this);
         this.redirectToSubmissionDetails = this.redirectToSubmissionDetails.bind(this);
         this.getUserFriendlyStatusLabels = this.getUserFriendlyStatusLabels.bind(this);
+        this.ElixirAuthService.isTokenExpired = this.ElixirAuthService.isTokenExpired.bind(this);
     }
 
     /**
@@ -153,26 +156,27 @@ class PublicationDetails extends Component {
      */
     createSubmission() {
         let pmid = this.PUBMED_ID;
+        let token = this.state.auth;
 
-        // Check if user is logged in, Get token from local storage
-        if (localStorage.getItem('id_token')) {
-            // let JWTToken = localStorage.getItem('id_token')
+        // Check if user is logged in and if token is still valid
+        if (token && !this.ElixirAuthService.isTokenExpired(token)) {
             this.API_CLIENT.createSubmission(pmid).then(response => {
                 this.setState(() => ({ createSubmissionError: false }));
 
-                // Display list of all submissions
-                // history.push(`${process.env.PUBLIC_URL}/submissions`);
-
                 this.redirectToSubmissionDetails();
-
             })
                 .catch(error => {
                     this.setState(() => ({ createSubmissionError: true }));
                     // alert("There was an error creating the submission")
                 })
         }
+        // Check if token is expired
+        else if (token && this.ElixirAuthService.isTokenExpired(token)) {
+            alert("Your session has expired, please login again.")
+            history.push(`${process.env.PUBLIC_URL}/login`);
+        }
         else {
-            alert("Please login to create a submission")
+            alert("Please login to create a submission.")
             history.push(`${process.env.PUBLIC_URL}/login`);
         }
     }
@@ -180,35 +184,50 @@ class PublicationDetails extends Component {
 
     async redirectToSubmissionDetails() {
         let pmid = this.PUBMED_ID;
-        // let token = this.authToken;
         let token = this.state.auth;
 
-        // Get SubmissionId
-        await this.API_CLIENT.getSubmissionId(pmid, token).then(response => {
-            let newSubmissionId = response.data._embedded.submissions[0].submissionId
-            return history.push(`${process.env.PUBLIC_URL}/submission/${newSubmissionId}`);
-        }).catch(error => {
-            if (error.response) {
-                if (error.response.status === 401) {
-                    let errorMessage = "You must login to view the submission details."
-                    this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
-                }
-                if (error.response.status === 403) {
-                    let errorMessage = "You do not have permission to view the submission details."
-                    this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
-                }
-            } else {
-                // Zero results returned if user "unauthorized", e.g. did not create the submission
-                if (error.message.includes("undefined")) {
-                    let errorMessage = "Error: You do not have permission to view this page."
-                    this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+        // Check if user is logged in and if token is still valid
+        if (token && !this.ElixirAuthService.isTokenExpired(token)) {
+            // Get SubmissionId
+            await this.API_CLIENT.getSubmissionId(pmid, token).then(response => {
+                let newSubmissionId = response.data._embedded.submissions[0].submissionId
+                return history.push(`${process.env.PUBLIC_URL}/submission/${newSubmissionId}`);
+            }).catch(error => {
+                if (error.response) {
+                    if (error.response.status === 401) {
+                        let errorMessage = "Error: You must login to view the submission details."
+                        this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                        // Redirect to login page
+                        setTimeout(() => {
+                            history.push(`${process.env.PUBLIC_URL}/login`);
+                        }, 3000)
+                    }
+                    if (error.response.status === 403) {
+                        let errorMessage = "Error: You do not have permission to view the submission details."
+                        this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                    }
                 } else {
-                    // Display all other error messages
-                    let errorMessage = error.message
-                    this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                    // Zero results returned if user "unauthorized", e.g. did not create the submission
+                    if (error.message.includes("undefined")) {
+                        let errorMessage = "Error: You do not have permission to view this page."
+                        this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                    } else {
+                        // Display all other error messages
+                        let errorMessage = error.message
+                        this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                    }
                 }
-            }
-        });
+            })
+        }
+        // Check if token is expired
+        else if (token && this.ElixirAuthService.isTokenExpired(token)) {
+            alert("Your session has expired, please login again.")
+            history.push(`${process.env.PUBLIC_URL}/login`);
+        }
+        else {
+            alert("Please login to view the submission details.")
+            history.push(`${process.env.PUBLIC_URL}/login`);
+        }
     }
 
 
