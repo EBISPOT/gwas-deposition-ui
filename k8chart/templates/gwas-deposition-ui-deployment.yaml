@@ -42,6 +42,5 @@ spec:
   ports:
     - name: "application"
       port: {{.Values.service.port}}
-      nodePort: {{.Values.service.nodePort}}
   selector:
     app: {{.Values.service.name}}

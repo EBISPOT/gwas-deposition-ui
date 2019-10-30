@@ -18,7 +18,6 @@ service:
   name: gwas-deposition-ui
   type: NodePort
   port: 80
-  nodePort: 30667
 
 ingress:
   enabled: false
