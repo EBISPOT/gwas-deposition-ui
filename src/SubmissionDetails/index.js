@@ -551,17 +551,30 @@ class SubmissionDetails extends Component {
 
         // Check if user is logged in, Get token from local storage
         if (token && !this.ElixirAuthService.isTokenExpired(token)) {
+            // Set state to block any further button clicks
+            this.setState(() => ({
+                submissionStatus: 'DELETING SUBMISSION',
+                deleteFileError: null,
+                fileUploadId: null,
+                fileValidationErrorMessage: null,
+                displaySummaryStatsSection: false,
+                metadataStatus: 'NA',
+                summaryStatisticsStatus: 'NA',
+            }));
+
             // Delete file
             this.API_CLIENT.deleteFileUpload(submissionId, fileId).then(response => {
-                this.setState(() => ({
-                    submissionStatus: 'STARTED',
-                    deleteFileError: null,
-                    fileUploadId: null,
-                    fileValidationErrorMessage: null,
-                    displaySummaryStatsSection: false,
-                    metadataStatus: 'NA',
-                    summaryStatisticsStatus: 'NA',
-                }));
+                if (response.status === 200) {
+                    this.setState(() => ({
+                        submissionStatus: 'STARTED',
+                        deleteFileError: null,
+                        fileUploadId: null,
+                        fileValidationErrorMessage: null,
+                        displaySummaryStatsSection: false,
+                        metadataStatus: 'NA',
+                        summaryStatisticsStatus: 'NA',
+                    }));
+                }
             }).catch(error => {
                 let deleteFileErrorLabel = "Error: There was an error deleting the file."
                 this.setState({ deleteFileError: deleteFileErrorLabel });
