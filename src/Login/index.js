@@ -19,6 +19,8 @@ const AAP_URL = process.env.REACT_APP_AAPURL;
 
 const elixirRegisterationLink = "https://elixir-europe.org/register";
 
+const elixirLoginContact = <a href="mailto:aai-contact@elixir-europe.org">aai-contact@elixir-europe.org</a>;
+
 const styles = theme => ({
     linkColor: {
         color: '#0000EE',
@@ -143,6 +145,12 @@ class Login extends Component {
                         ELIXIR identity, which integrates with Google, ORCID and most academic institutions.
 
                         Obtain your ELIXIR identity <Link href={elixirRegisterationLink} className={classes.linkColor}>here</Link>.
+                    </Typography>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <Typography>
+                        If you have problems logging in please contact {elixirLoginContact}.
                     </Typography>
                 </Grid>
             </Grid >
