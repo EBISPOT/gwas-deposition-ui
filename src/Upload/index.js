@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import ElixirAuthService from '../ElixirAuthService';
 import history from "../history";
+import axios from 'axios';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -51,11 +52,14 @@ class Upload extends Component {
             uploadError: null,
             fileStatus: false,
             SUBMISSION_ID: this.props.submission_id,
+            extraFileProcessing: null,
+            extraFileProcessingMessage: null,
         };
 
         this.onFilesAdded = this.onFilesAdded.bind(this);
         this.uploadFiles = this.uploadFiles.bind(this);
         this.sendRequest = this.sendRequest.bind(this);
+        this._updateState = this._updateState.bind(this);
         this.renderActions = this.renderActions.bind(this);
         this.hideUploadComponent = this.hideUploadComponent.bind(this);
     }
@@ -110,6 +114,12 @@ class Upload extends Component {
 
     renderActions() {
         const { classes } = this.props;
+        const { extraFileProcessing } = this.state;
+
+        let { extraFileProcessingMessage } = this.state;
+        if (extraFileProcessing) {
+            extraFileProcessingMessage = 'Finalizing upload...';
+        }
 
         if (this.state.successfullUploaded) {
             return (
@@ -131,6 +141,11 @@ class Upload extends Component {
                             onClick={this.uploadFiles}>
                             Upload File
                         </Button>
+
+                        <Typography>
+                            {extraFileProcessingMessage}
+                        </Typography>
+
                         <Typography variant="body2" gutterBottom className={classes.errorMessageFormat}>
                             {this.state.uploadError}
                         </Typography>
@@ -167,68 +182,140 @@ class Upload extends Component {
 
         try {
             await Promise.all(promises);
-            this.setState({ successfullUploaded: true, uploading: false });
         } catch (error) {
             this.setState({ successfullUploaded: false, uploading: false });
         }
     }
 
+
     sendRequest(file) {
-        return new Promise((resolve, reject) => {
-            this._isMounted = true;
-            const req = new XMLHttpRequest();
+        this._isMounted = true;
+        const formData = new FormData();
+        formData.append("file", file);
 
-            req.upload.addEventListener("progress", event => {
-                if (event.lengthComputable) {
-                    const copy = { ...this.state.uploadProgress };
-                    copy[file.name] = {
-                        state: "pending",
-                        percentage: (event.loaded / event.total) * 100
-                    };
-                    this.setState({ uploadProgress: copy });
+        let token = localStorage.getItem('id_token');
+
+        var config = {
+            onUploadProgress: progressEvent => {
+                if (progressEvent.lengthComputable) {
+                    var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+
+                    if (progressEvent.lengthComputable) {
+                        const copy = { ...this.state.uploadProgress };
+                        copy[file.name] = {
+                            state: "pending",
+                            percentage: percentCompleted
+                        };
+                        this.setState({ uploadProgress: copy });
+
+                        if (percentCompleted === 100) {
+                            this.setState({ extraFileProcessing: true });
+                        }
+                    }
                 }
-            });
-
-            req.upload.addEventListener("load", event => {
-                const copy = { ...this.state.uploadProgress };
-                copy[file.name] = { state: "done", percentage: 100 };
-                this.setState({ uploadProgress: copy });
-                resolve(req.response);
-            });
-
-            req.upload.addEventListener("error", event => {
-                const copy = { ...this.state.uploadProgress };
-                copy[file.name] = { state: "error", percentage: 0 };
-                this.setState({ uploadProgress: copy, uploadError: "Error uploading file." });
-                reject(req.response);
-            });
-
-            const formData = new FormData();
-            formData.append("file", file);
-
-            // Post file to GWAS Backend app
-            let file_upload_url = UPLOAD_TEMPLATE_URL_BASE + "submissions/" + this.state.SUBMISSION_ID + "/uploads";
-            let token = localStorage.getItem('id_token');
-
-            if (this._isMounted) {
-                // Check if user is logged in and if token is still valid
-                if (token && !this.ElixirAuthService.isTokenExpired(token)) {
-                    req.open("POST", file_upload_url);
-                    req.setRequestHeader('Authorization', 'Bearer ' + token);
-                    req.send(formData);
-                }
-                // Check if token is expired
-                else if (token && this.ElixirAuthService.isTokenExpired(token)) {
-                    alert("Your session has expired, please login again.")
-                    history.push(`${process.env.PUBLIC_URL}/login`);
-                }
-                else {
-                    alert("Please login to create a submission.")
-                    history.push(`${process.env.PUBLIC_URL}/login`);
-                }
+            },
+            headers: {
+                'Authorization': 'Bearer ' + token,
             }
-        });
+        };
+
+        // Post file to GWAS Backend app
+        let file_upload_url = UPLOAD_TEMPLATE_URL_BASE + "submissions/" + this.state.SUBMISSION_ID + "/uploads";
+
+        if (this._isMounted) {
+            // Check if user is logged in and if token is still valid
+            if (token && !this.ElixirAuthService.isTokenExpired(token)) {
+                axios.post(file_upload_url, formData, config
+                )
+                    .then(response => {
+                        if (response.status === 201) {
+                            // Update file upload status on successful upload after response status 201 is returned
+                            this._updateState();
+                        }
+
+                    })
+                    .catch(err => {
+                        console.log("** Error: ", err);
+                    });
+            };
+        }
+        // Check if token is expired
+        else if (token && this.ElixirAuthService.isTokenExpired(token)) {
+            alert("Your session has expired, please login again.")
+            history.push(`${process.env.PUBLIC_URL}/login`);
+        }
+        else {
+            alert("Please login to create a submission.")
+            history.push(`${process.env.PUBLIC_URL}/login`);
+        }
     }
+
+    /**
+     * Update file upload status on successful upload.
+     */
+    _updateState() {
+        this.setState(() => ({ successfullUploaded: true, uploading: false }));
+    }
+
+
+
+
+    // sendRequest(file) {
+    //     return new Promise((resolve, reject) => {
+    //         this._isMounted = true;
+    //         const req = new XMLHttpRequest();
+
+    //         req.upload.addEventListener("progress", event => {
+    //             if (event.lengthComputable) {
+    //                 const copy = { ...this.state.uploadProgress };
+    //                 copy[file.name] = {
+    //                     state: "pending",
+    //                     percentage: (event.loaded / event.total) * 100
+    //                 };
+    //                 this.setState({ uploadProgress: copy });
+    //             }
+    //         });
+
+    //         req.upload.addEventListener("load", event => {
+    //             const copy = { ...this.state.uploadProgress };
+    //             copy[file.name] = { state: "done", percentage: 100 };
+    //             this.setState({ uploadProgress: copy });
+    //             resolve(req.response);
+    //         });
+
+    //         req.upload.addEventListener("error", event => {
+    //             const copy = { ...this.state.uploadProgress };
+    //             copy[file.name] = { state: "error", percentage: 0 };
+    //             this.setState({ uploadProgress: copy, uploadError: "Error uploading file." });
+    //             reject(req.response);
+    //         });
+
+    //         const formData = new FormData();
+    //         formData.append("file", file);
+
+    //         // Post file to GWAS Backend app
+    //         let file_upload_url = UPLOAD_TEMPLATE_URL_BASE + "submissions/" + this.state.SUBMISSION_ID + "/uploads";
+    //         let token = localStorage.getItem('id_token');
+
+    //         if (this._isMounted) {
+    //             // Check if user is logged in and if token is still valid
+    //             if (token && !this.ElixirAuthService.isTokenExpired(token)) {
+    //                 req.open("POST", file_upload_url);
+    //                 req.setRequestHeader('Authorization', 'Bearer ' + token);
+    //                 req.send(formData);
+    //             }
+    //             // Check if token is expired
+    //             else if (token && this.ElixirAuthService.isTokenExpired(token)) {
+    //                 alert("Your session has expired, please login again.")
+    //                 history.push(`${process.env.PUBLIC_URL}/login`);
+    //             }
+    //             else {
+    //                 alert("Please login to create a submission.")
+    //                 history.push(`${process.env.PUBLIC_URL}/login`);
+    //             }
+    //         }
+    //     });
+    // }
 
 
     render() {
