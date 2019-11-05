@@ -1077,11 +1077,6 @@ class SubmissionDetails extends Component {
                                     {userActionPublicationStatus}
                                 </Typography>
                             </Grid>
-                            <Grid item xs={12}>
-                                <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                    Summary statistics location: <i>To be added once data is available....</i>
-                                </Typography>
-                            </Grid>
                         </Paper>
                     </Grid>
                 </div>
