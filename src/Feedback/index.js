@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
     feedback: {
-        top: `45%`,
+        top: `35%`,
         height: 100,
         width: 55,
         position: 'fixed',
