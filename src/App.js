@@ -8,6 +8,7 @@ import SubmissionDetails from './SubmissionDetails';
 import Footer from './Footer';
 import './App.css';
 import ErrorPage from './ErrorPage';
+import Feedback from './Feedback';
 
 import { Route } from "react-router-dom";
 
@@ -36,6 +37,9 @@ const App = ({ classes }) => (
       <div className="Site-content">
         <div>
           <MenuAppBar />
+        </div>
+        <div>
+          <Feedback />
         </div>
         <div>
           <main className={classes.main}>
