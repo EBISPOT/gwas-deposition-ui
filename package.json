@@ -1,7 +1,7 @@
 {
   "name": "gwas-deposition-ui",
   "version": "0.1.0",
-  "homepage": "http://193.62.54.159/deposition",
+  "homepage": "http://193.62.54.159/gwas/deposition",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.0.1",
