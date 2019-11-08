@@ -134,7 +134,6 @@ class SubmissionDetails extends Component {
 
 
         this.state = ({
-            auth: localStorage.getItem('id_token'),
             submission_data: [],
             userName: null,
             submissionCreatedDate: null,
@@ -170,7 +169,7 @@ class SubmissionDetails extends Component {
 
 
         // Set token to use AuthConsumer props or localstorage if page refresh
-        this.props.token === null ? this.authToken = this.state.auth : this.authToken = this.props.token;
+        // this.props.token === null ? this.authToken = this.state.auth : this.authToken = this.props.token;
     }
 
 
@@ -192,9 +191,15 @@ class SubmissionDetails extends Component {
                 || this.state.submissionStatus === 'COMPLETE'
                 || this.state.submissionStatus === 'STARTED'
                 || this.state.submissionStatus === 'SUBMITTED') {
-                clearInterval(this.timer)
+                clearInterval(this.timer);
             } else {
-                this.getSubmissionDetails();
+                // console.log("** Timer values for - isMounted: ", this._isMounted, " Timer: ", this.timer);
+                // Only call for polling if still viewing submission details page,
+                // sometimes submissions are stuck in VALIDATING and then getSubmissionDetails() would
+                // always be called after viewing the page
+                if (this._isMounted) {
+                    this.getSubmissionDetails();
+                }
             }
         }, 30000)
     }
@@ -208,18 +213,25 @@ class SubmissionDetails extends Component {
      * Get Submission details and update state
      */
     getSubmissionDetails() {
+        let token = localStorage.getItem('id_token');
+
         // Check if token is expired
-        if (this.ElixirAuthService.isTokenExpired(this.authToken)) {
+        if (this.ElixirAuthService.isTokenExpired(token)) {
             alert("Your session has expired, redirecting to login.")
+            // console.log("** Timer values for getSubmissionDetails: ", this.timer, "\n** isMounted: ", this._isMounted);
+
             setTimeout(() => {
                 history.push(`${process.env.PUBLIC_URL}/login`);
             }, 1000);
+
+            this.timer = null;
+            this._isMounted = false;
         }
         else {
             axios.get(BASE_URI + 'submissions/' + this.SUBMISSION_ID,
                 {
                     headers: {
-                        'Authorization': 'Bearer ' + this.authToken,
+                        'Authorization': 'Bearer ' + token,
                     }
                 })
                 .then((response) => {
