@@ -137,8 +137,10 @@ function MenuAppBar() {
     }
 
     function showMySubmissions() {
-        // Check if logged in
-        if (localStorage.getItem('id_token')) {
+        let token = localStorage.getItem('id_token');
+
+        // Check if logged in and if token is still valid
+        if (token && !eas.isTokenExpired(token)) {
             history.push(`${process.env.PUBLIC_URL}/submissions`);
         } else {
             history.push(`${process.env.PUBLIC_URL}/login`);
@@ -167,9 +169,9 @@ function MenuAppBar() {
         // setAuth(false);
     }
 
-    function downloadTemplate() {
-        apiClient.downloadTemplate();
-    }
+    // function downloadTemplate() {
+    //     apiClient.downloadTemplate();
+    // }
 
     return (
         <div className={classes.root}>

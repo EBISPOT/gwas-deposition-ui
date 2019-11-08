@@ -65,7 +65,7 @@ export default class ElixirAuthService {
         const fragments = this._formatFragments({
             'from': this._domain,
         });
-        return `${this._appURL}/sso${fragments}`;
+        return `${this._appURL}/sso${fragments}&ttl=180`;
     }
 
 
