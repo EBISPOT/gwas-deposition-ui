@@ -20,6 +20,15 @@ import {
 } from '@material-ui/core';
 import PublicationDetails from './PublicationDetails';
 
+import ReactGA from 'react-ga';
+import history from "./history";
+
+ReactGA.initialize('UA-60195133-1');
+//Initialize google analytics page view tracking
+history.listen(location => {
+  ReactGA.set({ page: location.pathname }); // Update the user's current page
+  ReactGA.pageview(location.pathname); // Record a pageview for the given page
+});
 
 const styles = theme => ({
   main: {
