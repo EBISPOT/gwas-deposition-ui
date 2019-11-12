@@ -1,6 +1,7 @@
 import React from 'react';
 import MaterialTable from 'material-table';
 import { Link } from 'react-router-dom';
+import './publications.css';
 
 import { forwardRef } from 'react';
 
