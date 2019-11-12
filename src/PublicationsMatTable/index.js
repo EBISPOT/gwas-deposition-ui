@@ -1,6 +1,7 @@
 import React from 'react';
 import MaterialTable from 'material-table';
 import { Link } from 'react-router-dom';
+import './publications.css';
 
 import { forwardRef } from 'react';
 
@@ -187,7 +188,9 @@ class PublicationsMatTable extends React.Component {
                             { title: 'Publication', field: 'title' },
                             { title: 'Journal', field: 'journal' },
                             {
-                                title: 'Status', field: 'status',
+                                title: <div className="tooltip">Status
+                                    <span className="tooltiptext">Curation status of the publication.</span></div>,
+                                field: 'status',
                                 render: rowData => (this.getUserFriendlyStatusLabels(rowData.status))
                             },
                         ]}
