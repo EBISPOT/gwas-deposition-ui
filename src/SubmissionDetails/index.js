@@ -154,8 +154,6 @@ class SubmissionDetails extends Component {
             fileName: null,
             fileValidationErrorMessage: null,
             displaySummaryStatsSection: true,
-            summaryStatsTemplateFileUploadId: null,
-            summaryStatsTemplateFileName: null,
         })
         this.downloadMetadataTemplate = this.downloadMetadataTemplate.bind(this);
         this.downloadDataFile = this.downloadDataFile.bind(this);
@@ -268,8 +266,7 @@ class SubmissionDetails extends Component {
                              * Parse file metadata
                             */
                             const { summaryStatsFileMetadata,
-                                metadataFileMetadata,
-                                summaryStatsTemplateFileMetadata } = this.parseFileMetadata(data.files);
+                                metadataFileMetadata } = this.parseFileMetadata(data.files);
 
                             /**
                              * Set state based on type of file uploaded
@@ -283,14 +280,6 @@ class SubmissionDetails extends Component {
                                 this.setState({ ...this.state, fileUploadId: metadataFileMetadata.fileUploadId })
                                 this.setState({ ...this.state, fileName: metadataFileMetadata.fileName })
                                 this.setState({ ...this.state, fileValidationErrorMessage: metadataFileMetadata.metadata_errors });
-                            }
-
-                            /**
-                             * Set data for Download Summary Stats template
-                             */
-                            if (summaryStatsTemplateFileMetadata.fileUploadId !== undefined) {
-                                this.setState({ ...this.state, summaryStatsTemplateFileUploadId: summaryStatsTemplateFileMetadata.fileUploadId });
-                                this.setState({ ...this.state, summaryStatsTemplateFileName: summaryStatsTemplateFileMetadata.fileName });
                             }
                         }
                     }
@@ -481,12 +470,11 @@ class SubmissionDetails extends Component {
     }
 
     /**
-     * Download prefilled SumStats template
+     * Get fileUploadId for prefilled SumStats template and then download template file
      */
     downloadSummaryStatsTemplate() {
         let submissionId = this.SUBMISSION_ID;
         let pmid = this.state.publication_obj.pmid;
-        let summaryStatsTemplateFileId = this.state.summaryStatsTemplateFileUploadId;
         let summaryStatsTemplateFileName = `prefilled_template_${pmid}.xlsx`;
         let token = localStorage.getItem('id_token');
 
@@ -498,26 +486,42 @@ class SubmissionDetails extends Component {
             }, 1000);
         }
         else {
-            axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + summaryStatsTemplateFileId + '/download',
-                {
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                    },
-                    responseType: 'blob',
-                }
+            axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/',
+                { headers: { 'Authorization': 'Bearer ' + token, }, }
             ).then((response) => {
+                // Parse response to get fileUploadId from file Object with type "SUMMARY_STATS_TEMPLATE"
+                let SUMMARY_STATS_TEMPLATE_FILE_TYPE = "SUMMARY_STATS_TEMPLATE";
+                let allFiles = response.data._embedded.fileUploads;
+                let sumStatsFileUploadId;
+
+                allFiles.forEach((file) => {
+                    if (file.type === SUMMARY_STATS_TEMPLATE_FILE_TYPE) {
+                        sumStatsFileUploadId = file.fileUploadId;
+                    }
+                });
+
+                // Reset error status if failed previous attempt
+                this.setState(() => ({
+                    downloadSummaryStatsFileError: null,
+                }));
+
+                return axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + sumStatsFileUploadId + '/download',
+                    { headers: { 'Authorization': 'Bearer ' + token, }, responseType: 'blob', }
+                )
+            }).then((response) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
+
                 link.href = url;
                 link.setAttribute('download', summaryStatsTemplateFileName);
                 document.body.appendChild(link);
                 link.click();
-            }
-            ).catch((error) => {
-                console.log("Error: ", error)
-                let downloadSSTemplateErrorLabel = "Error: File not found."
-                this.setState({ downloadSummaryStatsFileError: downloadSSTemplateErrorLabel });
             })
+                .catch((error) => {
+                    console.log("Error: ", error)
+                    let downloadSSTemplateErrorLabel = "Error: File not found."
+                    this.setState({ downloadSummaryStatsFileError: downloadSSTemplateErrorLabel });
+                })
         }
     }
 
@@ -565,7 +569,7 @@ class SubmissionDetails extends Component {
         if (token && !this.ElixirAuthService.isTokenExpired(token)) {
             // Set state to block any further button clicks
             this.setState(() => ({
-                submissionStatus: 'DELETING SUBMISSION',
+                submissionStatus: 'DELETING SUBMISSION...',
                 deleteFileError: null,
                 fileUploadId: null,
                 fileValidationErrorMessage: null,
