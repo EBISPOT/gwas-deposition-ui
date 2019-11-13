@@ -189,7 +189,9 @@ class PublicationsMatTable extends React.Component {
                             { title: 'Journal', field: 'journal' },
                             {
                                 title: <div className="tooltip">Status
-                                    <span className="tooltiptext">Curation status of the publication.</span></div>,
+                                    <span className="tooltiptext">Submission status of the publication.
+                                        See documentation for detailed definitions.
+                                    </span></div>,
                                 field: 'status',
                                 render: rowData => (this.getUserFriendlyStatusLabels(rowData.status))
                             },
