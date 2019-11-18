@@ -83,6 +83,15 @@ class Submissions extends Component {
         return createdTimestamp
     }
 
+    transformStatusLabel(status) {
+        if (status === 'CURATION_COMPLETE') {
+            return 'SUBMITTED'
+        }
+        else {
+            return status
+        }
+    }
+
     componentWillUnmount() {
         this._isMounted = false;
     }
@@ -109,7 +118,8 @@ class Submissions extends Component {
                         {
                             title: <div className="tooltip">Submission Status
                                 <span className="tooltiptext">Overall status of the submission.</span></div>,
-                            field: 'submission_status', sorting: true
+                            field: 'submission_status', sorting: true,
+                            render: rowData => (this.transformStatusLabel(rowData.submission_status))
                         },
                         {
                             title: <div className="tooltip">Metadata Status
