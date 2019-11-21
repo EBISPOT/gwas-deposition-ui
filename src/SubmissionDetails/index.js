@@ -519,7 +519,7 @@ class SubmissionDetails extends Component {
             })
                 .catch((error) => {
                     console.log("Error: ", error)
-                    let downloadSSTemplateErrorLabel = "Error: File not found."
+                    let downloadSSTemplateErrorLabel = "Error: There is a fault on our end. Please contact gwas-info@ebi.ac.uk for help."
                     this.setState({ downloadSummaryStatsFileError: downloadSSTemplateErrorLabel });
                 })
         }
@@ -800,7 +800,7 @@ class SubmissionDetails extends Component {
                         <Button onClick={this.downloadSummaryStatsTemplate} fullWidth className={classes.button}>
                             Download template
                         </Button>
-                        <Typography variant="body2" gutterBottom className={classes.inputCenter}>
+                        <Typography variant="body2" gutterBottom className={classes.errorText}>
                             {this.state.downloadSummaryStatsFileError}
                         </Typography>
                     </Fragment>
