@@ -1,7 +1,7 @@
 {
   "name": "gwas-deposition-ui",
   "version": "0.1.0",
-  "homepage": "http://193.62.54.159/deposition",
+  "homepage": "http://193.62.54.159/gwas/deposition",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.0.1",
@@ -11,6 +11,7 @@
     "material-table": "^1.40.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-ga": "^2.7.0",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",

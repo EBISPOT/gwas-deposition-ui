@@ -7,12 +7,12 @@ import Submissions from './Submissions';
 import SubmissionDetails from './SubmissionDetails';
 import Footer from './Footer';
 import './App.css';
+import ErrorPage from './ErrorPage';
+import Feedback from './Feedback';
 
 import { Route } from "react-router-dom";
 
 import { withRouter } from "react-router";
-
-import SubmissionDetailsNEW from './SubmissionDetailsNEW';
 
 import {
   CssBaseline,
@@ -20,6 +20,15 @@ import {
 } from '@material-ui/core';
 import PublicationDetails from './PublicationDetails';
 
+import ReactGA from 'react-ga';
+import history from "./history";
+
+ReactGA.initialize('UA-60195133-1');
+//Initialize google analytics page view tracking
+history.listen(location => {
+  ReactGA.set({ page: location.pathname }); // Update the user's current page
+  ReactGA.pageview(location.pathname); // Record a pageview for the given page
+});
 
 const styles = theme => ({
   main: {
@@ -39,6 +48,9 @@ const App = ({ classes }) => (
           <MenuAppBar />
         </div>
         <div>
+          <Feedback />
+        </div>
+        <div>
           <main className={classes.main}>
             <Route path={`${process.env.PUBLIC_URL}/`} exact component={Home} />
             <Route path={`${process.env.PUBLIC_URL}/login`} component={Login}></Route>
@@ -46,7 +58,7 @@ const App = ({ classes }) => (
             <Route path={`${process.env.PUBLIC_URL}/publication/:pmid`} exact render={props => <PublicationDetails {...props} />} />
             <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
             <Route path={`${process.env.PUBLIC_URL}/submission/:submission_id`} exact render={props => <SubmissionDetails {...props} />} />
-            <Route path={`${process.env.PUBLIC_URL}/submissionNEW/:submission_id`} exact render={props => <SubmissionDetailsNEW {...props} />} />
+            <Route path={`${process.env.PUBLIC_URL}/error`} component={ErrorPage} />
           </main>
         </div>
       </div>

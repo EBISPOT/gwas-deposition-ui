@@ -65,7 +65,7 @@ export default class ElixirAuthService {
         const fragments = this._formatFragments({
             'from': this._domain,
         });
-        return `${this._appURL}/sso${fragments}`;
+        return `${this._appURL}/sso${fragments}&ttl=180`;
     }
 
 
@@ -92,15 +92,14 @@ export default class ElixirAuthService {
         try {
             const decoded = jwt_decode(token);
             if (decoded.exp < Date.now() / 1000) { // Checking if token is expired.
-                // console.log("** Token is EXPIRED!");
                 return true;
             }
-            else
-                // console.log("** Token is NOT EXPIRED!");
+            else {
                 return false;
+            }
         }
         catch (err) {
-            return false;
+            return err;
         }
     }
 

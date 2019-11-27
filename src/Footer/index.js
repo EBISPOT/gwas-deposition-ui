@@ -4,7 +4,7 @@ import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 
 var style = {
-    backgroundColor: "#A9A9A9",
+    backgroundColor: "#D2D1D4",
     textAlign: "center",
     padding: "20px",
     height: "80px",
@@ -18,7 +18,7 @@ var linkStyle = {
 }
 
 var button = {
-    backgroundColor: "#A9A9A9",
+    backgroundColor: "#D2D1D4",
     border: 'none',
 }
 

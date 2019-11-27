@@ -18,7 +18,9 @@ import API_CLIENT from '../apiClient';
 import history from "../history";
 
 import axios from 'axios';
-import { red } from '@material-ui/core/colors';
+import ElixirAuthService from '../ElixirAuthService';
+
+const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
 
 const styles = theme => ({
     root: {
@@ -119,6 +121,7 @@ class SubmissionDetails extends Component {
     constructor(props) {
         super(props)
         this.API_CLIENT = new API_CLIENT();
+        this.ElixirAuthService = new ElixirAuthService();
 
         // NOTE: SUBMISSION_ID is passed from location prop in Route pathname
         if (process.env.PUBLIC_URL) {
@@ -128,6 +131,7 @@ class SubmissionDetails extends Component {
         else {
             this.SUBMISSION_ID = this.props.location.pathname.split('/')[2];
         }
+
 
         this.state = ({
             submission_data: [],
@@ -150,8 +154,6 @@ class SubmissionDetails extends Component {
             fileName: null,
             fileValidationErrorMessage: null,
             displaySummaryStatsSection: true,
-            summaryStatsTemplateFileUploadId: null,
-            summaryStatsTemplateFileName: null,
         })
         this.downloadMetadataTemplate = this.downloadMetadataTemplate.bind(this);
         this.downloadDataFile = this.downloadDataFile.bind(this);
@@ -161,6 +163,11 @@ class SubmissionDetails extends Component {
         this.displayUploadComponent = this.displayUploadComponent.bind(this);
         this.hideUploadComponent = this.hideUploadComponent.bind(this);
         this.parseFileMetadata = this.parseFileMetadata.bind(this);
+        this.ElixirAuthService.isTokenExpired = this.ElixirAuthService.isTokenExpired.bind(this);
+
+
+        // Set token to use AuthConsumer props or localstorage if page refresh
+        // this.props.token === null ? this.authToken = this.state.auth : this.authToken = this.props.token;
     }
 
 
@@ -182,9 +189,15 @@ class SubmissionDetails extends Component {
                 || this.state.submissionStatus === 'COMPLETE'
                 || this.state.submissionStatus === 'STARTED'
                 || this.state.submissionStatus === 'SUBMITTED') {
-                clearInterval(this.timer)
+                clearInterval(this.timer);
             } else {
-                this.getSubmissionDetails();
+                // console.log("** Timer values for - isMounted: ", this._isMounted, " Timer: ", this.timer);
+                // Only call for polling if still viewing submission details page,
+                // sometimes submissions are stuck in VALIDATING and then getSubmissionDetails() would
+                // always be called after viewing the page
+                if (this._isMounted) {
+                    this.getSubmissionDetails();
+                }
             }
         }, 30000)
     }
@@ -198,75 +211,92 @@ class SubmissionDetails extends Component {
      * Get Submission details and update state
      */
     getSubmissionDetails() {
-        // this.API_CLIENT.getSubmission(this.SUBMISSION_ID).then((data) => {
+        let token = localStorage.getItem('id_token');
 
-        const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
-        axios.get(BASE_URI + 'submissions/' + this.SUBMISSION_ID)
-            .then((response) => {
+        // Check if token is expired
+        if (this.ElixirAuthService.isTokenExpired(token)) {
+            alert("Your session has expired, redirecting to login.")
+            // console.log("** Timer values for getSubmissionDetails: ", this.timer, "\n** isMounted: ", this._isMounted);
 
-                let data = response.data
+            setTimeout(() => {
+                history.push(`${process.env.PUBLIC_URL}/login`);
+            }, 1000);
 
-                // Only update state if component still mounted
-                if (this._isMounted) {
-
-                    this.setState({ ...this.state, submission_data: data });
-                    this.setState({ ...this.state, submissionStatus: data.submission_status });
-                    this.setState({ ...this.state, metadataStatus: data.metadata_status });
-                    this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
-                    this.setState({ ...this.state, publication_obj: data.publication });
-                    this.setState({ ...this.state, publicationStatus: data.publication.status });
-
-                    if (data.created.user.name) {
-                        this.setState({ ...this.state, userName: data.created.user.name });
+            this.timer = null;
+            this._isMounted = false;
+        }
+        else {
+            axios.get(BASE_URI + 'submissions/' + this.SUBMISSION_ID,
+                {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
                     }
+                })
+                .then((response) => {
 
-                    if (data.created.timestamp) {
-                        // Format timeStamp for display
-                        let createdTimestamp = new Date(data.created.timestamp);
-                        createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
-                        this.setState({ ...this.state, submissionCreatedDate: createdTimestamp });
-                    }
+                    let data = response.data
 
-                    if (data.status === 'VALID_METADATA') {
-                        this.setState({ ...this.state, isNotValid: false });
-                    }
+                    // Only update state if component still mounted
+                    if (this._isMounted) {
 
-                    if (data.files.length > 0) {
-                        /**
-                         * Parse file metadata
-                        */
-                        const { summaryStatsFileMetadata,
-                            metadataFileMetadata,
-                            summaryStatsTemplateFileMetadata } = this.parseFileMetadata(data.files);
+                        this.setState({ ...this.state, submission_data: data });
+                        this.setState({ ...this.state, submissionStatus: data.submission_status });
+                        this.setState({ ...this.state, metadataStatus: data.metadata_status });
+                        this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
+                        this.setState({ ...this.state, publication_obj: data.publication });
+                        this.setState({ ...this.state, publicationStatus: data.publication.status });
 
-                        /**
-                         * Set state based on type of file uploaded
-                         */
-                        if (summaryStatsFileMetadata.fileUploadId !== undefined) {
-                            this.setState({ ...this.state, fileUploadId: summaryStatsFileMetadata.fileUploadId })
-                            this.setState({ ...this.state, fileName: summaryStatsFileMetadata.fileName })
-                            this.setState({ ...this.state, fileValidationErrorMessage: summaryStatsFileMetadata.summary_stats_errors });
-                        }
-                        else {
-                            this.setState({ ...this.state, fileUploadId: metadataFileMetadata.fileUploadId })
-                            this.setState({ ...this.state, fileName: metadataFileMetadata.fileName })
-                            this.setState({ ...this.state, fileValidationErrorMessage: metadataFileMetadata.metadata_errors });
+                        if (data.created.user.name) {
+                            this.setState({ ...this.state, userName: data.created.user.name });
                         }
 
-                        /**
-                         * Set data for Download Summary Stats template
-                         */
-                        if (summaryStatsTemplateFileMetadata.fileUploadId !== undefined) {
-                            this.setState({ ...this.state, summaryStatsTemplateFileUploadId: summaryStatsTemplateFileMetadata.fileUploadId });
-                            this.setState({ ...this.state, summaryStatsTemplateFileName: summaryStatsTemplateFileMetadata.fileName });
+                        if (data.created.timestamp) {
+                            // Format timeStamp for display
+                            let createdTimestamp = new Date(data.created.timestamp);
+                            createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
+                            this.setState({ ...this.state, submissionCreatedDate: createdTimestamp });
+                        }
+
+                        if (data.status === 'VALID_METADATA') {
+                            this.setState({ ...this.state, isNotValid: false });
+                        }
+
+                        if (data.files.length > 0) {
+                            /**
+                             * Parse file metadata
+                            */
+                            const { summaryStatsFileMetadata,
+                                metadataFileMetadata } = this.parseFileMetadata(data.files);
+
+                            /**
+                             * Set state based on type of file uploaded
+                             */
+                            if (summaryStatsFileMetadata.fileUploadId !== undefined) {
+                                this.setState({ ...this.state, fileUploadId: summaryStatsFileMetadata.fileUploadId })
+                                this.setState({ ...this.state, fileName: summaryStatsFileMetadata.fileName })
+                                this.setState({ ...this.state, fileValidationErrorMessage: summaryStatsFileMetadata.summary_stats_errors });
+                            }
+                            else {
+                                this.setState({ ...this.state, fileUploadId: metadataFileMetadata.fileUploadId })
+                                this.setState({ ...this.state, fileName: metadataFileMetadata.fileName })
+                                this.setState({ ...this.state, fileValidationErrorMessage: metadataFileMetadata.metadata_errors });
+                            }
                         }
                     }
-                }
-            }).catch(error => {
-                console.log("** Error: ", error);
-                // Stop polling if error returned
-                this.setState({ submissionStatus: null })
-            });
+                }).catch(error => {
+                    console.log("Error: ", error);
+                    // Stop polling if error returned
+                    this.setState({ submissionStatus: null })
+
+                    // Redirect if 4xx response returned, 404 returned from backend if not authorized
+                    if (error.response && (error.response.status >= 404 && error.response.status < 500)) {
+                        return history.push(`${process.env.PUBLIC_URL}/error`);
+                    }
+                    if (error.response && (error.response.status >= 400 && error.response.status < 404)) {
+                        return history.push(`${process.env.PUBLIC_URL}/error`);
+                    }
+                });
+        }
     }
 
 
@@ -387,62 +417,112 @@ class SubmissionDetails extends Component {
         let submissionId = this.SUBMISSION_ID;
         let fileId = this.state.fileUploadId;
         let fileName = this.state.fileName;
+        let token = localStorage.getItem('id_token');
 
-        // this.API_CLIENT.downloadDataFile(submissionId, fileId, fileName)
-
-        const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
         if (!fileName) {
             fileName = "template.xlsx";
         }
-        axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + fileId + '/download',
-            {
-                responseType: 'blob',
-            }
-        ).then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', fileName);
-            document.body.appendChild(link);
-            link.click();
-        }).catch((error) => {
-            this.setState({ reviewLatestFileError: 'Error: ' + error.message })
-        })
-    }
 
-    downloadMetadataTemplate() {
-        this.API_CLIENT.downloadTemplate();
+        // Check if token is valid
+        if (this.ElixirAuthService.isTokenExpired(token)) {
+            alert("Your session has expired, redirecting to login.")
+            setTimeout(() => {
+                history.push(`${process.env.PUBLIC_URL}/login`);
+            }, 1000);
+        }
+        else {
+            axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + fileId + '/download',
+                {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                    },
+                    responseType: 'blob',
+                }
+            ).then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+            }).catch((error) => {
+                this.setState({ reviewLatestFileError: 'Error: ' + error.message })
+            })
+        }
     }
 
     /**
-     * Download prefilled SS template
+     * Download Metadata template
+     */
+    downloadMetadataTemplate() {
+        let token = localStorage.getItem('id_token');
+
+        // Check if token is valid
+        if (this.ElixirAuthService.isTokenExpired(token)) {
+            alert("Your session has expired, redirecting to login.")
+            setTimeout(() => {
+                history.push(`${process.env.PUBLIC_URL}/login`);
+            }, 1000);
+        }
+        else {
+            this.API_CLIENT.downloadTemplate();
+        }
+    }
+
+    /**
+     * Get fileUploadId for prefilled SumStats template and then download template file
      */
     downloadSummaryStatsTemplate() {
         let submissionId = this.SUBMISSION_ID;
         let pmid = this.state.publication_obj.pmid;
-        let summaryStatsTemplateFileId = this.state.summaryStatsTemplateFileUploadId;
-        // let summaryStatsTemplateFileName = this.state.summaryStatsTemplateFileName;
         let summaryStatsTemplateFileName = `prefilled_template_${pmid}.xlsx`;
+        let token = localStorage.getItem('id_token');
 
-        const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
-
-        axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + summaryStatsTemplateFileId + '/download',
-            {
-                responseType: 'blob',
-            }
-        ).then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', summaryStatsTemplateFileName);
-            document.body.appendChild(link);
-            link.click();
+        // Check if token is valid
+        if (this.ElixirAuthService.isTokenExpired(token)) {
+            alert("Your session has expired, redirecting to login.")
+            setTimeout(() => {
+                history.push(`${process.env.PUBLIC_URL}/login`);
+            }, 1000);
         }
-        ).catch((error) => {
-            console.log("** DL SS Template error: ", error)
-            let downloadSSTemplateErrorLabel = "Error: File not found."
-            this.setState({ downloadSummaryStatsFileError: downloadSSTemplateErrorLabel });
-        })
+        else {
+            axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/',
+                { headers: { 'Authorization': 'Bearer ' + token, }, }
+            ).then((response) => {
+                // Parse response to get fileUploadId from file Object with type "SUMMARY_STATS_TEMPLATE"
+                let SUMMARY_STATS_TEMPLATE_FILE_TYPE = "SUMMARY_STATS_TEMPLATE";
+                let allFiles = response.data._embedded.fileUploads;
+                let sumStatsFileUploadId;
+
+                allFiles.forEach((file) => {
+                    if (file.type === SUMMARY_STATS_TEMPLATE_FILE_TYPE) {
+                        sumStatsFileUploadId = file.fileUploadId;
+                    }
+                });
+
+                // Reset error status if failed previous attempt
+                this.setState(() => ({
+                    downloadSummaryStatsFileError: null,
+                }));
+
+                return axios.get(BASE_URI + 'submissions/' + submissionId + '/uploads/' + sumStatsFileUploadId + '/download',
+                    { headers: { 'Authorization': 'Bearer ' + token, }, responseType: 'blob', }
+                )
+            }).then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+
+                link.href = url;
+                link.setAttribute('download', summaryStatsTemplateFileName);
+                document.body.appendChild(link);
+                link.click();
+            })
+                .catch((error) => {
+                    console.log("Error: ", error)
+                    let downloadSSTemplateErrorLabel = "Error: There is a fault on our end. Please contact gwas-info@ebi.ac.uk for help."
+                    this.setState({ downloadSummaryStatsFileError: downloadSSTemplateErrorLabel });
+                })
+        }
     }
 
 
@@ -483,26 +563,45 @@ class SubmissionDetails extends Component {
     deleteData() {
         let submissionId = this.SUBMISSION_ID;
         let fileId = this.state.fileUploadId;
+        let token = localStorage.getItem('id_token');
 
         // Check if user is logged in, Get token from local storage
-        if (localStorage.getItem('id_token')) {
-            // let JWTToken = localStorage.getItem('id_token');
+        if (token && !this.ElixirAuthService.isTokenExpired(token)) {
+            // Set state to block any further button clicks
+            this.setState(() => ({
+                submissionStatus: 'DELETING SUBMISSION...',
+                deleteFileError: null,
+                fileUploadId: null,
+                fileValidationErrorMessage: null,
+                displaySummaryStatsSection: false,
+                metadataStatus: 'NA',
+                summaryStatisticsStatus: 'NA',
+            }));
 
             // Delete file
             this.API_CLIENT.deleteFileUpload(submissionId, fileId).then(response => {
-                this.setState(() => ({
-                    submissionStatus: 'STARTED',
-                    deleteFileError: null,
-                    fileUploadId: null,
-                    fileValidationErrorMessage: null,
-                    displaySummaryStatsSection: false,
-                    metadataStatus: 'NA',
-                    summaryStatisticsStatus: 'NA',
-                }));
+                if (response.status === 200) {
+                    this.setState(() => ({
+                        submissionStatus: 'STARTED',
+                        deleteFileError: null,
+                        fileUploadId: null,
+                        fileValidationErrorMessage: null,
+                        displaySummaryStatsSection: false,
+                        metadataStatus: 'NA',
+                        summaryStatisticsStatus: 'NA',
+                    }));
+                }
             }).catch(error => {
                 let deleteFileErrorLabel = "Error: There was an error deleting the file."
                 this.setState({ deleteFileError: deleteFileErrorLabel });
             })
+        }
+        // Check if token is valid
+        else if (token && this.ElixirAuthService.isTokenExpired(token)) {
+            alert("Your session has expired, redirecting to login.")
+            setTimeout(() => {
+                history.push(`${process.env.PUBLIC_URL}/login`);
+            }, 1000);
         }
         else {
             alert("Please login to delete a file")
@@ -516,26 +615,23 @@ class SubmissionDetails extends Component {
      */
     submitData() {
         let submissionId = this.SUBMISSION_ID;
+        let token = localStorage.getItem('id_token');
 
-        // Check if user is logged in, Get token from local storage
-        if (localStorage.getItem('id_token')) {
-            let JWTToken = localStorage.getItem('id_token')
-            this.API_CLIENT.submitSubmission(submissionId, JWTToken).then(response => {
+        // Check if token is valid
+        if (this.ElixirAuthService.isTokenExpired(token)) {
+            alert("Your session has expired, redirecting to login.")
+            setTimeout(() => {
+                history.push(`${process.env.PUBLIC_URL}/login`);
+            }, 1000);
+        }
+        else {
+            this.API_CLIENT.submitSubmission(submissionId).then(response => {
                 // Redirect to My Submissions page, NOTE: If using redirect, can't set state here
                 history.push(`${process.env.PUBLIC_URL}/submissions`);
             })
                 .catch(error => {
                     this.setState(() => ({ submitDataError: "Error: " + error.message }));
                 })
-            // Issue: This reloads the page before the submission is submitted
-            // window.location.reload();
-
-            // Redirect to My Submissions page, NOTE: If using redirect, can't set state here
-            // history.push(`${process.env.PUBLIC_URL}/submissions`);
-        }
-        else {
-            alert("Please login to create a submission")
-            history.push(`${process.env.PUBLIC_URL}/login`);
         }
     }
 
@@ -656,6 +752,9 @@ class SubmissionDetails extends Component {
             currentStatus = 'VALIDATING TEMPLATE...'
         } else if (submissionStatus === 'INVALID') {
             currentStatus = 'TEMPLATE INVALID'
+        }
+        else if (submissionStatus === 'COMPLETE' || submissionStatus === 'CURATION_COMPLETE') {
+            currentStatus = 'SUBMITTED'
         } else {
             currentStatus = submissionStatus;
         }
@@ -701,7 +800,7 @@ class SubmissionDetails extends Component {
                         <Button onClick={this.downloadSummaryStatsTemplate} fullWidth className={classes.button}>
                             Download template
                         </Button>
-                        <Typography variant="body2" gutterBottom className={classes.inputCenter}>
+                        <Typography variant="body2" gutterBottom className={classes.errorText}>
                             {this.state.downloadSummaryStatsFileError}
                         </Typography>
                     </Fragment>
@@ -992,11 +1091,6 @@ class SubmissionDetails extends Component {
                             <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     {userActionPublicationStatus}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                    Summary statistics location: <i>To be added once data is available....</i>
                                 </Typography>
                             </Grid>
                         </Paper>

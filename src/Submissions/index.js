@@ -1,12 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import MaterialTable from 'material-table';
-import Button from '@material-ui/core/Button';
-import API_CLIENT from '../apiClient';
-import history from "../history";
-
 import { Link } from 'react-router-dom'
-
 import { forwardRef } from 'react';
+import ElixirAuthService from '../ElixirAuthService';
+import history from "../history";
+import './submissions.css';
 
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
@@ -47,17 +45,55 @@ const tableIcons = {
 
 const GET_SUBMISSIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'submissions';
 
+class Submissions extends Component {
+    _isMounted = false;
 
-class Submissions extends React.Component {
     constructor(props) {
         super(props);
-        this.API_CLIENT = new API_CLIENT();
+        this.auth = this.getToken.bind(this);
+        this.ElixirAuthService = new ElixirAuthService();
+    }
+
+    getToken() {
+        let auth = localStorage.getItem('id_token');
+
+        // Check if token exists
+        if (auth) {
+            // Check if token is still valid
+            if (this.ElixirAuthService.isTokenExpired(auth)) {
+                alert("Your session has expired, redirecting to login.")
+                setTimeout(() => {
+                    history.push(`${process.env.PUBLIC_URL}/login`);
+                }, 1000);
+
+            } else {
+                return auth;
+            }
+        } else {
+            alert("You must login to view submissions, redirecting to login.")
+            setTimeout(() => {
+                history.push(`${process.env.PUBLIC_URL}/login`);
+            }, 1000);
+        }
     }
 
     transformDateFormat(timestamp) {
         let createdTimestamp = new Date(timestamp);
         createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
         return createdTimestamp
+    }
+
+    transformStatusLabel(status) {
+        if (status === 'CURATION_COMPLETE') {
+            return 'SUBMITTED'
+        }
+        else {
+            return status
+        }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {
@@ -67,27 +103,51 @@ class Submissions extends React.Component {
                     icons={tableIcons}
                     title="My Submissions"
                     columns={[
-                        { title: 'PubMedID', field: 'publication.pmid', sorting: true },
                         {
-                            title: 'Submission ID', field: 'submissionId',
+                            title: 'PMID', field: 'publication.pmid', sorting: true,
+                        },
+                        {
+                            title: <div className="tooltip">Submission ID
+                                <span className="tooltiptext">Unique identifier for submission.</span></div>,
+                            field: 'submissionId',
                             render: rowData => (<Link to={{
                                 pathname: `${process.env.PUBLIC_URL}/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
                             }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
                         },
                         { title: 'First author', field: 'publication.firstAuthor', sorting: true },
-                        { title: 'Submission Status', field: 'submission_status', sorting: true },
-                        { title: 'Metadata Status', field: 'metadata_status', sorting: true },
-                        { title: 'Summary statistics Status', field: 'summary_statistics_status', sorting: true },
+                        {
+                            title: <div className="tooltip">Submission Status
+                                <span className="tooltiptext">Overall status of the submission.</span></div>,
+                            field: 'submission_status', sorting: true,
+                            render: rowData => (this.transformStatusLabel(rowData.submission_status))
+                        },
+                        {
+                            title: <div className="tooltip">Metadata Status
+                                <span className="tooltiptext">Validation status of the template metadata.</span></div>,
+                            field: 'metadata_status', sorting: true
+                        },
+                        {
+                            title: <div className="tooltip">Summary statistics Status
+                                <span className="tooltiptext">Validation status of the summary statistics files.</span></div>,
+                            field: 'summary_statistics_status', sorting: true
+                        },
                         { title: 'Submitter', field: 'created.user.name', sorting: true },
                         {
-                            title: 'Date submission started', field: 'created.timestamp', sorting: true, defaultSort: 'desc',
+                            title: <div className="tooltip">Date submission started
+                                <span className="tooltiptext">YYYY-MM-DD</span></div>,
+                            field: 'created.timestamp', sorting: true, defaultSort: 'desc',
                             render: rowData => (this.transformDateFormat(rowData.created.timestamp))
                         },
                     ]}
                     data={query =>
                         new Promise((resolve, reject) => {
 
+                            this._isMounted = true;
+
                             let url = GET_SUBMISSIONS_URL
+
+                            let myHeaders = new Headers();
+                            myHeaders.append('Authorization', 'Bearer ' + this.auth());
 
                             // Handle search by PubMedID
                             let onlyNumbers = /^\d+$/;
@@ -95,28 +155,36 @@ class Submissions extends React.Component {
                             if (query.search) {
                                 if (onlyNumbers.test(query.search)) {
                                     url += '?pmid=' + query.search
-                                    fetch(url)
+                                    fetch(url, {
+                                        headers: myHeaders
+                                    })
                                         .then(response => response.json())
                                         .then(result => {
-                                            resolve({
-                                                data: result._embedded.submissions,
-                                                page: result.page.number,
-                                                totalCount: result.page.totalElements,
-                                            })
+                                            if (this._isMounted) {
+                                                resolve({
+                                                    data: result._embedded.submissions,
+                                                    page: result.page.number,
+                                                    totalCount: result.page.totalElements,
+                                                })
+                                            }
                                         }).catch(error => {
                                         })
                                 }
                                 // Handle search by SubmissionID
                                 else {
                                     url += '/' + query.search
-                                    fetch(url)
+                                    fetch(url, {
+                                        headers: myHeaders
+                                    })
                                         .then(response => response.json())
                                         .then(result => {
-                                            resolve({
-                                                data: [result],
-                                                page: 0,
-                                                totalCount: 1,
-                                            })
+                                            if (this._isMounted) {
+                                                resolve({
+                                                    data: [result],
+                                                    page: 0,
+                                                    totalCount: 1,
+                                                })
+                                            }
                                         }).catch(error => {
                                         })
                                 }
@@ -129,27 +197,33 @@ class Submissions extends React.Component {
                                 // Handle sorting all results
                                 if (query.orderBy) {
                                     let sortOrder = query.orderDirection;
-                                    // Server-side Sorting for submissions is only supported for submissionId
+                                    // NOTE: Server-side Sorting for submissions is only supported for submissionId
                                     url += '&sort=' + query.orderBy.field + ',' + sortOrder
                                 }
 
-                                fetch(url)
+                                fetch(url, {
+                                    headers: myHeaders
+                                })
                                     .then(response => response.json())
                                     .then(result => {
-                                        resolve({
-                                            data: result._embedded.submissions,
-                                            page: result.page.number,
-                                            totalCount: result.page.totalElements,
-                                        })
+                                        if (this._isMounted) {
+                                            resolve({
+                                                data: result._embedded.submissions,
+                                                page: result.page.number,
+                                                totalCount: result.page.totalElements,
+                                            })
+                                        }
                                     }).catch(error => {
                                     })
                             }
                             setTimeout(() => {
-                                resolve({
-                                    data: [],
-                                    page: 0,
-                                    totalCount: 0,
-                                });
+                                if (this._isMounted) {
+                                    resolve({
+                                        data: [],
+                                        page: 0,
+                                        totalCount: 0,
+                                    });
+                                }
                             }, 5000);
                         })
                     }

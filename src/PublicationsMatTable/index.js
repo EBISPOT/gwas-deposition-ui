@@ -1,6 +1,7 @@
 import React from 'react';
 import MaterialTable from 'material-table';
 import { Link } from 'react-router-dom';
+import './publications.css';
 
 import { forwardRef } from 'react';
 
@@ -118,15 +119,21 @@ class PublicationsMatTable extends React.Component {
      * Set user friendly status label
      */
     getUserFriendlyStatusLabels(rowData) {
-        if (rowData === 'UNDER_SUBMISSION' || rowData === 'UNDER_SUMMARY_STATS_SUBMISSION'
-            || rowData === 'PUBLISHED_WITH_SS') {
-            return 'CLOSED'
+        if (rowData === 'UNDER_SUBMISSION' || rowData === 'UNDER_SUMMARY_STATS_SUBMISSION') {
+            return <div className="tooltip">CLOSED<span className="tooltiptext">
+                A submission is already in progress for this publication.</span></div>
+        }
+        if (rowData === 'PUBLISHED_WITH_SS') {
+            return <div className="tooltip">CLOSED<span className="tooltiptext">
+                We already have summary statistics for this publication.</span></div>
         }
         if (rowData === 'ELIGIBLE') {
-            return 'OPEN FOR SUBMISSION'
+            return <div className="tooltip">OPEN FOR SUBMISSION<span className="tooltiptext">
+                This publication is not yet in the GWAS Catalog. We are accepting summary statistics and metadata.</span></div>
         }
         if (rowData === 'PUBLISHED') {
-            return 'OPEN FOR SUMMARY STATISTICS SUBMISSION'
+            return <div className="tooltip">OPEN FOR SUMMARY STATISTICS SUBMISSION<span className="tooltiptext">
+                This publication is in the GWAS Catalog and we are accepting summary statistics.</span></div>
         }
     }
 
@@ -187,7 +194,11 @@ class PublicationsMatTable extends React.Component {
                             { title: 'Publication', field: 'title' },
                             { title: 'Journal', field: 'journal' },
                             {
-                                title: 'Status', field: 'status',
+                                title: <div className="tooltip">Status
+                                    <span className="tooltiptext">Submission status of the publication.
+                                        See documentation for detailed definitions.
+                                    </span></div>,
+                                field: 'status',
                                 render: rowData => (this.getUserFriendlyStatusLabels(rowData.status))
                             },
                         ]}
