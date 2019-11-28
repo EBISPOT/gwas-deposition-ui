@@ -176,8 +176,9 @@ class PublicationDetails extends Component {
             history.push(`${process.env.PUBLIC_URL}/login`);
         }
         else {
-            alert("Please login to create a submission.")
-            history.push(`${process.env.PUBLIC_URL}/login`);
+            let next = `${process.env.REACT_APP_BASE_PATH}/login`;
+            console.log("Please login to create a submission." + next)
+            history.push(next);
         }
     }
 
@@ -364,7 +365,7 @@ class PublicationDetails extends Component {
                     </Grid>
 
                 </Paper>
-            </div >
+            </div>
 
 
             // <h4> JWTToken: {this.props.token}</h4>

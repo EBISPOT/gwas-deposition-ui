@@ -21,7 +21,7 @@ npm-build:
     - node -v
     - rm -rf node_modules
     - npm install
-    - CI=false npm run build
+    - CI=false npm run build:prod
   artifacts:
     paths:
       - build/*
@@ -59,7 +59,7 @@ deploy-sandbox:
     - echo ${SANBOX_KUBECONF} | base64 -d > /root/.kube/config
     - helm init
     - helm delete --purge gwas-deposition-ui || true
-    - helm install --name gwas-deposition-ui --set k8Namespace=gwas,image.repository=$CI_REGISTRY_IMAGE,image.tag=$CI_COMMIT_SHA ./k8chart/ --wait
+    - helm install --name gwas-deposition-ui --set ingress.enabled=true,k8Namespace=gwas,image.repository=$CI_REGISTRY_IMAGE,image.tag=$CI_COMMIT_SHA ./k8chart/ --wait
   environment:
     name: sandbox
   only:
