@@ -19,7 +19,7 @@
     "react-svg": "^10.0.11"
   },
   "scripts": {
-    "start": "PUBLIC_URL=/gwas/deposition PORT=8080 react-scripts start",
+    "start": "PORT=8080 react-scripts start",
     "build": "react-scripts build",
     "build:prod": "env-cmd -f .env.production npm run build",
     "test": "react-scripts test",

@@ -176,9 +176,8 @@ class PublicationDetails extends Component {
             history.push(`${process.env.PUBLIC_URL}/login`);
         }
         else {
-            let next = `${process.env.REACT_APP_BASE_PATH}/login`;
-            console.log("Please login to create a submission." + next)
-            history.push(next);
+            alert("Please login to create a submission.")
+            history.push(`${process.env.PUBLIC_URL}/login`);
         }
     }
 
