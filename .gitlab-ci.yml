@@ -40,7 +40,7 @@ docker:
 build_release:
   variables:
     GIT_STRATEGY: none
-  stage: docker
+  stage: build
   script:
     - echo "$DOCKER_HUB_PASSWORD" > dhpw.txt
     - docker login -u "${DOCKER_HUB_USER}" --password-stdin < dhpw.txt
