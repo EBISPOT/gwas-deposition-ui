@@ -25,6 +25,8 @@ npm-build:
   artifacts:
     paths:
       - build/*
+  except:
+    - tags
 
 docker:
   stage: docker
@@ -38,8 +40,6 @@ docker:
     - master
 
 build_release:
-  variables:
-    GIT_STRATEGY: none
   stage: build
   script:
     - echo "$DOCKER_HUB_PASSWORD" > dhpw.txt
