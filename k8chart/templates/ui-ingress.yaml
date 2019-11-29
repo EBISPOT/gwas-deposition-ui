@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: ui-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /gwas/deposition/$2
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
   namespace: {{.Values.k8Namespace}}
 spec:

@@ -6,7 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from './theme';
 
-import { Router } from 'react-router-dom';
+import { Router} from 'react-router-dom';
 
 import { UserProvider } from './user-context';
 import { AuthProvider } from './auth-context';
@@ -17,14 +17,15 @@ ReactDOM.render(
     <AuthProvider>
         <UserProvider>
             <ThemeProvider theme={theme}>
-                <Router basename={'/deposition'} history={history}>
+                <Router basename={'/gwas/deposition'} history={history}>
                     {/* <Security {...oktaConfig}> */}
                     < App />
                     {/* </Security> */}
                 </Router>
             </ThemeProvider>
         </UserProvider>
-    </AuthProvider>,
+    </AuthProvider>
+    ,
     document.getElementById('root'),
 );
 

@@ -364,7 +364,7 @@ class PublicationDetails extends Component {
                     </Grid>
 
                 </Paper>
-            </div >
+            </div>
 
 
             // <h4> JWTToken: {this.props.token}</h4>
