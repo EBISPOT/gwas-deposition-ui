@@ -60,6 +60,9 @@ const styles = theme => ({
         width: 350,
         verticalAlign: 'inherit',
     },
+    input: {
+        WebkitBoxShadow: "0 0 0 1000px #fafafa inset"
+    },
     publicationContainer: {
         paddingBottom: 32
     },
@@ -166,6 +169,7 @@ class PublicationsMatTable extends React.Component {
                             placeholder="Search by PubMedID or Author"
                             helperText="Enter an Author name, e.g. Yao, or PMID, e.g. 25533513"
                             InputProps={{
+                                classes: { input: classes.input },
                                 startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>
                             }}
 
