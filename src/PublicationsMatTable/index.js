@@ -25,6 +25,8 @@ import { TextField, Container } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { fade } from '@material-ui/core/styles';
+import SearchIcon from '@material-ui/icons/Search';
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 
 const tableIcons = {
@@ -58,6 +60,9 @@ const styles = theme => ({
         width: 350,
         verticalAlign: 'inherit',
     },
+    input: {
+        WebkitBoxShadow: "0 0 0 1000px #fafafa inset"
+    },
     publicationContainer: {
         paddingBottom: 32
     },
@@ -89,6 +94,7 @@ class PublicationsMatTable extends React.Component {
         this.state = ({
             value: '',
             searchValue: '',
+            isEnterKeyPress: false,
         });
         this.handleChange = this.handleChange.bind(this);
         this.getUserFriendlyStatusLabels = this.getUserFriendlyStatusLabels.bind(this);
@@ -98,7 +104,7 @@ class PublicationsMatTable extends React.Component {
 
     // Get text input value
     handleChange(event) {
-        this.setState({ value: event.target.value });
+        this.setState({ value: event.target.value, isEnterKeyPress: false });
     }
 
     clearSearchInput = () => {
@@ -162,22 +168,26 @@ class PublicationsMatTable extends React.Component {
                             variant="outlined"
                             placeholder="Search by PubMedID or Author"
                             helperText="Enter an Author name, e.g. Yao, or PMID, e.g. 25533513"
+                            InputProps={{
+                                classes: { input: classes.input },
+                                startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>
+                            }}
 
                             onChange={this.handleChange}
 
                             onKeyPress={(event) => {
                                 if (event.key === 'Enter') {
                                     event.preventDefault();
-                                    this.setState({ value: event.target.value, searchValue: event.target.value });
+                                    this.setState({ value: event.target.value, searchValue: event.target.value, isEnterKeyPress: true });
                                     this.tableRef.current && this.tableRef.current.onQueryChange();
                                 }
                             }}
                         />
-                        <button label="Clear" onClick={this.clearSearchInput}> Clear </button>
+                        {/* <button label="Clear" onClick={this.clearSearchInput}> Clear </button> */}
                     </Grid>
                 </Grid>
 
-                {searchTextValue && (
+                {searchTextValue && this.state.isEnterKeyPress && (
                     <MaterialTable
                         tableRef={this.tableRef}
                         icons={tableIcons}
