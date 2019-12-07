@@ -135,6 +135,7 @@ class SubmissionDetails extends Component {
 
         this.state = ({
             submission_data: [],
+            globusFolder: null,
             userName: null,
             submissionCreatedDate: null,
             publication_obj: [],
@@ -259,6 +260,10 @@ class SubmissionDetails extends Component {
 
                         if (data.status === 'VALID_METADATA') {
                             this.setState({ ...this.state, isNotValid: false });
+                        }
+
+                        if (data.globusFolder) {
+                            this.setState({ ...this.state, globusFolder: data.globusFolder });
                         }
 
                         if (data.files.length > 0) {
@@ -670,7 +675,7 @@ class SubmissionDetails extends Component {
             userActionPublicationStatus = <i>You are able to submit summary statistics and study metadata for this publication.</i>
         }
 
-
+        const { globusFolder } = this.state;
 
         const { submissionStatus } = this.state;
         const { metadataStatus } = this.state;
@@ -1087,6 +1092,14 @@ class SubmissionDetails extends Component {
                                     {this.state.publication_obj.journal}
                                 </Typography>
                             </Grid>
+
+                            {globusFolder && (
+                                <Grid item xs={12}>
+                                    <Typography className={classes.publicationCatalogStatusTextStyle}>
+                                        Summary Statistics folder: {globusFolder}
+                                    </Typography>
+                                </Grid>
+                            )}
 
                             <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
