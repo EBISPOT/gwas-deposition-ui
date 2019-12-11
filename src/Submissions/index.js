@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MaterialTable from 'material-table';
+import MaterialTable, { MTableToolbar } from 'material-table';
 import { Link } from 'react-router-dom'
 import { forwardRef } from 'react';
 import ElixirAuthService from '../ElixirAuthService';
@@ -21,7 +21,15 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import { Container } from '@material-ui/core';
+import { TextField, Container } from '@material-ui/core';
+
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import SearchIcon from '@material-ui/icons/Search';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import ClearIcon from '@material-ui/icons/Clear';
+
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -45,13 +53,69 @@ const tableIcons = {
 
 const GET_SUBMISSIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'submissions';
 
+const styles = theme => ({
+    textField: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(3),
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        width: 410,
+        verticalAlign: 'inherit',
+    },
+    noResultsTextStyle: {
+        fontSize: 18,
+    },
+    title: {
+        fontSize: '1.25rem',
+        paddingLeft: theme.spacing(3),
+    },
+    button: {
+        border: 'none',
+        color: 'rgba(0, 0, 0, 0.54)',
+    },
+});
+
+const CustomMTableToolbar = withStyles({
+    root: {
+        minHeight: 8,
+    }
+})(MTableToolbar);
+
+
 class Submissions extends Component {
     _isMounted = false;
 
     constructor(props) {
         super(props);
+
+        this.state = ({
+            value: '',
+            searchValue: '',
+        });
+
+        this.handleChange = this.handleChange.bind(this);
         this.auth = this.getToken.bind(this);
         this.ElixirAuthService = new ElixirAuthService();
+    }
+
+    tableRef = React.createRef();
+
+    // Get text input value
+    handleChange(event) {
+        this.setState({ value: event.target.value });
+    }
+
+    clearSearchInput = () => {
+        // clear value
+        this.setState({
+            value: '',
+            searchValue: '',
+        })
+
+        // refresh table
+        if (this.tableRef.current) {
+            this.tableRef.current.onQueryChange();
+        }
     }
 
     getToken() {
@@ -97,9 +161,15 @@ class Submissions extends Component {
     }
 
     render() {
+        const { classes } = this.props;
+
+        let { searchValue } = this.state;
+        let searchTextValue = searchValue.trim();
+
         return (
             <Container maxWidth="xl">
                 <MaterialTable
+                    tableRef={this.tableRef}
                     icons={tableIcons}
                     title="My Submissions"
                     columns={[
@@ -143,6 +213,14 @@ class Submissions extends Component {
                         new Promise((resolve, reject) => {
 
                             this._isMounted = true;
+
+                            // Re-set search page for new query
+                            if (query.search !== searchTextValue) {
+                                query.page = 0
+                            }
+
+                            // Replace search text value in Query object with input from TextField
+                            query.search = searchTextValue;
 
                             let url = GET_SUBMISSIONS_URL
 
@@ -227,25 +305,66 @@ class Submissions extends Component {
                             }, 5000);
                         })
                     }
+                    components={{
+                        Toolbar: props => (
+                            <div>
+                                <CustomMTableToolbar {...props} />
+                                <Grid container
+                                    direction="row"
+                                    justify="space-between"
+                                    alignItems="center">
+                                    <Grid item className={classes.title}>
+                                        My Submissions
+                                    </Grid>
+                                    <Grid item>
+                                        <TextField
+                                            autoFocus
+                                            id="search-submission"
+                                            name="searchInput"
+                                            value={this.state.value}
+                                            className={classes.textField}
+                                            placeholder="Search by PubMedID or Submission ID"
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+                                                endAdornment: <InputAdornment position="end">
+                                                    <button label="Clear" className={classes.button} onClick={this.clearSearchInput} >
+                                                        <ClearIcon />
+                                                    </button>
+                                                </InputAdornment>
+                                            }}
+
+                                            onChange={this.handleChange}
+
+                                            onKeyPress={(event) => {
+                                                if (event.key === 'Enter') {
+                                                    event.preventDefault();
+                                                    this.setState({ value: event.target.value, searchValue: event.target.value });
+                                                    this.tableRef.current && this.tableRef.current.onQueryChange();
+                                                }
+                                            }}
+                                        />
+
+                                    </Grid>
+                                </Grid>
+                            </div>
+                        ),
+                    }}
                     options={{
-                        search: true,
+                        search: false,
+                        showTitle: false,
                         pageSize: 10,
                         pageSizeOptions: [10, 20, 50],
-                        searchFieldStyle: {
-                            width: 410,
-                        },
                         sorting: true,
-                        debounceInterval: 3000,
-                    }}
-                    localization={{
-                        toolbar: {
-                            searchPlaceholder: 'Search by PubMedID or Submission ID',
-                        }
                     }}
                 />
             </Container>
         )
     }
 }
+
+Submissions.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+Submissions = withStyles(styles)(Submissions)
 
 export default (Submissions);
