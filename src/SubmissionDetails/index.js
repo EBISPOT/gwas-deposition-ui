@@ -135,7 +135,7 @@ class SubmissionDetails extends Component {
 
         this.state = ({
             submission_data: [],
-            globusFolder: null,
+            globusOriginID: null,
             userName: null,
             submissionCreatedDate: null,
             publication_obj: [],
@@ -262,8 +262,8 @@ class SubmissionDetails extends Component {
                             this.setState({ ...this.state, isNotValid: false });
                         }
 
-                        if (data.globusFolder) {
-                            this.setState({ ...this.state, globusFolder: data.globusFolder });
+                        if (data.globusOriginID) {
+                            this.setState({ ...this.state, globusOriginID: data.globusOriginID });
                         }
 
                         if (data.files.length > 0) {
@@ -675,7 +675,8 @@ class SubmissionDetails extends Component {
             userActionPublicationStatus = <i>You are able to submit summary statistics and study metadata for this publication.</i>
         }
 
-        const { globusFolder } = this.state;
+        const { globusOriginID } = this.state;
+        const globusSumStatsFolder = `https://app.globus.org/file-manager?origin_id=${globusOriginID}`
 
         const { submissionStatus } = this.state;
         const { metadataStatus } = this.state;
@@ -1093,10 +1094,10 @@ class SubmissionDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            {globusFolder && (
+                            {globusOriginID && (
                                 <Grid item xs={12}>
                                     <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                        Summary Statistics folder: {globusFolder}
+                                        Summary Statistics folder: {globusSumStatsFolder}
                                     </Typography>
                                 </Grid>
                             )}
