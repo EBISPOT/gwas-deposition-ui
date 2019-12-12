@@ -72,6 +72,7 @@ const styles = theme => ({
     button: {
         border: 'none',
         color: 'rgba(0, 0, 0, 0.54)',
+        backgroundColor: 'inherit',
     },
 });
 
