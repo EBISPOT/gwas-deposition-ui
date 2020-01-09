@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-// import Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { green } from '@material-ui/core/colors';
 
 import { AuthConsumer } from '../auth-context';
 
@@ -13,7 +15,6 @@ import API_CLIENT from '../apiClient';
 import history from "../history";
 
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
 import ElixirAuthService from '../ElixirAuthService';
 
 
@@ -75,6 +76,17 @@ const styles = theme => ({
             textShadow: 'none',
         }
     },
+    wrapper: {
+        position: 'relative',
+    },
+    buttonProgress: {
+        color: green[500],
+        position: 'absolute',
+        top: '50%',
+        left: 62,
+        marginTop: -12,
+        marginLeft: -12,
+    },
     leftIcon: {
         marginRight: theme.spacing(1),
     },
@@ -112,6 +124,7 @@ class PublicationDetails extends Component {
             publicationStatus: null,
             transformedPublicationStatus: null,
             createSubmissionError: false,
+            isCreateSubmissionDisabled: false,
             redirectError: false,
             redirectErrorMessage: null,
         })
@@ -158,6 +171,10 @@ class PublicationDetails extends Component {
         let pmid = this.PUBMED_ID;
         let token = this.state.auth;
 
+        this.setState(() => ({
+            isCreateSubmissionDisabled: true
+        }));
+
         // Check if user is logged in and if token is still valid
         if (token && !this.ElixirAuthService.isTokenExpired(token)) {
             this.API_CLIENT.createSubmission(pmid).then(response => {
@@ -166,7 +183,10 @@ class PublicationDetails extends Component {
                 this.redirectToSubmissionDetails();
             })
                 .catch(error => {
-                    this.setState(() => ({ createSubmissionError: true }));
+                    this.setState(() => ({
+                        createSubmissionError: true,
+                        isCreateSubmissionDisabled: false
+                    }));
                     // alert("There was an error creating the submission")
                 })
         }
@@ -237,6 +257,7 @@ class PublicationDetails extends Component {
         const { redirectError } = this.state;
         const { redirectErrorMessage } = this.state;
         const { publicationStatus } = this.state;
+        const { isCreateSubmissionDisabled } = this.state;
         const { transformedPublicationStatus } = this.state;
 
         let create_submission_button;
@@ -250,9 +271,20 @@ class PublicationDetails extends Component {
         // Show Create Submission button
         if (publicationStatus === 'ELIGIBLE' || publicationStatus === 'PUBLISHED') {
             create_submission_button =
-                <Button onClick={this.createSubmission} className={classes.button}>
-                    Create Submission
-                </Button>
+                <div className={classes.wrapper}>
+                    <Fragment>
+                        <Button
+                            className={classes.button}
+                            disabled={this.state.isCreateSubmissionDisabled}
+                            onClick={this.createSubmission}
+                        >
+                            Create Submission
+                        </Button >
+                        {isCreateSubmissionDisabled && (
+                            <div><CircularProgress size={24} className={classes.buttonProgress} /></div>
+                        )}
+                    </Fragment>
+                </div>
         }
 
         // Show View Submission details button
