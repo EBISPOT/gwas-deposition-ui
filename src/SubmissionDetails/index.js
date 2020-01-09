@@ -135,6 +135,7 @@ class SubmissionDetails extends Component {
 
         this.state = ({
             submission_data: [],
+            globusOriginID: null,
             userName: null,
             submissionCreatedDate: null,
             publication_obj: [],
@@ -259,6 +260,11 @@ class SubmissionDetails extends Component {
 
                         if (data.status === 'VALID_METADATA') {
                             this.setState({ ...this.state, isNotValid: false });
+                        }
+
+                        if (data.globusOriginId) {
+                            origin = JSON.parse(data.globusOriginId)
+                            this.setState({ ...this.state, globusOriginID: origin.globusOriginID });
                         }
 
                         if (data.files.length > 0) {
@@ -670,7 +676,8 @@ class SubmissionDetails extends Component {
             userActionPublicationStatus = <i>You are able to submit summary statistics and study metadata for this publication.</i>
         }
 
-
+        const { globusOriginID } = this.state;
+        const globusSumStatsFolder = `https://app.globus.org/file-manager?origin_id=${globusOriginID}`
 
         const { submissionStatus } = this.state;
         const { metadataStatus } = this.state;
@@ -1087,6 +1094,14 @@ class SubmissionDetails extends Component {
                                     {this.state.publication_obj.journal}
                                 </Typography>
                             </Grid>
+
+                            {globusOriginID && (
+                                <Grid item xs={12}>
+                                    <Typography className={classes.publicationCatalogStatusTextStyle}>
+                                        Summary Statistics folder: <a href={globusSumStatsFolder}>{globusSumStatsFolder}</a>
+                                    </Typography>
+                                </Grid>
+                            )}
 
                             <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
