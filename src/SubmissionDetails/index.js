@@ -135,7 +135,7 @@ class SubmissionDetails extends Component {
 
         this.state = ({
             submission_data: [],
-            globusOriginID: null,
+            globusOriginId: null,
             userName: null,
             submissionCreatedDate: null,
             publication_obj: [],
@@ -263,8 +263,7 @@ class SubmissionDetails extends Component {
                         }
 
                         if (data.globusOriginId) {
-                            origin = JSON.parse(data.globusOriginId)
-                            this.setState({ ...this.state, globusOriginID: origin.globusOriginID });
+                            this.setState({ ...this.state, globusOriginId: data.globusOriginId });
                         }
 
                         if (data.files.length > 0) {
@@ -676,8 +675,8 @@ class SubmissionDetails extends Component {
             userActionPublicationStatus = <i>You are able to submit summary statistics and study metadata for this publication.</i>
         }
 
-        const { globusOriginID } = this.state;
-        const globusSumStatsFolder = `https://app.globus.org/file-manager?origin_id=${globusOriginID}`
+        const { globusOriginId } = this.state;
+        const globusSumStatsFolder = `https://app.globus.org/file-manager?origin_id=${globusOriginId}`
 
         const { submissionStatus } = this.state;
         const { metadataStatus } = this.state;
@@ -1095,10 +1094,12 @@ class SubmissionDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            {globusOriginID && (
+                            {globusOriginId && (
                                 <Grid item xs={12}>
                                     <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                        Summary Statistics folder: <a href={globusSumStatsFolder}>{globusSumStatsFolder}</a>
+                                        Summary Statistics folder: <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer">
+                                            {globusSumStatsFolder}
+                                        </a>
                                     </Typography>
                                 </Grid>
                             )}
