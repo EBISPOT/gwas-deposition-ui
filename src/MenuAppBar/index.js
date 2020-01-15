@@ -197,7 +197,7 @@ function MenuAppBar() {
                     </AuthConsumer> */}
 
                     <div className={classes.grow} />
-                    <Button target="_blank" href="https://www.ebi.ac.uk/gwas/docs" className={classes.docButton}>Documentation</Button>
+                    <Button target="_blank" href="https://www.ebi.ac.uk/gwas/docs/submission" className={classes.docButton}>Documentation</Button>
 
                     {/* <Button onClick={downloadTemplate} className={classes.downloadButton} style={{ float: 'right' }}>Download Template</Button> */}
 
