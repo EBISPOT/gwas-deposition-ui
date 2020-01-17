@@ -127,6 +127,8 @@ class PublicationDetails extends Component {
             isCreateSubmissionDisabled: false,
             redirectError: false,
             redirectErrorMessage: null,
+            emailLoginError: false,
+            emailLoginErrorMessage: null,
         })
         this.createSubmission = this.createSubmission.bind(this);
         this.redirectToSubmissionDetails = this.redirectToSubmissionDetails.bind(this);
@@ -188,6 +190,12 @@ class PublicationDetails extends Component {
                         isCreateSubmissionDisabled: false
                     }));
                     // alert("There was an error creating the submission")
+                    if (error.response) {
+                        if (error.response.status === 400) {
+                            let emailLoginErrorMessage = "Error: Your Elixir and Globus accounts must be linked to the same email account."
+                            this.setState(() => ({ emailLoginError: true, emailLoginErrorMessage: emailLoginErrorMessage }));
+                        }
+                    }
                 })
         }
         // Check if token is expired
@@ -256,6 +264,8 @@ class PublicationDetails extends Component {
         // const { createSubmissionError } = this.state;
         const { redirectError } = this.state;
         const { redirectErrorMessage } = this.state;
+        const { emailLoginError } = this.state;
+        const { emailLoginErrorMessage } = this.state;
         const { publicationStatus } = this.state;
         const { isCreateSubmissionDisabled } = this.state;
         const { transformedPublicationStatus } = this.state;
@@ -391,6 +401,12 @@ class PublicationDetails extends Component {
                             </Grid>
 
                             {create_submission_button}
+
+                            <Grid container alignItems="flex-start" justify="flex-start">
+                                <Typography variant="body2" gutterBottom className={classes.errorText}>
+                                    {emailLoginError ? emailLoginErrorMessage : null}
+                                </Typography>
+                            </Grid>
 
                         </Grid>
                     </Grid>
