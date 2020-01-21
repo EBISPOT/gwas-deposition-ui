@@ -124,11 +124,10 @@ class PublicationDetails extends Component {
             publicationStatus: null,
             transformedPublicationStatus: null,
             createSubmissionError: false,
+            createSubmissionErrorMessage: null,
             isCreateSubmissionDisabled: false,
             redirectError: false,
             redirectErrorMessage: null,
-            emailLoginError: false,
-            emailLoginErrorMessage: null,
         })
         this.createSubmission = this.createSubmission.bind(this);
         this.redirectToSubmissionDetails = this.redirectToSubmissionDetails.bind(this);
@@ -189,12 +188,9 @@ class PublicationDetails extends Component {
                         createSubmissionError: true,
                         isCreateSubmissionDisabled: false
                     }));
-                    // alert("There was an error creating the submission")
                     if (error.response) {
-                        if (error.response.status === 400) {
-                            let emailLoginErrorMessage = "Error: Your Elixir and Globus accounts must be linked to the same email account."
-                            this.setState(() => ({ emailLoginError: true, emailLoginErrorMessage: emailLoginErrorMessage }));
-                        }
+                        let createSubmissionErrorMessage = "Error: " + error.response.data
+                        this.setState(() => ({ createSubmissionErrorMessage: createSubmissionErrorMessage }));
                     }
                 })
         }
@@ -261,11 +257,10 @@ class PublicationDetails extends Component {
 
     render() {
         const { classes } = this.props;
-        // const { createSubmissionError } = this.state;
+        const { createSubmissionError } = this.state;
+        const { createSubmissionErrorMessage } = this.state;
         const { redirectError } = this.state;
         const { redirectErrorMessage } = this.state;
-        const { emailLoginError } = this.state;
-        const { emailLoginErrorMessage } = this.state;
         const { publicationStatus } = this.state;
         const { isCreateSubmissionDisabled } = this.state;
         const { transformedPublicationStatus } = this.state;
@@ -404,7 +399,7 @@ class PublicationDetails extends Component {
 
                             <Grid container alignItems="flex-start" justify="flex-start">
                                 <Typography variant="body2" gutterBottom className={classes.errorText}>
-                                    {emailLoginError ? emailLoginErrorMessage : null}
+                                    {createSubmissionError ? createSubmissionErrorMessage : null}
                                 </Typography>
                             </Grid>
 
