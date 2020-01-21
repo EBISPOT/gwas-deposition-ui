@@ -166,7 +166,7 @@ class PublicationsMatTable extends React.Component {
                             value={this.state.value}
                             className={classes.textField}
                             variant="outlined"
-                            placeholder="Search by PubMedID or Author"
+                            placeholder="Search by PMID or Author"
                             helperText="Enter an Author name, e.g. Yao, or PMID, e.g. 25533513"
                             InputProps={{
                                 classes: { input: classes.input },
@@ -193,7 +193,7 @@ class PublicationsMatTable extends React.Component {
                         icons={tableIcons}
                         columns={[
                             {
-                                title: 'PubMedID', field: 'pmid',
+                                title: 'PMID', field: 'pmid',
                                 render: rowData => (<Link to={{
                                     pathname: `${process.env.PUBLIC_URL}/publication/${rowData.pmid}`,
                                     state: { pmid: rowData.pmid }
@@ -224,7 +224,7 @@ class PublicationsMatTable extends React.Component {
 
                                 let url = GET_PUBLICATIONS_URL
 
-                                // Handle search by PubMedID
+                                // Handle search by PMID
                                 let onlyNumbers = /^\d+$/;
 
                                 if (query.search) {

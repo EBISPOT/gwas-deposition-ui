@@ -228,7 +228,7 @@ class Submissions extends Component {
                             let myHeaders = new Headers();
                             myHeaders.append('Authorization', 'Bearer ' + this.auth());
 
-                            // Handle search by PubMedID
+                            // Handle search by PMID
                             let onlyNumbers = /^\d+$/;
 
                             if (query.search) {
@@ -324,7 +324,7 @@ class Submissions extends Component {
                                             name="searchInput"
                                             value={this.state.value}
                                             className={classes.textField}
-                                            placeholder="Search by PubMedID or Submission ID"
+                                            placeholder="Search by PMID or Submission ID"
                                             InputProps={{
                                                 startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
                                                 endAdornment: <InputAdornment position="end">
