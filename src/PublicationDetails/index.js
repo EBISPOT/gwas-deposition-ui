@@ -3,9 +3,16 @@ import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
+import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+// import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import FormHelperText from '@material-ui/core/FormHelperText';
+import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
 
@@ -14,7 +21,6 @@ import { AuthConsumer } from '../auth-context';
 import API_CLIENT from '../apiClient';
 import history from "../history";
 
-import Grid from '@material-ui/core/Grid';
 import ElixirAuthService from '../ElixirAuthService';
 
 
@@ -102,6 +108,17 @@ const styles = theme => ({
     },
 });
 
+const BlueCheckbox = withStyles({
+    root: {
+        // color: blue[400],
+        '&$checked': {
+            // color: blue[600],
+            color: 'rgb(57, 138, 150)',
+        },
+    },
+    checked: {},
+})(props => <Checkbox color="default" {...props} />);
+
 
 class PublicationDetails extends Component {
     constructor(props) {
@@ -128,7 +145,12 @@ class PublicationDetails extends Component {
             isCreateSubmissionDisabled: false,
             redirectError: false,
             redirectErrorMessage: null,
+            elixirRegistration: false,
+            installGlobus: false,
+            linkElixir2Globus: false,
+            validateSummaryStats: false,
         })
+        this.handleChange = this.handleChange.bind(this);
         this.createSubmission = this.createSubmission.bind(this);
         this.redirectToSubmissionDetails = this.redirectToSubmissionDetails.bind(this);
         this.getUserFriendlyStatusLabels = this.getUserFriendlyStatusLabels.bind(this);
@@ -163,6 +185,15 @@ class PublicationDetails extends Component {
             return 'OPEN FOR SUMMARY STATISTICS SUBMISSION'
         }
     }
+
+
+    /**
+     * Handle state of checkboxes
+     */
+    handleChange = name => event => {
+        this.setState({ ...this.state, [name]: event.target.checked });
+    };
+
 
 
     /**
@@ -265,6 +296,14 @@ class PublicationDetails extends Component {
         const { isCreateSubmissionDisabled } = this.state;
         const { transformedPublicationStatus } = this.state;
 
+        let submission_checklist;
+        let elixirRegistrationLink = <a href="https://elixir-europe.org/register" target="_blank" rel="noopener noreferrer">Elixir ID</a>
+        let globusLink = <a href="https://www.globus.org/globus-connect-personal" target="_blank" rel="noopener noreferrer">Globus Connect Personal</a>
+        let linkElixir2GlobusLink = <a href="https://globus.org/app/login" target="_blank" rel="noopener noreferrer">Elixir account to Globus</a>
+        let summaryStatsFormattingLink = <a href="https://www.ebi.ac.uk/gwas/docs/summary-statistics-format" target="_blank" rel="noopener noreferrer">Format and validate</a>
+        const { elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats } = this.state;
+        const checklistCompleteError = [elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats].filter(v => v).length !== 4;
+
         let create_submission_button;
         let showSubmissionDetailsButton;
         const gwasInfoEmail = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
@@ -273,6 +312,43 @@ class PublicationDetails extends Component {
         const eligibleBoldText = <span className={classes.bold}>submit both summary statistics and supporting metadata</span>
         const publishedBoldText = <span className={classes.bold}>submit summary statistics</span>
 
+
+        // Submission checklist checklist form
+        submission_checklist =
+            <div>
+                <Typography>
+                    Please complete these items before
+                creating the submission. Once all items are checked, the "Create Submission"
+                button will be active.
+                </Typography>
+                <FormControl required error={checklistCompleteError} component="fieldset" className={classes.formControl}>
+                    {/* <FormLabel component="legend">Please complete these items before
+                    creating the submission. Once all items are checked, the "Create Submission"
+                    button will be active.
+                    </FormLabel> */}
+                    <FormGroup>
+                        <FormControlLabel
+                            control={<BlueCheckbox checked={elixirRegistration} onChange={this.handleChange('elixirRegistration')} color="secondary" value="elixirRegistration" />}
+                            label={<Typography>Create an {elixirRegistrationLink} to login to this application</Typography>}
+                        />
+                        <FormControlLabel
+                            control={<BlueCheckbox checked={installGlobus} onChange={this.handleChange('installGlobus')} value="installGlobus" />}
+                            label={<Typography>Install {globusLink}</Typography>}
+                        />
+                        <FormControlLabel
+                            control={<BlueCheckbox checked={linkElixir2Globus} onChange={this.handleChange('linkElixir2Globus')} value="linkElixir2Globus" />}
+                            label={<Typography>Link your {linkElixir2GlobusLink}</Typography>}
+                        />
+                        <FormControlLabel
+                            control={<BlueCheckbox checked={validateSummaryStats} onChange={this.handleChange('validateSummaryStats')} value="validateSummaryStats" />}
+                            label={<Typography>{summaryStatsFormattingLink} your summary statistics data</Typography>}
+                        />
+                    </FormGroup>
+                    {/* <FormHelperText>Check all steps to activate the "Create Submission" button</FormHelperText> */}
+                </FormControl>
+            </div>
+
+
         // Show Create Submission button
         if (publicationStatus === 'ELIGIBLE' || publicationStatus === 'PUBLISHED') {
             create_submission_button =
@@ -280,7 +356,8 @@ class PublicationDetails extends Component {
                     <Fragment>
                         <Button
                             className={classes.button}
-                            disabled={this.state.isCreateSubmissionDisabled}
+                            disabled={isCreateSubmissionDisabled || checklistCompleteError}
+                            // disabled={checklistCompleteError}
                             onClick={this.createSubmission}
                         >
                             Create Submission
@@ -389,13 +466,27 @@ class PublicationDetails extends Component {
                                     Catalog status: {transformedPublicationStatus}
                                 </Typography>
                             </Grid>
+
                             <Grid item xs={12}>
                                 <Typography className={classes.statusExplanationMessageTextStyle}>
                                     {statusExplanationMessageText}
                                 </Typography>
                             </Grid>
 
-                            {create_submission_button}
+                            <Grid item xs={12}>
+                                <Grid><Typography>&nbsp;</Typography></Grid>
+                                <Typography variant="h5" className={classes.headerTextStyle}>
+                                    Submission Checklist
+                                </Typography>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                {submission_checklist}
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                {create_submission_button}
+                            </Grid>
 
                             <Grid container alignItems="flex-start" justify="flex-start">
                                 <Typography variant="body2" gutterBottom className={classes.errorText}>
