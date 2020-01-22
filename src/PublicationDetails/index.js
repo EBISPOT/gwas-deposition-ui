@@ -314,39 +314,48 @@ class PublicationDetails extends Component {
 
 
         // Submission checklist checklist form
-        submission_checklist =
-            <div>
-                <Typography>
-                    Please complete these items before
-                creating the submission. Once all items are checked, the "Create Submission"
-                button will be active.
-                </Typography>
-                <FormControl required error={checklistCompleteError} component="fieldset" className={classes.formControl}>
-                    {/* <FormLabel component="legend">Please complete these items before
+        if (publicationStatus === 'ELIGIBLE' || publicationStatus === 'PUBLISHED') {
+            submission_checklist =
+                <div>
+                    <Grid item xs={12}>
+                        <Grid><Typography>&nbsp;</Typography></Grid>
+                        <Typography variant="h5" className={classes.headerTextStyle}>
+                            Submission Checklist
+                            </Typography>
+
+                        <Typography>
+                            Please complete these items before creating the submission. Once all items are checked, the "Create Submission"
+                            button will be active.
+                        </Typography>
+                    </Grid>
+
+                    <FormControl required error={checklistCompleteError} component="fieldset" className={classes.formControl}>
+                        {/* <FormLabel component="legend">Please complete these items before
                     creating the submission. Once all items are checked, the "Create Submission"
                     button will be active.
                     </FormLabel> */}
-                    <FormGroup>
-                        <FormControlLabel
-                            control={<BlueCheckbox checked={elixirRegistration} onChange={this.handleChange('elixirRegistration')} color="secondary" value="elixirRegistration" />}
-                            label={<Typography>Create an {elixirRegistrationLink} to login to this application</Typography>}
-                        />
-                        <FormControlLabel
-                            control={<BlueCheckbox checked={installGlobus} onChange={this.handleChange('installGlobus')} value="installGlobus" />}
-                            label={<Typography>Install {globusLink}</Typography>}
-                        />
-                        <FormControlLabel
-                            control={<BlueCheckbox checked={linkElixir2Globus} onChange={this.handleChange('linkElixir2Globus')} value="linkElixir2Globus" />}
-                            label={<Typography>Link your {linkElixir2GlobusLink}</Typography>}
-                        />
-                        <FormControlLabel
-                            control={<BlueCheckbox checked={validateSummaryStats} onChange={this.handleChange('validateSummaryStats')} value="validateSummaryStats" />}
-                            label={<Typography>{summaryStatsFormattingLink} your summary statistics data</Typography>}
-                        />
-                    </FormGroup>
-                    {/* <FormHelperText>Check all steps to activate the "Create Submission" button</FormHelperText> */}
-                </FormControl>
-            </div>
+                        <FormGroup>
+                            <FormControlLabel
+                                control={<BlueCheckbox checked={elixirRegistration} onChange={this.handleChange('elixirRegistration')} color="secondary" value="elixirRegistration" />}
+                                label={<Typography>Create an {elixirRegistrationLink} to login to this application</Typography>}
+                            />
+                            <FormControlLabel
+                                control={<BlueCheckbox checked={installGlobus} onChange={this.handleChange('installGlobus')} value="installGlobus" />}
+                                label={<Typography>Install {globusLink}</Typography>}
+                            />
+                            <FormControlLabel
+                                control={<BlueCheckbox checked={linkElixir2Globus} onChange={this.handleChange('linkElixir2Globus')} value="linkElixir2Globus" />}
+                                label={<Typography>Link your {linkElixir2GlobusLink}</Typography>}
+                            />
+                            <FormControlLabel
+                                control={<BlueCheckbox checked={validateSummaryStats} onChange={this.handleChange('validateSummaryStats')} value="validateSummaryStats" />}
+                                label={<Typography>{summaryStatsFormattingLink} your summary statistics data</Typography>}
+                            />
+                        </FormGroup>
+                        {/* <FormHelperText>Check all steps to activate the "Create Submission" button</FormHelperText> */}
+                    </FormControl>
+                </div>
+        }
 
 
         // Show Create Submission button
@@ -473,12 +482,12 @@ class PublicationDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            <Grid item xs={12}>
+                            {/* <Grid item xs={12}>
                                 <Grid><Typography>&nbsp;</Typography></Grid>
                                 <Typography variant="h5" className={classes.headerTextStyle}>
                                     Submission Checklist
                                 </Typography>
-                            </Grid>
+                            </Grid> */}
 
                             <Grid item xs={12}>
                                 {submission_checklist}
