@@ -55,6 +55,11 @@ const styles = theme => ({
         marginLeft: 12,
         marginRight: 8,
     },
+    thankYouSubmissionTextStyle: {
+        marginLeft: 12,
+        marginRight: 8,
+        fontStyle: 'italic'
+    },
     filler: {
         height: "100%",
     },
@@ -963,7 +968,8 @@ class SubmissionDetails extends Component {
                         {metadata_field_label}
                         < Grid item xs={8} >
                             <Typography variant="h6" className={classes.submissionTextStyle}>
-                                <CircularProgress className={classes.progress} size={24} />
+                                {/* <CircularProgress className={classes.progress} size={24} /> */}
+                                Validating data...
                             </Typography>
                         </Grid >
                     </Fragment >
@@ -993,7 +999,8 @@ class SubmissionDetails extends Component {
                         {metadata_field_label}
                         <Grid item xs={8}>
                             <Typography variant="h6" className={classes.submissionTextStyle}>
-                                <CircularProgress className={classes.progress} size={24} />
+                                {/* <CircularProgress className={classes.progress} size={24} /> */}
+                                Validating data...
                             </Typography>
                         </Grid>
                     </Fragment>
@@ -1036,7 +1043,11 @@ class SubmissionDetails extends Component {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <CircularProgress className={classes.progress} size={24} />
+                        {/* <CircularProgress className={classes.progress} size={24} /> */}
+                        Validating data...
+                    </Typography>
+                    <Typography variant="body1" className={classes.thankYouSubmissionTextStyle}>
+                        Thank you for submitting your data, you will receive an email when the validation is complete.
                     </Typography>
                 </Grid>
         }
@@ -1243,7 +1254,13 @@ class SubmissionDetails extends Component {
                                                 </Grid>
                                                 {summary_statistics_status_icon}
 
-                                                <Grid item xs={12} className={classes.filler}></Grid>
+                                                {/* <Grid item xs={12}>
+                                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                                        {submissionStatus === 'VALIDATING' ?
+                                                            "Thank you for submitting your data, you will receive an email when the validation is complete" : null}
+                                                    </Typography>
+                                                </Grid> */}
+                                                {/* <Grid item xs={12} className={classes.filler}></Grid> */}
                                             </Grid>
                                         </Grid>
                                     </Grid>
