@@ -1113,6 +1113,24 @@ class SubmissionDetails extends Component {
                     </Grid>
                 </div>
 
+                <div className={classes.root}>
+                    <Grid
+                        container
+                        direction="column"
+                        justify="flex-start"
+                        alignItems="stretch"
+                        spacing={4}
+                    >
+                        <Paper className={classes.paper}>
+                            <Grid item xs={12} className={classes.pageHeader}>
+                                <Typography variant="h5" className={classes.headerTextStyle}>
+                                    Submission Steps
+                                    </Typography>
+                            </Grid>
+                        </Paper>
+                    </Grid>
+                </div>
+
                 <div className={classes.section}>
                     <Grid container
                         direction="row"
