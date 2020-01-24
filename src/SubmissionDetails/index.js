@@ -35,6 +35,7 @@ const styles = theme => ({
         fontSize: 18,
         marginLeft: theme.spacing(1),
         marginBottom: theme.spacing(2),
+        marginTop: theme.spacing(0.3),
     },
     chipStyle: {
         background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
@@ -487,7 +488,7 @@ class SubmissionDetails extends Component {
     }
 
     /**
-     * Get fileUploadId for prefilled SumStats template and then download template file
+     * Get fileUploadId for prefilled SumStats template and then download submission form template file
      */
     downloadSummaryStatsTemplate() {
         let submissionId = this.SUBMISSION_ID;
@@ -693,6 +694,9 @@ class SubmissionDetails extends Component {
         const sumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics`;
         const metadataAndSumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics-plus-metadata`;
 
+        const gwasInfoEmailLink = `mailto:gwas-info@ebi.ac.uk?subject=Post-submission edit request`;
+        let final_thank_you_message;
+
         const { submissionStatus } = this.state;
         const { metadataStatus } = this.state;
         let metadata_status_section;
@@ -706,6 +710,7 @@ class SubmissionDetails extends Component {
 
         let submission_stats_section;
         let file_validation_error_section;
+        let upload_sumstats_button;
         let download_summary_stats_button;
         let download_template;
         let select_upload_file_button;
@@ -805,9 +810,33 @@ class SubmissionDetails extends Component {
                 </Fragment>
         }
 
+        /**
+         * Manage display of "Upload summary statistics" button. Clicking this button
+         * will open a new tab to take the user to the Globus folder created for their
+         * submission.
+         */
+        if (submissionStatus === 'STARTED') {
+            upload_sumstats_button =
+                <Fragment>
+                    <Button href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer" fullWidth className={classes.button}>
+                        Upload summary statistics
+                    </Button>
+                    {/* Handle case when globusSumStatsFolder is not returned */}
+                </Fragment>
+        }
+        else {
+            upload_sumstats_button =
+                <Fragment>
+                    <Button disabled fullWidth className={classes.button} variant="outlined">
+                        Upload summary statistics
+                    </Button>
+                </Fragment>
+        }
+
+
 
         /**
-         * Manage display of "Download template" file button
+         * Manage display of "Download submission form" template file button
          * For a publication with status UNDER_SUMMARY_STATS_SUBMISSION, 
          * this downloads the pre-filled template file.
          * 
@@ -819,7 +848,7 @@ class SubmissionDetails extends Component {
                 download_template =
                     <Fragment>
                         <Button onClick={this.downloadSummaryStatsTemplate} fullWidth className={classes.button}>
-                            Download template
+                            Download submission form
                         </Button>
                         <Typography variant="body2" gutterBottom className={classes.errorText}>
                             {this.state.downloadSummaryStatsFileError}
@@ -830,7 +859,7 @@ class SubmissionDetails extends Component {
                 download_template =
                     <Fragment>
                         <Button onClick={this.downloadMetadataTemplate} fullWidth className={classes.button}>
-                            Download template
+                            Download submission form
                         </Button>
                         <Typography variant="body2" gutterBottom className={classes.inputCenter}>
                             {this.state.downloadSummaryStatsFileError}
@@ -842,27 +871,27 @@ class SubmissionDetails extends Component {
             download_template =
                 <Fragment>
                     <Button disabled fullWidth className={classes.button} variant="outlined">
-                        Download template
+                        Download submission form
                     </Button>
                 </Fragment>
         }
 
 
         /**
-         * Manage display of "Upload template" file button
+         * Manage display of "Upload submission form" template file button
          */
         if (submissionStatus === 'STARTED') {
             select_upload_file_button =
                 <Fragment>
                     <Button fullWidth onClick={this.displayUploadComponent} className={classes.button} variant="outlined">
-                        Upload template
+                        Upload submission form
                     </Button>
                 </Fragment>
         } else {
             select_upload_file_button =
                 <Fragment>
                     <Button fullWidth disabled size="small" className={classes.button} variant="outlined">
-                        Upload template
+                        Upload submisson form
                     </Button>
                 </Fragment>
         }
@@ -892,14 +921,14 @@ class SubmissionDetails extends Component {
 
 
         /**
-        * Manage display of "Review latest file" button
+        * Manage display of "Review submission" (previously "Review latest file") button
         * This downloads the user provided data file.
         */
         if (submissionStatus === 'VALID' || submissionStatus === 'INVALID' || submissionStatus === 'SUBMITTED') {
             download_data_file_button =
                 <Fragment>
                     <Button onClick={this.downloadDataFile} fullWidth className={classes.button}>
-                        Review latest file
+                        Review submission
                     </Button>
                     <Typography variant="body2" gutterBottom className={classes.inputCenter}>
                         {this.state.reviewLatestFileError}
@@ -909,21 +938,21 @@ class SubmissionDetails extends Component {
             download_data_file_button =
                 <Fragment>
                     <Button disabled fullWidth className={classes.button} variant="outlined">
-                        Review latest file
+                        Review submission
                     </Button>
                 </Fragment>
         }
 
 
         /**
-         * Manage display of "Delete latest file" button 
+         * Manage display of "Reset" (previously "Delete latest file") button
          * This allows the submitter needs delete an existing file and re-submit a new one.
          */
         if ((submissionStatus === 'VALID' || submissionStatus === 'INVALID') && this.state.fileUploadId !== null) {
             delete_file_button =
                 <Fragment>
                     <Button onClick={this.deleteData} fullWidth className={classes.button}>
-                        Delete latest file
+                        Reset
                     </Button>
                     <Typography variant="body2" gutterBottom className={classes.inputCenter}>
                         {this.state.deleteFileError}
@@ -933,8 +962,8 @@ class SubmissionDetails extends Component {
             delete_file_button =
                 <Fragment>
                     <Button disabled fullWidth className={classes.button} variant="outlined">
-                        Delete latest file
-                </Button>
+                        Reset
+                    </Button>
                 </Fragment>
         }
 
@@ -1019,7 +1048,7 @@ class SubmissionDetails extends Component {
 
 
         /** 
-         * Manage display of Summary statistics status image
+         * Manage display of Summary statistics status value display
          */
         if (summaryStatisticsStatus === 'VALID') {
             summary_statistics_status_icon =
@@ -1058,6 +1087,20 @@ class SubmissionDetails extends Component {
                     </Typography>
                     <Typography variant="body1" className={classes.thankYouSubmissionTextStyle}>
                         Thank you for submitting your data, you will receive an email when the validation is complete.
+                    </Typography>
+                </Grid>
+        }
+
+
+        /**
+         * Manage display of final thank you message after valid file
+         * processing status.
+         */
+        if (submissionStatus === 'VALID') {
+            final_thank_you_message =
+                <Grid item container xs={12}>
+                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                        Thank you for submitting your data. Contact <a href={gwasInfoEmailLink}>gwas-info@ebi.ac.uk</a> if changes are needed.
                     </Typography>
                 </Grid>
         }
@@ -1115,16 +1158,6 @@ class SubmissionDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            {globusOriginId && (
-                                <Grid item xs={12}>
-                                    <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                        Summary Statistics folder: <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer">
-                                            {globusSumStatsFolder}
-                                        </a>
-                                    </Typography>
-                                </Grid>
-                            )}
-
                             <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     {userActionPublicationStatus}
@@ -1150,21 +1183,24 @@ class SubmissionDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            <Grid item xs={12}>
+                            <Grid item container xs={12}>
+                                <Chip label="1" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    <Chip label="1" variant="outlined" className={classes.chipStyle} />  Upload summary statistics
+                                    Upload summary statistics
                                 </Typography>
                             </Grid>
 
-                            <Grid item xs={12}>
+                            <Grid item container xs={12}>
+                                <Chip label="2" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    <Chip label="2" variant="outlined" className={classes.chipStyle} />  Download submission form
+                                    Download submission form
                                 </Typography>
                             </Grid>
 
-                            <Grid item xs={12}>
+                            <Grid item container xs={12}>
+                                <Chip label="3" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    <Chip label="3" variant="outlined" className={classes.chipStyle} />  Fill in submission form
+                                    Fill in submission form
                                     (see <a href={publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' ? sumStatsDocs : metadataAndSumStatsDocs} target="_blank" rel="noopener noreferrer">
                                         here</a> for help) and upload
                                 </Typography>
@@ -1187,6 +1223,10 @@ class SubmissionDetails extends Component {
                                 justify="flex-start"
                                 alignItems="stretch"
                             />
+                            <Grid item container xs={12}>
+                                {upload_sumstats_button}
+                            </Grid>
+
                             <Grid item container xs={12}>
                                 {download_template}
                             </Grid>
@@ -1285,13 +1325,8 @@ class SubmissionDetails extends Component {
                                                 </Grid>
                                                 {summary_statistics_status_icon}
 
-                                                {/* <Grid item xs={12}>
-                                                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        {submissionStatus === 'VALIDATING' ?
-                                                            "Thank you for submitting your data, you will receive an email when the validation is complete" : null}
-                                                    </Typography>
-                                                </Grid> */}
-                                                {/* <Grid item xs={12} className={classes.filler}></Grid> */}
+                                                {final_thank_you_message}
+
                                             </Grid>
                                         </Grid>
                                     </Grid>
