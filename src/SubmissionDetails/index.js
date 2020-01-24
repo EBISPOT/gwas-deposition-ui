@@ -9,8 +9,9 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import classNames from 'classnames'
-import CircularProgress from '@material-ui/core/CircularProgress';
+// import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSVG from 'react-svg'
+import Chip from '@material-ui/core/Chip';
 
 import { AuthConsumer } from '../auth-context';
 
@@ -29,8 +30,14 @@ const styles = theme => ({
     paper: {
         padding: theme.spacing(2),
         height: '100%',
-        // margin: 'auto',
-        // maxWidth: 1200,
+    },
+    chipTextStyle: {
+        fontSize: 18,
+        marginLeft: theme.spacing(1),
+        marginBottom: theme.spacing(2),
+    },
+    chipStyle: {
+        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
     },
     headerTextStyle: {
         fontWeight: 500,
@@ -681,7 +688,10 @@ class SubmissionDetails extends Component {
         }
 
         const { globusOriginId } = this.state;
-        const globusSumStatsFolder = `https://app.globus.org/file-manager?origin_id=${globusOriginId}`
+        const globusSumStatsFolder = `https://app.globus.org/file-manager?origin_id=${globusOriginId}`;
+
+        const sumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics`;
+        const metadataAndSumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics-plus-metadata`;
 
         const { submissionStatus } = this.state;
         const { metadataStatus } = this.state;
@@ -1124,6 +1134,7 @@ class SubmissionDetails extends Component {
                     </Grid>
                 </div>
 
+
                 <div className={classes.root}>
                     <Grid
                         container
@@ -1135,8 +1146,28 @@ class SubmissionDetails extends Component {
                         <Paper className={classes.paper}>
                             <Grid item xs={12} className={classes.pageHeader}>
                                 <Typography variant="h5" className={classes.headerTextStyle}>
-                                    Submission Steps
-                                    </Typography>
+                                    Submission Steps Overview
+                                </Typography>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Typography className={classes.chipTextStyle} >
+                                    <Chip label="1" variant="outlined" className={classes.chipStyle} />  Upload summary statistics
+                                </Typography>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Typography className={classes.chipTextStyle} >
+                                    <Chip label="2" variant="outlined" className={classes.chipStyle} />  Download submission form
+                                </Typography>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Typography className={classes.chipTextStyle} >
+                                    <Chip label="3" variant="outlined" className={classes.chipStyle} />  Fill in submission form
+                                    (see <a href={publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' ? sumStatsDocs : metadataAndSumStatsDocs} target="_blank" rel="noopener noreferrer">
+                                        here</a> for help) and upload
+                                </Typography>
                             </Grid>
                         </Paper>
                     </Grid>
