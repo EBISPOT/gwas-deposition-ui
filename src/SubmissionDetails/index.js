@@ -9,8 +9,9 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import classNames from 'classnames'
-import CircularProgress from '@material-ui/core/CircularProgress';
+// import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSVG from 'react-svg'
+import Chip from '@material-ui/core/Chip';
 
 import { AuthConsumer } from '../auth-context';
 
@@ -29,8 +30,14 @@ const styles = theme => ({
     paper: {
         padding: theme.spacing(2),
         height: '100%',
-        // margin: 'auto',
-        // maxWidth: 1200,
+    },
+    chipTextStyle: {
+        fontSize: 18,
+        marginLeft: theme.spacing(1),
+        marginBottom: theme.spacing(2),
+    },
+    chipStyle: {
+        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
     },
     headerTextStyle: {
         fontWeight: 500,
@@ -54,6 +61,11 @@ const styles = theme => ({
         fontSize: 18,
         marginLeft: 12,
         marginRight: 8,
+    },
+    thankYouSubmissionTextStyle: {
+        marginLeft: 12,
+        marginRight: 8,
+        fontStyle: 'italic'
     },
     filler: {
         height: "100%",
@@ -676,7 +688,10 @@ class SubmissionDetails extends Component {
         }
 
         const { globusOriginId } = this.state;
-        const globusSumStatsFolder = `https://app.globus.org/file-manager?origin_id=${globusOriginId}`
+        const globusSumStatsFolder = `https://app.globus.org/file-manager?origin_id=${globusOriginId}`;
+
+        const sumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics`;
+        const metadataAndSumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics-plus-metadata`;
 
         const { submissionStatus } = this.state;
         const { metadataStatus } = this.state;
@@ -963,7 +978,8 @@ class SubmissionDetails extends Component {
                         {metadata_field_label}
                         < Grid item xs={8} >
                             <Typography variant="h6" className={classes.submissionTextStyle}>
-                                <CircularProgress className={classes.progress} size={24} />
+                                {/* <CircularProgress className={classes.progress} size={24} /> */}
+                                Validating data...
                             </Typography>
                         </Grid >
                     </Fragment >
@@ -993,7 +1009,8 @@ class SubmissionDetails extends Component {
                         {metadata_field_label}
                         <Grid item xs={8}>
                             <Typography variant="h6" className={classes.submissionTextStyle}>
-                                <CircularProgress className={classes.progress} size={24} />
+                                {/* <CircularProgress className={classes.progress} size={24} /> */}
+                                Validating data...
                             </Typography>
                         </Grid>
                     </Fragment>
@@ -1036,7 +1053,11 @@ class SubmissionDetails extends Component {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
                     <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <CircularProgress className={classes.progress} size={24} />
+                        {/* <CircularProgress className={classes.progress} size={24} /> */}
+                        Validating data...
+                    </Typography>
+                    <Typography variant="body1" className={classes.thankYouSubmissionTextStyle}>
+                        Thank you for submitting your data, you will receive an email when the validation is complete.
                     </Typography>
                 </Grid>
         }
@@ -1107,6 +1128,45 @@ class SubmissionDetails extends Component {
                             <Grid item xs={12}>
                                 <Typography className={classes.publicationCatalogStatusTextStyle}>
                                     {userActionPublicationStatus}
+                                </Typography>
+                            </Grid>
+                        </Paper>
+                    </Grid>
+                </div>
+
+
+                <div className={classes.root}>
+                    <Grid
+                        container
+                        direction="column"
+                        justify="flex-start"
+                        alignItems="stretch"
+                        spacing={4}
+                    >
+                        <Paper className={classes.paper}>
+                            <Grid item xs={12} className={classes.pageHeader}>
+                                <Typography variant="h5" className={classes.headerTextStyle}>
+                                    Submission Steps Overview
+                                </Typography>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Typography className={classes.chipTextStyle} >
+                                    <Chip label="1" variant="outlined" className={classes.chipStyle} />  Upload summary statistics
+                                </Typography>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Typography className={classes.chipTextStyle} >
+                                    <Chip label="2" variant="outlined" className={classes.chipStyle} />  Download submission form
+                                </Typography>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Typography className={classes.chipTextStyle} >
+                                    <Chip label="3" variant="outlined" className={classes.chipStyle} />  Fill in submission form
+                                    (see <a href={publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' ? sumStatsDocs : metadataAndSumStatsDocs} target="_blank" rel="noopener noreferrer">
+                                        here</a> for help) and upload
                                 </Typography>
                             </Grid>
                         </Paper>
@@ -1225,7 +1285,13 @@ class SubmissionDetails extends Component {
                                                 </Grid>
                                                 {summary_statistics_status_icon}
 
-                                                <Grid item xs={12} className={classes.filler}></Grid>
+                                                {/* <Grid item xs={12}>
+                                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                                        {submissionStatus === 'VALIDATING' ?
+                                                            "Thank you for submitting your data, you will receive an email when the validation is complete" : null}
+                                                    </Typography>
+                                                </Grid> */}
+                                                {/* <Grid item xs={12} className={classes.filler}></Grid> */}
                                             </Grid>
                                         </Grid>
                                     </Grid>
