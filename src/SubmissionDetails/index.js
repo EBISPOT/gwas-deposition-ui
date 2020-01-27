@@ -815,23 +815,23 @@ class SubmissionDetails extends Component {
          * will open a new tab to take the user to the Globus folder created for their
          * submission.
          */
-        if (submissionStatus === 'STARTED') {
-            upload_sumstats_button =
-                <Fragment>
-                    <Button href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer" fullWidth className={classes.button}>
-                        Upload summary statistics
-                    </Button>
-                    {/* Handle case when globusSumStatsFolder is not returned */}
-                </Fragment>
-        }
-        else {
-            upload_sumstats_button =
-                <Fragment>
-                    <Button disabled fullWidth className={classes.button} variant="outlined">
-                        Upload summary statistics
-                    </Button>
-                </Fragment>
-        }
+        // if (submissionStatus === 'STARTED') {
+        //     upload_sumstats_button =
+        //         <Fragment>
+        //             <Button href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer" fullWidth className={classes.button}>
+        //                 Upload summary statistics
+        //             </Button>
+        //             {/* Handle case when globusSumStatsFolder is not returned */}
+        //         </Fragment>
+        // }
+        // else {
+        //     upload_sumstats_button =
+        //         <Fragment>
+        //             <Button disabled fullWidth className={classes.button} variant="outlined">
+        //                 Upload summary statistics
+        //             </Button>
+        //         </Fragment>
+        // }
 
 
 
@@ -1052,39 +1052,76 @@ class SubmissionDetails extends Component {
          */
         if (summaryStatisticsStatus === 'VALID') {
             summary_statistics_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
+                <Fragment>
+                    <Grid item xs={4}>
+                        <Typography variant="h6" className={classes.submissionTextStyle}>
+                            SumStats valid:
                     </Typography>
-                </Grid>
+                    </Grid>
+                    <Grid item xs={8}>
+                        <Typography variant="h6" className={classes.submissionTextStyle}>
+                            <ReactSVG src={process.env.PUBLIC_URL + '/images/check_24px.svg'} className={classes.check_icon} />
+                        </Typography>
+                    </Grid>
+                </Fragment>
         } else if (summaryStatisticsStatus === 'INVALID') {
             summary_statistics_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
+                <Fragment>
+                    <Grid item xs={4}>
+                        <Typography variant="h6" className={classes.submissionTextStyle}>
+                            SumStats valid:
                     </Typography>
-                </Grid>
-        } else if (summaryStatisticsStatus === 'NA') {
+                    </Grid>
+
+                    <Grid item xs={8}>
+                        <Typography variant="h6" className={classes.submissionTextStyle}>
+                            <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
+                        </Typography>
+                    </Grid>
+                </Fragment>
+        }
+        // else if (summaryStatisticsStatus === 'NA') {
+        //     summary_statistics_status_icon =
+        //         <Grid item xs={8}>
+        //             <Typography variant="h6" className={classes.submissionTextStyle}>
+        //                 {summaryStatisticsStatus}
+        //             </Typography>
+        //         </Grid>
+        // }
+        else if (submissionStatus === null) {
             summary_statistics_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        {summaryStatisticsStatus}
+                <Fragment>
+                    <Grid item xs={4}>
+                        <Typography variant="h6" className={classes.submissionTextStyle}>
+                            SumStats valid:
                     </Typography>
-                </Grid>
-        } else if (submissionStatus === null) {
-            summary_statistics_status_icon =
-                <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.errorText}>
-                        Error retrieving data.
+                    </Grid>
+                    <Grid item xs={8}>
+                        <Typography variant="h6" className={classes.errorText}>
+                            Error retrieving data.
                     </Typography>
-                </Grid>
+                    </Grid>
+                </Fragment>
         } else {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        {/* <CircularProgress className={classes.progress} size={24} /> */}
-                        Validating data...
-                    </Typography>
+                    {/* <Typography variant="h6" className={classes.submissionTextStyle}> */}
+                    {/* <CircularProgress className={classes.progress} size={24} /> */}
+                    {/* Validating data...
+                    </Typography> */}
+                    {/* <Typography variant="body1" className={classes.thankYouSubmissionTextStyle}>
+                        Thank you for submitting your data, you will receive an email when the validation is complete.
+                    </Typography> */}
+                </Grid>
+        }
+
+        /**
+         * Manage display of validating thank you message.
+         */
+        let validating_thank_you;
+        if (submissionStatus === VALIDATING) {
+            validating_thank_you =
+                <Grid item container xs={12}>
                     <Typography variant="body1" className={classes.thankYouSubmissionTextStyle}>
                         Thank you for submitting your data, you will receive an email when the validation is complete.
                     </Typography>
@@ -1186,7 +1223,7 @@ class SubmissionDetails extends Component {
                             <Grid item container xs={12}>
                                 <Chip label="1" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    Upload summary statistics
+                                    Upload summary statistics file(s) to <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer">Globus</a>
                                 </Typography>
                             </Grid>
 
@@ -1203,6 +1240,20 @@ class SubmissionDetails extends Component {
                                     Fill in submission form
                                     (see <a href={publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' ? sumStatsDocs : metadataAndSumStatsDocs} target="_blank" rel="noopener noreferrer">
                                         here</a> for help) and upload
+                                </Typography>
+                            </Grid>
+
+                            <Grid item container xs={12}>
+                                <Chip label="4" variant="outlined" className={classes.chipStyle} />
+                                <Typography className={classes.chipTextStyle} >
+                                    Upload submission form
+                                </Typography>
+                            </Grid>
+
+                            <Grid item container xs={12}>
+                                <Chip label="5" variant="outlined" className={classes.chipStyle} />
+                                <Typography className={classes.chipTextStyle} >
+                                    After successful validation of your submission form and summary statistics file, click "Submit".
                                 </Typography>
                             </Grid>
                         </Paper>
@@ -1223,9 +1274,9 @@ class SubmissionDetails extends Component {
                                 justify="flex-start"
                                 alignItems="stretch"
                             />
-                            <Grid item container xs={12}>
+                            {/* <Grid item container xs={12}>
                                 {upload_sumstats_button}
-                            </Grid>
+                            </Grid> */}
 
                             <Grid item container xs={12}>
                                 {download_template}
@@ -1311,6 +1362,10 @@ class SubmissionDetails extends Component {
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
                                                         {currentStatus}
                                                     </Typography>
+
+                                                    {validating_thank_you}
+
+                                                    {final_thank_you_message}
                                                 </Grid>
                                             </Grid>
 
@@ -1318,14 +1373,12 @@ class SubmissionDetails extends Component {
 
                                                 {metadata_status_section}
 
-                                                <Grid item xs={4}>
+                                                {/* <Grid item xs={4}>
                                                     <Typography variant="h6" className={classes.submissionTextStyle}>
                                                         SumStats valid:
                                                     </Typography>
-                                                </Grid>
+                                                </Grid> */}
                                                 {summary_statistics_status_icon}
-
-                                                {final_thank_you_message}
 
                                             </Grid>
                                         </Grid>
