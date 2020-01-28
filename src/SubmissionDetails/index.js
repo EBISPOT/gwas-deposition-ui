@@ -9,7 +9,6 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import classNames from 'classnames'
-// import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSVG from 'react-svg'
 import Chip from '@material-ui/core/Chip';
 
@@ -658,7 +657,6 @@ class SubmissionDetails extends Component {
         const { classes } = this.props;
         const { error } = this.state;
         const { submitDataError } = this.state;
-        // const bull = <span className={classes.bullet}>•</span>;
 
         const OVERALL_STATUS_STARTED = 'STARTED';
         const VALID_SUBMISSION = 'VALID';
@@ -809,31 +807,6 @@ class SubmissionDetails extends Component {
                     </Grid>
                 </Fragment>
         }
-
-        /**
-         * Manage display of "Upload summary statistics" button. Clicking this button
-         * will open a new tab to take the user to the Globus folder created for their
-         * submission.
-         */
-        // if (submissionStatus === 'STARTED') {
-        //     upload_sumstats_button =
-        //         <Fragment>
-        //             <Button href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer" fullWidth className={classes.button}>
-        //                 Upload summary statistics
-        //             </Button>
-        //             {/* Handle case when globusSumStatsFolder is not returned */}
-        //         </Fragment>
-        // }
-        // else {
-        //     upload_sumstats_button =
-        //         <Fragment>
-        //             <Button disabled fullWidth className={classes.button} variant="outlined">
-        //                 Upload summary statistics
-        //             </Button>
-        //         </Fragment>
-        // }
-
-
 
         /**
          * Manage display of "Download submission form" template file button
@@ -1007,7 +980,6 @@ class SubmissionDetails extends Component {
                         {metadata_field_label}
                         < Grid item xs={8} >
                             <Typography variant="h6" className={classes.submissionTextStyle}>
-                                {/* <CircularProgress className={classes.progress} size={24} /> */}
                                 Validating data...
                             </Typography>
                         </Grid >
@@ -1038,7 +1010,6 @@ class SubmissionDetails extends Component {
                         {metadata_field_label}
                         <Grid item xs={8}>
                             <Typography variant="h6" className={classes.submissionTextStyle}>
-                                {/* <CircularProgress className={classes.progress} size={24} /> */}
                                 Validating data...
                             </Typography>
                         </Grid>
@@ -1080,14 +1051,6 @@ class SubmissionDetails extends Component {
                     </Grid>
                 </Fragment>
         }
-        // else if (summaryStatisticsStatus === 'NA') {
-        //     summary_statistics_status_icon =
-        //         <Grid item xs={8}>
-        //             <Typography variant="h6" className={classes.submissionTextStyle}>
-        //                 {summaryStatisticsStatus}
-        //             </Typography>
-        //         </Grid>
-        // }
         else if (submissionStatus === null) {
             summary_statistics_status_icon =
                 <Fragment>
@@ -1105,13 +1068,6 @@ class SubmissionDetails extends Component {
         } else {
             summary_statistics_status_icon =
                 <Grid item xs={8}>
-                    {/* <Typography variant="h6" className={classes.submissionTextStyle}> */}
-                    {/* <CircularProgress className={classes.progress} size={24} /> */}
-                    {/* Validating data...
-                    </Typography> */}
-                    {/* <Typography variant="body1" className={classes.thankYouSubmissionTextStyle}>
-                        Thank you for submitting your data, you will receive an email when the validation is complete.
-                    </Typography> */}
                 </Grid>
         }
 
@@ -1274,9 +1230,6 @@ class SubmissionDetails extends Component {
                                 justify="flex-start"
                                 alignItems="stretch"
                             />
-                            {/* <Grid item container xs={12}>
-                                {upload_sumstats_button}
-                            </Grid> */}
 
                             <Grid item container xs={12}>
                                 {download_template}
@@ -1373,11 +1326,6 @@ class SubmissionDetails extends Component {
 
                                                 {metadata_status_section}
 
-                                                {/* <Grid item xs={4}>
-                                                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                                                        SumStats valid:
-                                                    </Typography>
-                                                </Grid> */}
                                                 {summary_statistics_status_icon}
 
                                             </Grid>
