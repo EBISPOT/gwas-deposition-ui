@@ -1350,68 +1350,6 @@ class SubmissionDetails extends Component {
 
                         </Grid>
                     </Grid>
-
-
-
-                    {/* <Grid item xs={12}
-                        container
-                        direction="row"
-                        justify="space-evenly"
-                        alignItems="flex-start"
-                        spacing={3}>
-                        <Grid item xs={4}
-                            container
-                            direction="column"
-                            justify="flex-start"
-                            alignItems="flex-start">
-                            <Grid item >
-                                <Typography variant="body1" gutterBottom>
-                                    Submission status: {submissionStatus}
-                                </Typography>
-                            </Grid>
-                            <Grid item >
-                                <Typography>
-                                    {fileValidationErrorMessage}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={2}></Grid>
-                        <Grid item xs={2}>
-                            {download_summary_stats_button}
-                            {delete_file_button}
-                        </Grid>
-                        <Grid item xs={2}>
-                            {select_upload_file_button}
-                        </Grid>
-                        <Grid item xs={2}>
-                            {submit_data_button}
-                        </Grid>
-                    </Grid>
-                    <Grid container
-                        direction="row"
-                        justify="flex-start"
-                        alignItems="center">
-                        {upload_component}
-                    </Grid> */}
-                    {/* <Grid container
-                        direction="column"
-                        justify="center"
-                        alignItems="flex-start"
-                        spacing={3}
-                        className={classes.statistics}
-                    >
-                        {submission_stats_section}
-                    </Grid> */}
-                    {/* <Grid container
-                        direction="column"
-                        justify="center"
-                        alignItems="flex-start"
-                        spacing={3}
-                    >
-                        {download_data_file_button}
-                    </Grid> */}
-                    {/* </Grid> */}
-
                 </div >
             </Fragment >
         )
