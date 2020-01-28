@@ -692,7 +692,7 @@ class SubmissionDetails extends Component {
         const sumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics`;
         const metadataAndSumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics-plus-metadata`;
 
-        const gwasInfoEmailLink = `mailto:gwas-info@ebi.ac.uk?subject=Post-submission edit request`;
+        const gwasSubsEmailLink = `mailto:gwas-subs@ebi.ac.uk?subject=Post-submission edit request`;
         let final_thank_you_message;
 
         const { submissionStatus } = this.state;
@@ -1089,11 +1089,11 @@ class SubmissionDetails extends Component {
          * Manage display of final thank you message after valid file
          * processing status.
          */
-        if (submissionStatus === 'VALID') {
+        if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) {
             final_thank_you_message =
                 <Grid item container xs={12}>
-                    <Typography variant="h6" className={classes.submissionTextStyle}>
-                        Thank you for submitting your data. Contact <a href={gwasInfoEmailLink}>gwas-info@ebi.ac.uk</a> if changes are needed.
+                    <Typography variant="body1" className={classes.thankYouSubmissionTextStyle}>
+                        Thank you for submitting your data. Contact <a href={gwasSubsEmailLink}>gwas-subs@ebi.ac.uk</a> if changes are needed.
                     </Typography>
                 </Grid>
         }
@@ -1179,7 +1179,7 @@ class SubmissionDetails extends Component {
                             <Grid item container xs={12}>
                                 <Chip label="1" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    Upload summary statistics file(s) to <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer">Globus</a>
+                                    Upload summary statistics file(s) to <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer"> your Globus submission folder</a>
                                 </Typography>
                             </Grid>
 
@@ -1195,7 +1195,7 @@ class SubmissionDetails extends Component {
                                 <Typography className={classes.chipTextStyle} >
                                     Fill in submission form
                                     (see <a href={publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' ? sumStatsDocs : metadataAndSumStatsDocs} target="_blank" rel="noopener noreferrer">
-                                        here</a> for help) and upload
+                                        here</a> for help)
                                 </Typography>
                             </Grid>
 
@@ -1209,7 +1209,14 @@ class SubmissionDetails extends Component {
                             <Grid item container xs={12}>
                                 <Chip label="5" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    After successful validation of your submission form and summary statistics file, click "Submit".
+                                    After successful validation of your submission form, click "Submit".
+                                </Typography>
+                            </Grid>
+
+                            <Grid item container xs={12}>
+                                <Chip label="6" variant="outlined" className={classes.chipStyle} />
+                                <Typography className={classes.chipTextStyle} >
+                                    To remove the current submission form, click "Reset". Use "Review submission" to download the current submission form.
                                 </Typography>
                             </Grid>
                         </Paper>
