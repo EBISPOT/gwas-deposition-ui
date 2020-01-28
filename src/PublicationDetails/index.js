@@ -14,7 +14,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 // import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { green } from '@material-ui/core/colors';
 
 import { AuthConsumer } from '../auth-context';
 
@@ -86,7 +85,7 @@ const styles = theme => ({
         position: 'relative',
     },
     buttonProgress: {
-        color: green[500],
+        color: 'rgb(57, 138, 150)',
         position: 'absolute',
         top: '50%',
         left: 62,
