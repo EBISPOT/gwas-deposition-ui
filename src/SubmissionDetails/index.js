@@ -1177,46 +1177,40 @@ class SubmissionDetails extends Component {
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Chip label="1" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    Upload summary statistics file(s) to <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer"> your Globus submission folder</a>
+                                    1 - Upload summary statistics file(s) to <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer"> your Globus submission folder</a>
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Chip label="2" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    Download submission form
+                                    2 - Download submission form
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Chip label="3" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    Fill in submission form
+                                    3 - Fill in submission form
                                     (see <a href={publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' ? sumStatsDocs : metadataAndSumStatsDocs} target="_blank" rel="noopener noreferrer">
                                         here</a> for help)
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Chip label="4" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    Upload submission form
+                                    4 - Upload submission form
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Chip label="5" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    After successful validation of your submission form, click "Submit".
+                                    5 - After successful validation of your submission form, click "Submit".
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Chip label="6" variant="outlined" className={classes.chipStyle} />
                                 <Typography className={classes.chipTextStyle} >
-                                    To remove the current submission form, click "Reset". Use "Review submission" to download the current submission form.
+                                    6 - To remove the current submission form, click "Reset". Use "Review submission" to download the current submission form.
                                 </Typography>
                             </Grid>
                         </Paper>
