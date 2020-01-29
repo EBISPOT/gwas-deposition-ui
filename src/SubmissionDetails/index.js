@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import classNames from 'classnames'
 import ReactSVG from 'react-svg'
-import Chip from '@material-ui/core/Chip';
 
 import { AuthConsumer } from '../auth-context';
 
@@ -30,14 +29,11 @@ const styles = theme => ({
         padding: theme.spacing(2),
         height: '100%',
     },
-    chipTextStyle: {
+    stepTextStyle: {
         fontSize: 18,
         marginLeft: theme.spacing(1),
-        marginBottom: theme.spacing(2),
+        marginBottom: theme.spacing(0.4),
         marginTop: theme.spacing(0.3),
-    },
-    chipStyle: {
-        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
     },
     headerTextStyle: {
         fontWeight: 500,
@@ -1202,19 +1198,19 @@ class SubmissionDetails extends Component {
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Typography className={classes.chipTextStyle} >
+                                <Typography className={classes.stepTextStyle} >
                                     1 - Upload summary statistics file(s) to <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer"> your Globus submission folder</a>
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Typography className={classes.chipTextStyle} >
+                                <Typography className={classes.stepTextStyle} >
                                     2 - Download submission form
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Typography className={classes.chipTextStyle} >
+                                <Typography className={classes.stepTextStyle} >
                                     3 - Fill in submission form
                                     (see <a href={publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' ? sumStatsDocs : metadataAndSumStatsDocs} target="_blank" rel="noopener noreferrer">
                                         here</a> for help)
@@ -1222,19 +1218,19 @@ class SubmissionDetails extends Component {
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Typography className={classes.chipTextStyle} >
+                                <Typography className={classes.stepTextStyle} >
                                     4 - Upload submission form
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Typography className={classes.chipTextStyle} >
+                                <Typography className={classes.stepTextStyle} >
                                     5 - After successful validation of your submission form, click "Submit".
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
-                                <Typography className={classes.chipTextStyle} >
+                                <Typography className={classes.stepTextStyle} >
                                     6 - To remove the current submission form, click "Reset". Use "Review submission" to download the current submission form.
                                 </Typography>
                             </Grid>
