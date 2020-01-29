@@ -298,7 +298,7 @@ class PublicationDetails extends Component {
         let submission_checklist;
         let elixirRegistrationLink = <a href="https://elixir-europe.org/register" target="_blank" rel="noopener noreferrer">Elixir ID</a>
         let globusLink = <a href="https://www.globus.org/globus-connect-personal" target="_blank" rel="noopener noreferrer">Globus Connect Personal</a>
-        let linkElixir2GlobusLink = <a href="https://globus.org/app/login" target="_blank" rel="noopener noreferrer">Elixir account to Globus</a>
+        let linkElixir2GlobusLink = <a href=" https://docs.globus.org/how-to/link-to-existing/" target="_blank" rel="noopener noreferrer">Elixir account to Globus</a>
         let summaryStatsFormattingLink = <a href="https://www.ebi.ac.uk/gwas/docs/summary-statistics-format" target="_blank" rel="noopener noreferrer">Format and validate</a>
         const { elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats } = this.state;
         const checklistCompleteError = [elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats].filter(v => v).length !== 4;
