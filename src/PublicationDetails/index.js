@@ -340,15 +340,15 @@ class PublicationDetails extends Component {
                             />
                             <FormControlLabel
                                 control={<BlueCheckbox checked={installGlobus} onChange={this.handleChange('installGlobus')} value="installGlobus" />}
-                                label={<Typography>Install {globusLink}</Typography>}
+                                label={<Typography>Install {globusLink} (required to submit summary statistics)</Typography>}
                             />
                             <FormControlLabel
                                 control={<BlueCheckbox checked={linkElixir2Globus} onChange={this.handleChange('linkElixir2Globus')} value="linkElixir2Globus" />}
-                                label={<Typography>Link your {linkElixir2GlobusLink}</Typography>}
+                                label={<Typography>Link your {linkElixir2GlobusLink} (required to submit summary statistics)</Typography>}
                             />
                             <FormControlLabel
                                 control={<BlueCheckbox checked={validateSummaryStats} onChange={this.handleChange('validateSummaryStats')} value="validateSummaryStats" />}
-                                label={<Typography>{summaryStatsFormattingLink} your summary statistics data</Typography>}
+                                label={<Typography>{summaryStatsFormattingLink} your summary statistics data (required to submit summary statistics)</Typography>}
                             />
                         </FormGroup>
                         {/* <FormHelperText>Check all steps to activate the "Create Submission" button</FormHelperText> */}
