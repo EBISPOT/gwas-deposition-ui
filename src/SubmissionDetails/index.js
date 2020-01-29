@@ -808,6 +808,31 @@ class SubmissionDetails extends Component {
                 </Fragment>
         }
 
+
+        /**
+         * Manage display of "Upload summary statistics" button. Clicking this button
+         * will open a new tab to take the user to the Globus folder created for their
+         * submission.
+         */
+        if (submissionStatus === 'STARTED') {
+            upload_sumstats_button =
+                <Fragment>
+                    <Button href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer" fullWidth className={classes.button}>
+                        Upload summary statistics
+                    </Button>
+                    {/* Handle case when globusSumStatsFolder is not returned */}
+                </Fragment>
+        }
+        else {
+            upload_sumstats_button =
+                <Fragment>
+                    <Button disabled fullWidth className={classes.button} variant="outlined">
+                        Upload summary statistics
+                    </Button>
+                </Fragment>
+        }
+
+
         /**
          * Manage display of "Download submission form" template file button
          * For a publication with status UNDER_SUMMARY_STATS_SUBMISSION, 
@@ -1231,6 +1256,10 @@ class SubmissionDetails extends Component {
                                 justify="flex-start"
                                 alignItems="stretch"
                             />
+
+                            <Grid item container xs={12}>
+                                {upload_sumstats_button}
+                            </Grid>
 
                             <Grid item container xs={12}>
                                 {download_template}
