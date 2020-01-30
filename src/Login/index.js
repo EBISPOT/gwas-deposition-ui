@@ -93,8 +93,8 @@ class Login extends Component {
         // var decoded = jwt_decode(token);
         // console.log("** Decoded Token: ", decoded);
 
-        // Redirect to Home page on successful authentication
-        history.push(`${process.env.PUBLIC_URL}`);
+        // Redirect back to page that required a login
+        history.goBack();
     }
 
     componentDidMount() {
