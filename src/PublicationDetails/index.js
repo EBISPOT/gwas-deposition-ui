@@ -298,7 +298,7 @@ class PublicationDetails extends Component {
         let submission_checklist;
         let elixirRegistrationLink = <a href="https://elixir-europe.org/register" target="_blank" rel="noopener noreferrer">Elixir ID</a>
         let globusLink = <a href="https://www.globus.org/globus-connect-personal" target="_blank" rel="noopener noreferrer">Globus Connect Personal</a>
-        let linkElixir2GlobusLink = <a href="https://globus.org/app/login" target="_blank" rel="noopener noreferrer">Elixir account to Globus</a>
+        let linkElixir2GlobusLink = <a href=" https://docs.globus.org/how-to/link-to-existing/" target="_blank" rel="noopener noreferrer">Elixir account to Globus</a>
         let summaryStatsFormattingLink = <a href="https://www.ebi.ac.uk/gwas/docs/summary-statistics-format" target="_blank" rel="noopener noreferrer">Format and validate</a>
         const { elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats } = this.state;
         const checklistCompleteError = [elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats].filter(v => v).length !== 4;
@@ -340,15 +340,15 @@ class PublicationDetails extends Component {
                             />
                             <FormControlLabel
                                 control={<BlueCheckbox checked={installGlobus} onChange={this.handleChange('installGlobus')} value="installGlobus" />}
-                                label={<Typography>Install {globusLink}</Typography>}
+                                label={<Typography>Install {globusLink} (required to submit summary statistics)</Typography>}
                             />
                             <FormControlLabel
                                 control={<BlueCheckbox checked={linkElixir2Globus} onChange={this.handleChange('linkElixir2Globus')} value="linkElixir2Globus" />}
-                                label={<Typography>Link your {linkElixir2GlobusLink}</Typography>}
+                                label={<Typography>Link your {linkElixir2GlobusLink} (required to submit summary statistics)</Typography>}
                             />
                             <FormControlLabel
                                 control={<BlueCheckbox checked={validateSummaryStats} onChange={this.handleChange('validateSummaryStats')} value="validateSummaryStats" />}
-                                label={<Typography>{summaryStatsFormattingLink} your summary statistics data</Typography>}
+                                label={<Typography>{summaryStatsFormattingLink} your summary statistics data (required to submit summary statistics)</Typography>}
                             />
                         </FormGroup>
                         {/* <FormHelperText>Check all steps to activate the "Create Submission" button</FormHelperText> */}
