@@ -9,6 +9,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import classNames from 'classnames'
+import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSVG from 'react-svg'
 
 import { AuthConsumer } from '../auth-context';
@@ -75,6 +76,7 @@ const styles = theme => ({
     progress: {
         height: 25,
         width: 25,
+        color: 'gray',
     },
     check_icon: {
         fill: 'green',
@@ -1069,6 +1071,19 @@ class SubmissionDetails extends Component {
                         <Typography variant="h6" className={classes.submissionTextStyle}>
                             <ReactSVG src={process.env.PUBLIC_URL + '/images/error_24px.svg'} className={classes.error_icon} />
                         </Typography>
+                    </Grid>
+                </Fragment>
+        }
+        else if (submissionStatus === VALIDATING && publicationStatus === 'UNDER_SUBMISSION') {
+            summary_statistics_status_icon =
+                <Fragment>
+                    <Grid item xs={4}>
+                        <Typography variant="h6" className={classes.submissionTextStyle}>
+                            SumStats valid:
+                    </Typography>
+                    </Grid>
+                    <Grid item xs={8}>
+                        <CircularProgress className={classes.progress} size={24} />
                     </Grid>
                 </Fragment>
         }
