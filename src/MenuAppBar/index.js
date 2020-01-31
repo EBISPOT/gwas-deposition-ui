@@ -4,8 +4,6 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-// import Switch from '@material-ui/core/Switch';
-// import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
@@ -19,9 +17,6 @@ import ElixirAuthService from '../ElixirAuthService';
 import jwt_decode from 'jwt-decode';
 
 import { AuthConsumer, AuthContext } from '../auth-context';
-
-import APIClient from '../apiClient';
-
 
 
 const useStyles = makeStyles(theme => ({
@@ -100,13 +95,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-// export default function MenuAppBar() {
 function MenuAppBar() {
     const classes = useStyles();
 
     const user = useContext(AuthContext)
-
-    const apiClient = new APIClient();
 
     // Set auth status for Testing
     // const [auth, setAuth] = React.useState(false);
@@ -117,7 +109,6 @@ function MenuAppBar() {
     let userName = ''
     if (eas.loggedIn()) {
         userName = jwt_decode(eas.getToken()).name;
-        // console.log("Username: ", userName);
     }
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -145,7 +136,6 @@ function MenuAppBar() {
         } else {
             history.push(`${process.env.PUBLIC_URL}/login`);
         }
-        // handleMenuClose();
     }
 
     function handleLogout() {
@@ -157,21 +147,12 @@ function MenuAppBar() {
         // Use Context to reset auth status
         user.onLogout();
 
-
-        // Redirect to Home page for Testing
-        // window.location.href = "/"
-
         // Refresh Home page on Logout
         history.push(`${process.env.PUBLIC_URL}`);
-
 
         // Reset "auth" so Login is displayed for Testing
         // setAuth(false);
     }
-
-    // function downloadTemplate() {
-    //     apiClient.downloadTemplate();
-    // }
 
     return (
         <div className={classes.root}>
@@ -257,8 +238,6 @@ function MenuAppBar() {
     );
 }
 
-
-// export default MenuAppBar
 
 export default () => (
     <AuthConsumer>

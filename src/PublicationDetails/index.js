@@ -33,7 +33,6 @@ import ElixirAuthService from '../ElixirAuthService';
 // }
 // export default PublicationDetails;
 
-// const auth = localStorage.getItem('id_token');
 
 const styles = theme => ({
     root: {
@@ -109,9 +108,7 @@ const styles = theme => ({
 
 const BlueCheckbox = withStyles({
     root: {
-        // color: blue[400],
         '&$checked': {
-            // color: blue[600],
             color: 'rgb(57, 138, 150)',
         },
     },
@@ -204,7 +201,7 @@ class PublicationDetails extends Component {
         const email = event.target.value;
 
         // Regex to check for valid email formatted text
-        let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (re.test(String(email).toLowerCase())) {
             this.setState({ ...this.state, globusIdentity: email, globusIdentityFormatError: false, linkElixir2Globus: true })
         } else {
@@ -318,8 +315,9 @@ class PublicationDetails extends Component {
         let submission_checklist;
         let elixirRegistrationLink = <a href="https://elixir-europe.org/register" target="_blank" rel="noopener noreferrer">Elixir ID</a>
         let globusLink = <a href="https://www.globus.org/globus-connect-personal" target="_blank" rel="noopener noreferrer">Globus Connect Personal</a>
-        let linkElixir2GlobusLink = <a href=" https://docs.globus.org/how-to/link-to-existing/" target="_blank" rel="noopener noreferrer">Elixir account to Globus</a>
         let summaryStatsFormattingLink = <a href="https://www.ebi.ac.uk/gwas/docs/summary-statistics-format" target="_blank" rel="noopener noreferrer">Format and validate</a>
+        const sumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics`;
+        const metadataAndSumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics-plus-metadata`;
         const { elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats } = this.state;
         const checklistCompleteError = [elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats].filter(v => v).length !== 4;
 
@@ -396,7 +394,6 @@ class PublicationDetails extends Component {
                         <Button
                             className={classes.button}
                             disabled={isCreateSubmissionDisabled || checklistCompleteError || globusIdentityFormatError}
-                            // disabled={checklistCompleteError}
                             onClick={this.createSubmission}
                         >
                             Create Submission
@@ -436,16 +433,17 @@ class PublicationDetails extends Component {
             statusExplanationMessageText =
                 <span>
                     Data describing this publication is not yet available in the GWAS Catalog. If you are an
-                    author of this publication please {eligibleBoldText}
-                    [link to section in documentation].
+                    author of this publication please {eligibleBoldText}. See doucmentation
+                    <a href={metadataAndSumStatsDocs} target="_blank" rel="noopener noreferrer"> here</a>.
                 </span>
         }
         if (publicationStatus === 'PUBLISHED') {
             statusExplanationMessageText =
                 <span>
                     Data describing this publication is available in the GWAS Catalog. You are provided with a
-                    pre-filled template containing the metadata. You can {publishedBoldText}
-                    [link to section in documentation] and let us know which file belongs to each study.
+                    pre-filled template containing the metadata. You can {publishedBoldText}. See documentation
+                    <a href={sumStatsDocs} target="_blank" rel="noopener noreferrer"> here</a> and
+                    let us know which file belongs to each study.
                     If you think there is a mistake in the pre-filled spreadsheet containing the data currently
                     in the Catalog (e.g. an incorrect number of studies for your publication), please contact {gwasInfoEmail}.
                 </span>
@@ -512,13 +510,6 @@ class PublicationDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            {/* <Grid item xs={12}>
-                                <Grid><Typography>&nbsp;</Typography></Grid>
-                                <Typography variant="h5" className={classes.headerTextStyle}>
-                                    Submission Checklist
-                                </Typography>
-                            </Grid> */}
-
                             <Grid item xs={12}>
                                 {submission_checklist}
                             </Grid>
@@ -554,8 +545,6 @@ class PublicationDetails extends Component {
 PublicationDetails.propTypes = {
     classes: PropTypes.object.isRequired,
 };
-
-// export default withStyles(styles)(PublicationDetails);
 
 PublicationDetails = withStyles(styles)(PublicationDetails)
 

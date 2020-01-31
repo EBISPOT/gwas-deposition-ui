@@ -653,27 +653,26 @@ class SubmissionDetails extends Component {
 
     render() {
         const { classes } = this.props;
-        const { error } = this.state;
-        const { submitDataError } = this.state;
+        // const { submitDataError } = this.state;
 
-        const OVERALL_STATUS_STARTED = 'STARTED';
+        // const OVERALL_STATUS_STARTED = 'STARTED';
         const VALID_SUBMISSION = 'VALID';
         const VALIDATING = 'VALIDATING';
         const SUBMITTED = 'SUBMITTED';
 
         const { publicationStatus } = this.state;
-        let transformedPublicationStatus;
+        // let transformedPublicationStatus;
 
-        if (publicationStatus === 'UNDER_SUBMISSION' || publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION'
-            || publicationStatus === 'PUBLISHED_WITH_SS') {
-            transformedPublicationStatus = 'CLOSED'
-        }
-        if (publicationStatus === 'ELIGIBLE') {
-            transformedPublicationStatus = 'OPEN FOR SUBMISSION'
-        }
-        if (publicationStatus === 'PUBLISHED') {
-            transformedPublicationStatus = 'OPEN FOR SUMMARY STATISTICS SUBMISSION'
-        }
+        // if (publicationStatus === 'UNDER_SUBMISSION' || publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION'
+        //     || publicationStatus === 'PUBLISHED_WITH_SS') {
+        //     transformedPublicationStatus = 'CLOSED'
+        // }
+        // if (publicationStatus === 'ELIGIBLE') {
+        //     transformedPublicationStatus = 'OPEN FOR SUBMISSION'
+        // }
+        // if (publicationStatus === 'PUBLISHED') {
+        //     transformedPublicationStatus = 'OPEN FOR SUMMARY STATISTICS SUBMISSION'
+        // }
 
 
         let userActionPublicationStatus;
@@ -707,7 +706,7 @@ class SubmissionDetails extends Component {
         let submission_stats_section;
         let file_validation_error_section;
         let upload_sumstats_button;
-        let download_summary_stats_button;
+        // let download_summary_stats_button;
         let download_template;
         let select_upload_file_button;
         let upload_component;
@@ -1002,9 +1001,7 @@ class SubmissionDetails extends Component {
                     <Fragment>
                         {metadata_field_label}
                         < Grid item xs={8} >
-                            <Typography variant="h6" className={classes.submissionTextStyle}>
-                                Validating data...
-                            </Typography>
+                            <CircularProgress className={classes.progress} size={24} />
                         </Grid >
                     </Fragment >
             } else if (metadataStatus === 'NA') {
@@ -1032,9 +1029,7 @@ class SubmissionDetails extends Component {
                     <Fragment>
                         {metadata_field_label}
                         <Grid item xs={8}>
-                            <Typography variant="h6" className={classes.submissionTextStyle}>
-                                Validating data...
-                            </Typography>
+                            <CircularProgress className={classes.progress} size={24} />
                         </Grid>
                     </Fragment>
             }

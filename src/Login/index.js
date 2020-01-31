@@ -3,7 +3,6 @@ import elixir_login_button from '../elixir_logo.png';
 
 import Grid from '@material-ui/core/Grid';
 import ElixirAuthService from '../ElixirAuthService';
-// import jwt_decode from 'jwt-decode';
 
 import { AuthConsumer } from '../auth-context';
 
@@ -67,12 +66,7 @@ class Login extends Component {
 
 
     handleLogin = (event) => {
-        // Example: https://gitlab.ebi.ac.uk/tools-glue/ng-ebi-authorization/blob/master/src/auth/auth.service.ts
-        // console.log("** Elixir Button clicked!")
         this.ElixirAuthService.login();
-
-        // console.log("** Event: ", event)
-        // console.log("** Token: ", event.data);
 
         if (!this.messageIsAcceptable(event)) {
             return;
@@ -90,21 +84,16 @@ class Login extends Component {
             (window.event.source).close();
         }
 
-        // var decoded = jwt_decode(token);
-        // console.log("** Decoded Token: ", decoded);
-
         // Redirect back to page that required a login
         history.goBack();
     }
 
     componentDidMount() {
         window.addEventListener("message", this.handleLogin);
-        // console.log("** Add \"handleLogin\" Event listener")
     }
 
     componentWillUnmount() {
         window.removeEventListener('message', this.handleLogin);
-        // console.log("** Removed \"handleLogin\" Event listener")
     }
 
     /**
@@ -157,7 +146,6 @@ class Login extends Component {
         )
     }
 }
-// export default Login
 
 Login.propTypes = {
     classes: PropTypes.object.isRequired,
