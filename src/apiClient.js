@@ -141,9 +141,10 @@ class APIClient {
     /**
      * API call to backend app to create a submission
      *  @param {String} pmid PubMedId
+     * @param {String} globusIdentityEmail Email to link to Globus
      */
-    createSubmission(pmid) {
-        let pmid_data = { publication: { pmid: pmid } };
+    createSubmission(pmid, globusIdentityEmail) {
+        let pmid_data = { publication: { pmid: pmid }, globusIdentity: globusIdentityEmail };
 
         return axios.post(BASE_URI + 'submissions', pmid_data,
             {
