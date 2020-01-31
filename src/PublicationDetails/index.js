@@ -7,16 +7,16 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 // import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-// import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { AuthConsumer } from '../auth-context';
-
+import jwt_decode from 'jwt-decode';
 import API_CLIENT from '../apiClient';
 import history from "../history";
 
@@ -147,9 +147,12 @@ class PublicationDetails extends Component {
             elixirRegistration: false,
             installGlobus: false,
             linkElixir2Globus: false,
+            globusIdentity: null,
+            globusIdentityFormatError: false,
             validateSummaryStats: false,
         })
         this.handleChange = this.handleChange.bind(this);
+        this.validateGlobusIdentity = this.validateGlobusIdentity.bind(this);
         this.createSubmission = this.createSubmission.bind(this);
         this.redirectToSubmissionDetails = this.redirectToSubmissionDetails.bind(this);
         this.getUserFriendlyStatusLabels = this.getUserFriendlyStatusLabels.bind(this);
@@ -194,6 +197,21 @@ class PublicationDetails extends Component {
     };
 
 
+    /**
+     * Handle state of Input Textfield
+     */
+    validateGlobusIdentity(event) {
+        const email = event.target.value;
+
+        // Regex to check for valid email formatted text
+        let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (re.test(String(email).toLowerCase())) {
+            this.setState({ ...this.state, globusIdentity: email, globusIdentityFormatError: false, linkElixir2Globus: true })
+        } else {
+            this.setState({ ...this.state, globusIdentity: jwt_decode(this.state.auth).email, globusIdentityFormatError: true, linkElixir2Globus: false })
+        }
+    }
+
 
     /**
      * Create submission for this publication
@@ -201,6 +219,7 @@ class PublicationDetails extends Component {
     createSubmission() {
         let pmid = this.PUBMED_ID;
         let token = this.state.auth;
+        let globusIdentityEmail = this.state.globusIdentity;
 
         this.setState(() => ({
             isCreateSubmissionDisabled: true
@@ -208,7 +227,7 @@ class PublicationDetails extends Component {
 
         // Check if user is logged in and if token is still valid
         if (token && !this.ElixirAuthService.isTokenExpired(token)) {
-            this.API_CLIENT.createSubmission(pmid).then(response => {
+            this.API_CLIENT.createSubmission(pmid, globusIdentityEmail).then(response => {
                 this.setState(() => ({ createSubmissionError: false }));
 
                 this.redirectToSubmissionDetails();
@@ -293,6 +312,7 @@ class PublicationDetails extends Component {
         const { redirectErrorMessage } = this.state;
         const { publicationStatus } = this.state;
         const { isCreateSubmissionDisabled } = this.state;
+        const { globusIdentityFormatError } = this.state;
         const { transformedPublicationStatus } = this.state;
 
         let submission_checklist;
@@ -338,14 +358,25 @@ class PublicationDetails extends Component {
                                 control={<BlueCheckbox checked={elixirRegistration} onChange={this.handleChange('elixirRegistration')} color="secondary" value="elixirRegistration" />}
                                 label={<Typography>Create an {elixirRegistrationLink} to login to this application</Typography>}
                             />
+
                             <FormControlLabel
                                 control={<BlueCheckbox checked={installGlobus} onChange={this.handleChange('installGlobus')} value="installGlobus" />}
                                 label={<Typography>Install {globusLink} (required to submit summary statistics)</Typography>}
                             />
+
                             <FormControlLabel
                                 control={<BlueCheckbox checked={linkElixir2Globus} onChange={this.handleChange('linkElixir2Globus')} value="linkElixir2Globus" />}
-                                label={<Typography>Link your {linkElixir2GlobusLink} (required to submit summary statistics)</Typography>}
+                                label={<Typography>Enter your registered Globus email (required to submit summary statistics)</Typography>}
                             />
+                            <TextField
+                                id="globusIdentity"
+                                label="Globus email"
+                                required
+                                defaultValue={jwt_decode(this.state.auth).email}
+                                onChange={this.validateGlobusIdentity}
+                                error={globusIdentityFormatError}
+                            />
+
                             <FormControlLabel
                                 control={<BlueCheckbox checked={validateSummaryStats} onChange={this.handleChange('validateSummaryStats')} value="validateSummaryStats" />}
                                 label={<Typography>{summaryStatsFormattingLink} your summary statistics data (required to submit summary statistics)</Typography>}
@@ -364,7 +395,7 @@ class PublicationDetails extends Component {
                     <Fragment>
                         <Button
                             className={classes.button}
-                            disabled={isCreateSubmissionDisabled || checklistCompleteError}
+                            disabled={isCreateSubmissionDisabled || checklistCompleteError || globusIdentityFormatError}
                             // disabled={checklistCompleteError}
                             onClick={this.createSubmission}
                         >
