@@ -6,10 +6,7 @@ export default class ElixirAuthService {
         this._appURL = process.env.REACT_APP_AAPURL.replace(/\/$/, '');
 
         this.getProfile = this.getProfile.bind(this);
-
-        //This binding is necessary to make `this` work in the callback
         this.login = this.login.bind(this);
-
     }
 
     login = () => {
