@@ -12,8 +12,13 @@ import { withStyles } from '@material-ui/core/styles';
 
 
 const styles = theme => ({
-    Checkbox: {
+    checkboxStyle: {
         color: 'primary',
+        float: "left",
+        width: "5%"
+    },
+    gdprTextStyle: {
+        marginLeft: "5%"
     },
 });
 
@@ -53,32 +58,30 @@ class GDPR extends Component {
 
 
     render() {
+        const { classes } = this.props;
+        const tos = "https://www.ebi.ac.uk/about/terms-of-use/";
+
         return (
-            <Grid container
-                direction="column"
-                justify="space-evenly"
-                alignItems="center"
-                spacing={3}>
-                <Grid item xs={12} sm={6}>
-                    <Typography>
-                        Some description as needed about GDPR...
-                    </Typography>
-                </Grid>
-                <Grid item container
+            <div>
+                <Grid container
                     direction="row"
                     justify="center"
                     alignItems="center"
-                    xs={12} sm={6}>
-                    <Checkbox color='primary'
-                        onChange={this.handleChange}
-                        checked={this.state.checkedBox}
-                        value="gdprCheckbox"
-                    />
-                    <Typography>
-                        Add GDPR Acceptance text here!
-                    </Typography>
+                    spacing={3}>
+                    <Grid item xs={5}>
+                        <Checkbox className={classes.checkboxStyle}
+                            onChange={this.handleChange}
+                            checked={this.state.checkedBox}
+                            value="gdprCheckbox"
+                        />
+                        <Typography className={classes.gdprTextStyle}>
+                            This website requires cookies, and the limited processing of your personal data in order to function.
+                            By checking this box you are agreeing to this as outlined in our
+                            <a href={tos} target="_blank" rel="noopener noreferrer"> Privacy Notice and Terms of Use</a>.
+                            </Typography>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </div>
         )
     }
 }
