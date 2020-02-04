@@ -129,12 +129,20 @@ function MenuAppBar() {
 
     function showMySubmissions() {
         let token = localStorage.getItem('id_token');
+        let gdprAccepted = JSON.parse(localStorage.getItem('gdpr-accepted'));
 
-        // Check if logged in and if token is still valid
-        if (token && !eas.isTokenExpired(token)) {
+        // Check if logged in and if token is still valid and if GDPR accepted
+        if (token && !eas.isTokenExpired(token) && gdprAccepted) {
             history.push(`${process.env.PUBLIC_URL}/submissions`);
-        } else {
-            history.push(`${process.env.PUBLIC_URL}/login`);
+        }
+        // Check GDPR accepted state - if true, login, else, present GDPR page
+        else {
+            if (!JSON.parse(gdprAccepted)) {
+                history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: '/submissions' }));
+            }
+            else {
+                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: '/submissions' }));
+            }
         }
     }
 
@@ -222,9 +230,14 @@ function MenuAppBar() {
                         {value => !value.isAuthenticated && (<div>
                             {/* Authentication is FALSE */}
 
-                            <Button component={Link} to={`${process.env.PUBLIC_URL}/gdpr`} className={classes.loginButton} style={{ float: 'right', background: 'inherit' }}>
+                            <Button component={Link} to={{
+                                pathname: `${process.env.PUBLIC_URL}/gdpr`,
+                                state: { from: '/' }
+                            }}
+                                className={classes.loginButton}
+                                style={{ float: 'right', background: 'inherit' }}>
                                 Login
-                        </Button>
+                            </Button>
 
                         </div>)}
                     </AuthConsumer>
