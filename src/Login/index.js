@@ -85,7 +85,16 @@ class Login extends Component {
         }
 
         // Redirect back to page that required a login
-        history.goBack();
+        let referrer;
+        if (history.location.state && history.location.state.from) {
+            referrer = history.location.state.from;
+        }
+
+        if (referrer) {
+            history.push(referrer)
+        } else {
+            history.goBack();
+        }
     }
 
     componentDidMount() {
