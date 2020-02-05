@@ -132,7 +132,8 @@ class PublicationDetails extends Component {
         }
 
         this.state = ({
-            auth: localStorage.getItem('id_token'),
+            auth: null,
+            authEmail: null,
             publication: [],
             publicationStatus: null,
             transformedPublicationStatus: null,
@@ -146,6 +147,7 @@ class PublicationDetails extends Component {
             linkElixir2Globus: false,
             globusIdentity: null,
             globusIdentityFormatError: false,
+            globusIdentityHelperText: null,
             validateSummaryStats: false,
         })
         this.handleChange = this.handleChange.bind(this);
@@ -153,6 +155,7 @@ class PublicationDetails extends Component {
         this.createSubmission = this.createSubmission.bind(this);
         this.redirectToSubmissionDetails = this.redirectToSubmissionDetails.bind(this);
         this.getUserFriendlyStatusLabels = this.getUserFriendlyStatusLabels.bind(this);
+        this.getToken = this.getToken.bind(this);
         this.ElixirAuthService.isTokenExpired = this.ElixirAuthService.isTokenExpired.bind(this);
     }
 
@@ -165,9 +168,23 @@ class PublicationDetails extends Component {
             this.setState({ ...this.state, publication: data })
             this.setState({ ...this.state, publicationStatus: data.status })
             this.setState({ ...this.state, transformedPublicationStatus: this.getUserFriendlyStatusLabels(data.status) })
+            this.setState({ ...this.state, authEmail: this.getToken().authEmail, auth: this.getToken().auth, globusIdentity: this.getToken().authEmail })
         });
     }
 
+    /**
+     * Check for token in local storage
+     * and parse out email if token is present.
+     */
+    getToken() {
+        let token = null;
+        let userEmail = null;
+        if (localStorage.getItem('id_token')) {
+            token = localStorage.getItem('id_token');
+            userEmail = jwt_decode(token).email;
+        }
+        return { authEmail: userEmail, auth: token };
+    }
 
     /**
      * Set user friendly status label
@@ -190,7 +207,26 @@ class PublicationDetails extends Component {
      * Handle state of checkboxes
      */
     handleChange = name => event => {
-        this.setState({ ...this.state, [name]: event.target.checked });
+        // If the "linkElixir2Globus" checkbox is checked and either no globusIdentity value is present
+        // or an invalid globusIdentity value is present, prevent check and show helper text error.
+        if (name === 'linkElixir2Globus' && (this.state.globusIdentity === null || this.state.globusIdentityFormatError)) {
+            // Set helper error text based on error type condition
+            let errorHelperText = this.state.globusIdentityFormatError ? 'Add valid email to link to Globus' : 'Add email to link to Globus'
+
+            this.setState({
+                ...this.state,
+                globusIdentityHelperText: errorHelperText,
+                globusIdentityFormatError: true,
+                linkElixir2Globus: false
+            })
+        }
+        else {
+            this.setState({
+                ...this.state, [name]:
+                    event.target.checked,
+                globusIdentityHelperText: '',
+            });
+        }
     };
 
 
@@ -203,9 +239,21 @@ class PublicationDetails extends Component {
         // Regex to check for valid email formatted text
         let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (re.test(String(email).toLowerCase())) {
-            this.setState({ ...this.state, globusIdentity: email, globusIdentityFormatError: false, linkElixir2Globus: true })
+            this.setState({
+                ...this.state,
+                globusIdentity: email,
+                globusIdentityHelperText: '',
+                globusIdentityFormatError: false,
+                linkElixir2Globus: true
+            })
         } else {
-            this.setState({ ...this.state, globusIdentity: jwt_decode(this.state.auth).email, globusIdentityFormatError: true, linkElixir2Globus: false })
+            this.setState({
+                ...this.state,
+                globusIdentity: email,
+                globusIdentityHelperText: 'Add valid email to link to Globus',
+                globusIdentityFormatError: true,
+                linkElixir2Globus: false
+            })
         }
     }
 
@@ -217,13 +265,14 @@ class PublicationDetails extends Component {
         let pmid = this.PUBMED_ID;
         let token = this.state.auth;
         let globusIdentityEmail = this.state.globusIdentity;
+        let gdprAccepted = JSON.parse(localStorage.getItem('gdpr-accepted'));
 
         this.setState(() => ({
             isCreateSubmissionDisabled: true
         }));
 
-        // Check if user is logged in and if token is still valid
-        if (token && !this.ElixirAuthService.isTokenExpired(token)) {
+        // Check if user is logged in and if token is still valid and if GDPR accepted
+        if (token && !this.ElixirAuthService.isTokenExpired(token) && gdprAccepted) {
             this.API_CLIENT.createSubmission(pmid, globusIdentityEmail).then(response => {
                 this.setState(() => ({ createSubmissionError: false }));
 
@@ -239,15 +288,13 @@ class PublicationDetails extends Component {
                         this.setState(() => ({ createSubmissionErrorMessage: createSubmissionErrorMessage }));
                     }
                 })
-        }
-        // Check if token is expired
-        else if (token && this.ElixirAuthService.isTokenExpired(token)) {
-            alert("Your session has expired, please login again.")
-            history.push(`${process.env.PUBLIC_URL}/login`);
-        }
-        else {
-            alert("Please login to create a submission.")
-            history.push(`${process.env.PUBLIC_URL}/login`);
+        } else {
+            if (!JSON.parse(gdprAccepted)) {
+                history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: history.location.pathname }));
+            }
+            else {
+                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.pathname }));
+            }
         }
     }
 
@@ -255,9 +302,10 @@ class PublicationDetails extends Component {
     async redirectToSubmissionDetails() {
         let pmid = this.PUBMED_ID;
         let token = this.state.auth;
+        let gdprAccepted = JSON.parse(localStorage.getItem('gdpr-accepted'));
 
-        // Check if user is logged in and if token is still valid
-        if (token && !this.ElixirAuthService.isTokenExpired(token)) {
+        // Check if user is logged in and if token is still valid and if GDPR accepted
+        if (token && !this.ElixirAuthService.isTokenExpired(token) && gdprAccepted) {
             // Get SubmissionId
             await this.API_CLIENT.getSubmissionId(pmid, token).then(response => {
                 let newSubmissionId = response.data._embedded.submissions[0].submissionId
@@ -289,14 +337,13 @@ class PublicationDetails extends Component {
                 }
             })
         }
-        // Check if token is expired
-        else if (token && this.ElixirAuthService.isTokenExpired(token)) {
-            alert("Your session has expired, please login again.")
-            history.push(`${process.env.PUBLIC_URL}/login`);
-        }
         else {
-            alert("Please login to view the submission details.")
-            history.push(`${process.env.PUBLIC_URL}/login`);
+            if (!JSON.parse(gdprAccepted)) {
+                history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: history.location.pathname }));
+            }
+            else {
+                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.pathname }));
+            }
         }
     }
 
@@ -311,6 +358,9 @@ class PublicationDetails extends Component {
         const { isCreateSubmissionDisabled } = this.state;
         const { globusIdentityFormatError } = this.state;
         const { transformedPublicationStatus } = this.state;
+
+        const { authEmail } = this.state;
+        const { globusIdentityHelperText } = this.state;
 
         let submission_checklist;
         let elixirRegistrationLink = <a href="https://elixir-europe.org/register" target="_blank" rel="noopener noreferrer">Elixir ID</a>
@@ -370,9 +420,11 @@ class PublicationDetails extends Component {
                                 id="globusIdentity"
                                 label="Globus email"
                                 required
-                                defaultValue={jwt_decode(this.state.auth).email}
+                                key={authEmail} // Set key to state value to force component to re-render
+                                defaultValue={authEmail}
                                 onChange={this.validateGlobusIdentity}
                                 error={globusIdentityFormatError}
+                                helperText={globusIdentityHelperText}
                             />
 
                             <FormControlLabel
