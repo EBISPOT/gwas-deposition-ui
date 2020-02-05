@@ -46,7 +46,7 @@ class GDPR extends Component {
 
         // Split off environment specific URL if not localhost (empty string)
         if (`${process.env.PUBLIC_URL}` !== "") {
-            localPath = history.location.state.from.split(`${process.env.PUBLIC_URL}`)
+            localPath = history.location.state.from.split(`${process.env.PUBLIC_URL}`)[1]
             console.log("LP: ", localPath, '\n PURL: ', `${process.env.PUBLIC_URL}`);
         }
 
