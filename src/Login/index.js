@@ -87,7 +87,7 @@ class Login extends Component {
         // Redirect back to page that required a login
         let referrer;
         if (history.location.state && history.location.state.from) {
-            referrer = history.location.state.from;
+            referrer = `${process.env.PUBLIC_URL}` + history.location.state.from;
         }
 
         if (referrer) {

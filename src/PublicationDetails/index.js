@@ -290,10 +290,12 @@ class PublicationDetails extends Component {
                 })
         } else {
             if (!JSON.parse(gdprAccepted)) {
-                history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: history.location.pathname }));
+                history.push(`${process.env.PUBLIC_URL}/gdpr`, ({
+                    from: `${process.env.PUBLIC_URL}` + history.location.pathname
+                }));
             }
             else {
-                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.pathname }));
+                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: `${process.env.PUBLIC_URL}` + history.location.pathname }));
             }
         }
     }
@@ -339,10 +341,10 @@ class PublicationDetails extends Component {
         }
         else {
             if (!JSON.parse(gdprAccepted)) {
-                history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: history.location.pathname }));
+                history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: `${process.env.PUBLIC_URL}` + history.location.pathname }));
             }
             else {
-                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.pathname }));
+                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: `${process.env.PUBLIC_URL}` + history.location.pathname }));
             }
         }
     }

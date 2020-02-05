@@ -138,10 +138,10 @@ function MenuAppBar() {
         // Check GDPR accepted state - if true, login, else, present GDPR page
         else {
             if (!JSON.parse(gdprAccepted)) {
-                history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: '/submissions' }));
+                history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: `${process.env.PUBLIC_URL}/submissions` }));
             }
             else {
-                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: '/submissions' }));
+                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: `${process.env.PUBLIC_URL}/submissions` }));
             }
         }
     }
@@ -232,7 +232,7 @@ function MenuAppBar() {
 
                             <Button component={Link} to={{
                                 pathname: `${process.env.PUBLIC_URL}/gdpr`,
-                                state: { from: '/' }
+                                state: { from: `${process.env.PUBLIC_URL}/` }
                             }}
                                 className={classes.loginButton}
                                 style={{ float: 'right', background: 'inherit' }}>
