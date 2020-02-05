@@ -44,10 +44,10 @@ class GDPR extends Component {
         this.setState({ checked: event.target.checked });
         let localPath = history.location.state.from
         console.log("LP 1: ", localPath);
-        console.log("URL: ", `${process.env.PUBLIC_URL}`);
+        console.log("PURL: ", `${process.env.PUBLIC_URL}`);
 
         // Split off environment specific URL if not localhost (empty string)
-        if (`${process.env.PUBLIC_URL}` !== "") {
+        if (localPath.includes(`/gwas/deposition`)) {
             localPath = history.location.state.from.split(`${process.env.PUBLIC_URL}`)[1]
             console.log("LP 2: ", localPath, '\n PURL: ', `${process.env.PUBLIC_URL}`);
         }
