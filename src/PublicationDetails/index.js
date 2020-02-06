@@ -296,8 +296,8 @@ class PublicationDetails extends Component {
                 console.log("PD CS 1: ", history.location.pathname);
             }
             else {
-                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.pathname }));
                 console.log("PD CS 2: ", history.location.pathname);
+                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.pathname }));
             }
         }
     }
