@@ -293,9 +293,11 @@ class PublicationDetails extends Component {
                 history.push(`${process.env.PUBLIC_URL}/gdpr`, ({
                     from: history.location.pathname
                 }));
+                console.log("PD CS 1: ", history.location.pathname);
             }
             else {
                 history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.pathname }));
+                console.log("PD CS 2: ", history.location.pathname);
             }
         }
     }
@@ -342,9 +344,11 @@ class PublicationDetails extends Component {
         else {
             if (!JSON.parse(gdprAccepted)) {
                 history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: history.location.pathname }));
+                console.log("PD VS 1: ", history.location.pathname);
             }
             else {
                 history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.pathname }));
+                console.log("PD VS 2: ", history.location.pathname);
             }
         }
     }
