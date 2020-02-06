@@ -296,8 +296,14 @@ class PublicationDetails extends Component {
                 console.log("PD CS 1: ", history.location.pathname);
             }
             else {
-                console.log("PD CS 2: ", history.location.pathname, '\n PD CS 2 Split: ', history.location.pathname.split(`${process.env.PUBLIC_URL}`)[1]);
-                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.pathname.split(`${process.env.PUBLIC_URL}`)[1] }));
+                let localPath = history.location.pathname
+                // Split off environment specific URL if not localhost (empty string)
+                if (localPath.includes(`/gwas/deposition`)) {
+                    localPath = history.location.pathname.split(`${process.env.PUBLIC_URL}`)[1]
+                }
+                console.log("PD CS 2: ", history.location.pathname,
+                    '\nLP: ', localPath);
+                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: localPath }));
             }
         }
     }
