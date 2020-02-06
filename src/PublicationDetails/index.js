@@ -293,16 +293,14 @@ class PublicationDetails extends Component {
                 history.push(`${process.env.PUBLIC_URL}/gdpr`, ({
                     from: history.location.pathname
                 }));
-                console.log("PD CS 1: ", history.location.pathname);
             }
             else {
                 let localPath = history.location.pathname
+
                 // Split off environment specific URL if not localhost (empty string)
                 if (localPath.includes(`/gwas/deposition`)) {
                     localPath = history.location.pathname.split(`${process.env.PUBLIC_URL}`)[1]
                 }
-                console.log("PD CS 2: ", history.location.pathname,
-                    '\nLP: ', localPath);
                 history.push(`${process.env.PUBLIC_URL}/login`, ({ from: localPath }));
             }
         }
@@ -350,11 +348,9 @@ class PublicationDetails extends Component {
         else {
             if (!JSON.parse(gdprAccepted)) {
                 history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: history.location.pathname }));
-                console.log("PD VS 1: ", history.location.pathname);
             }
             else {
                 history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.pathname }));
-                console.log("PD VS 2: ", history.location.pathname);
             }
         }
     }

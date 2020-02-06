@@ -89,7 +89,6 @@ class Login extends Component {
         if (history.location.state && history.location.state.from) {
             referrer = `${process.env.PUBLIC_URL}` + history.location.state.from;
         }
-        console.log("Login referrer: ", referrer);
 
         if (referrer) {
             history.push(referrer)
