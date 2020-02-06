@@ -31,10 +31,16 @@ class GDPR extends Component {
             gdprCheckbox: false,
         }
 
+        let localPath = history.location.state.from
+        // Split off environment specific URL if not localhost (empty string)
+        if (localPath.includes(`/gwas/deposition`)) {
+            localPath = history.location.state.from.split(`${process.env.PUBLIC_URL}`)[1]
+        }
+
         // Check for previous GDPR acceptance
         if (localStorage.getItem('gdpr-accepted')) {
             // Redirect to Login page if GDPR was accepted before
-            history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.state.from }));
+            history.push(`${process.env.PUBLIC_URL}/login`, ({ from: localPath }));
         }
         this.handleChange = this.handleChange.bind(this);
     }
