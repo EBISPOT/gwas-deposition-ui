@@ -35,7 +35,6 @@ class GDPR extends Component {
         if (localStorage.getItem('gdpr-accepted')) {
             // Redirect to Login page if GDPR was accepted before
             history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.state.from }));
-            console.log("From GDPR 1: ", history.location.state.from)
         }
         this.handleChange = this.handleChange.bind(this);
     }
@@ -43,13 +42,10 @@ class GDPR extends Component {
     handleChange = event => {
         this.setState({ checked: event.target.checked });
         let localPath = history.location.state.from
-        console.log("LP 1: ", localPath);
-        console.log("PURL: ", `${process.env.PUBLIC_URL}`);
 
         // Split off environment specific URL if not localhost (empty string)
         if (localPath.includes(`/gwas/deposition`)) {
             localPath = history.location.state.from.split(`${process.env.PUBLIC_URL}`)[1]
-            console.log("LP 2: ", localPath, '\n PURL: ', `${process.env.PUBLIC_URL}`);
         }
 
         // Set gdpr acceptance status if checked
@@ -58,7 +54,6 @@ class GDPR extends Component {
 
             // Redirect to Login page
             history.push(`${process.env.PUBLIC_URL}/login`, ({ from: localPath }));
-            console.log("From GDPR 2: ", localPath)
         }
         // TODO: Check for use case to revoke GDPR acceptance status
         else {
