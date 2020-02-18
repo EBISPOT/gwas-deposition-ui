@@ -713,6 +713,7 @@ class SubmissionDetails extends Component {
         let submit_data_button;
         let delete_file_button;
         let download_data_file_button;
+        let upload_files_to_globus_step;
 
         /**
          * Display Submission statistics section if a file has been uploaded
@@ -1130,6 +1131,30 @@ class SubmissionDetails extends Component {
         }
 
 
+        /**
+         * Manage display of Submission Steps Overview instructions
+         * to upload files to Globus. The Globus link should not
+         * be displayed when the status is SUBMITTED.
+         */
+        if (submissionStatus === 'SUBMITTED' || submissionStatus === 'COMPLETE'
+            || submissionStatus === 'CURATION_COMPLETE' || submissionStatus === 'NA'
+            || submissionStatus === '') {
+            upload_files_to_globus_step =
+                <Grid item container xs={12}>
+                    <Typography className={classes.stepTextStyle} >
+                        1 - Upload summary statistics file(s)
+                    </Typography>
+                </Grid>
+        } else {
+            upload_files_to_globus_step =
+                <Grid item container xs={12}>
+                    <Typography className={classes.stepTextStyle} >
+                        1 - Upload summary statistics file(s) <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer"> to your Globus submission folder</a>
+                    </Typography>
+                </Grid>
+        }
+
+
         /** 
          * Upload component display
          */
@@ -1207,11 +1232,7 @@ class SubmissionDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            <Grid item container xs={12}>
-                                <Typography className={classes.stepTextStyle} >
-                                    1 - Upload summary statistics file(s) to <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer"> your Globus submission folder</a>
-                                </Typography>
-                            </Grid>
+                            {upload_files_to_globus_step}
 
                             <Grid item container xs={12}>
                                 <Typography className={classes.stepTextStyle} >
