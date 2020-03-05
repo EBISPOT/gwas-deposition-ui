@@ -14,6 +14,13 @@ import PropTypes from 'prop-types';
 const styles = theme => ({
     fontStyle: {
         fontWeight: 600,
+    },
+    banner: {
+        backgroundColor: '#FFF6EC',
+        fontWeight: 800,
+        border: '1px solid #C0C0C0',
+        borderRadius: '5px',
+        padding: '8px',
     }
 });
 
@@ -27,6 +34,12 @@ class Home extends React.Component {
                     justify="space-evenly"
                     alignItems="center"
                     spacing={4}>
+                    <Grid item xs={8}>
+                        <Typography gutterBottom variant="h5" className={classes.banner}>
+                            Login access to the Submission page is unavailable on 05-Mar-2020 from 10:00am-12:00pm GMT.
+                            Apologies for any inconvenience.
+                        </Typography>
+                    </Grid>
                     <Grid item>
                         <Typography gutterBottom variant="h5" className={classes.fontStyle}>
                             Welcome to the GWAS Catalog submission page
