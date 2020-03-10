@@ -10,6 +10,8 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
+import Banner from '../Banner';
+
 
 const styles = theme => ({
     fontStyle: {
@@ -35,10 +37,7 @@ class Home extends React.Component {
                     alignItems="center"
                     spacing={4}>
                     <Grid item xs={8}>
-                        <Typography gutterBottom variant="h5" className={classes.banner}>
-                            Login access to the Submission page is unavailable on 05-Mar-2020 from 10:00am-12:00pm GMT.
-                            Apologies for any inconvenience.
-                        </Typography>
+                        <Banner />
                     </Grid>
                     <Grid item>
                         <Typography gutterBottom variant="h5" className={classes.fontStyle}>
