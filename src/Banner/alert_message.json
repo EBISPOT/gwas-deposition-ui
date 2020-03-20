@@ -7,8 +7,8 @@
     },
     {
         "id": 2,
-        "display_start_time": "01 Jan 1970 00:00:00 GMT",
-        "display_end_time": "01 Jan 1970 00:00:00 GMT",
+        "display_start_time": "20 Mar 2020 00:00:00 GMT",
+        "display_end_time": "20 Mar 2020 00:00:00 GMT",
         "message": "Test Message"
     }
 ]
