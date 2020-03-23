@@ -72,6 +72,7 @@ deploy-sandbox:
     - helm init
     - helm delete --purge gwas-deposition-ui || true
     - helm install --name gwas-deposition-ui --set k8Namespace=gwas,image.repository=$CI_REGISTRY_IMAGE,image.tag=$CI_COMMIT_SHA ./k8chart/ --wait
+    - kubectl create -f /root/.kube/nginx-reverse-proxy-deployment.yaml
   environment:
     name: sandbox
   only:
