@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import Paper from '@material-ui/core/Paper';
@@ -13,11 +13,10 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
+// import FormLabel from '@material-ui/core/FormLabel';
 import { green } from '@material-ui/core/colors';
+import history from "../../history";
 
-import Test from '../Test';
-import Form from '../Form';
 
 const allQuestions = question_data.questions;
 console.log(allQuestions)
@@ -65,36 +64,43 @@ export default function TextMobileStepper(props) {
     const theme = useTheme();
     const [activeStep, setActiveStep] = React.useState(0);
     const maxSteps = allQuestions.length;
-
+    const LAST_QUESTION_ID = allQuestions.length - 1;
 
     const [answer0, setAnswer0State] = React.useState('');
     const [answer1, setAnswer1State] = React.useState('');
     const [answer2, setAnswer2State] = React.useState('');
     const [answer3, setAnswer3State] = React.useState('');
     const [answer4, setAnswer4State] = React.useState('');
+    const [answer5, setAnswer5State] = React.useState('');
 
 
     const handleNext = () => {
-        setActiveStep(prevActiveStep => allQuestions[activeStep].next_question_id[value]);
+        if (allQuestions[activeStep].next_question_id[value] === undefined) {
+            alert("Must answer question")
+        }
+        else {
+            setActiveStep(prevActiveStep => allQuestions[activeStep].next_question_id[value]);
 
-        console.log("Active Step: ", activeStep);
-        console.log("Next Step: ", allQuestions[activeStep].next_question_id[value]);
-        console.log("Ans: ", value, typeof (value));
+            console.log("Active Step: ", activeStep);
+            console.log("Next Step: ", allQuestions[activeStep].next_question_id[value]);
+            console.log("Ans: ", value, typeof (value));
 
-        setValue('-- clear --'); // clear value so no radio button is selected on Next
-        console.log("-------------");
+            setValue('-- clear --'); // clear value so no radio button is selected on Next
+            console.log("-------------");
+        }
     };
 
     const handleBack = () => {
         setActiveStep(prevActiveStep => 0);
         // TODO: Check other steps and clearing state
         // Clear state when re-setting questions
-        // if (activeStep === 4) {
+        // if (activeStep === LAST_QUESTION_ID) {
         setAnswer0State('')
         setAnswer1State('')
         setAnswer2State('')
         setAnswer3State('')
         setAnswer4State('')
+        setAnswer5State('')
         // }
     };
 
@@ -103,14 +109,14 @@ export default function TextMobileStepper(props) {
     const handleChange = event => {
         setValue(event.target.value);
 
-        // Set answer state
-        if (activeStep < 4) {
+        // Set answer state for current question
+        if (activeStep < LAST_QUESTION_ID) {
             getAnswerSetState(activeStep)(event.target.value);
         }
     };
     console.log("Current Step: ", activeStep);
     console.log("Selected value: ", value);
-    console.log("Answers: ", answer0, answer1, answer2, answer3, answer4);
+    console.log("Answers: ", answer0, answer1, answer2, answer3, answer4, answer5);
     console.log("Ans: ", typeof (answer0), answer0);
 
     function getAnswerSetState(activeStep) {
@@ -125,11 +131,35 @@ export default function TextMobileStepper(props) {
                 return setAnswer3State;
             case 4:
                 return setAnswer4State;
+            case 5:
+                return setAnswer5State
             default:
                 console.log('Unknown step');
                 return 'Unknown step';
         }
     }
+
+    // Manage which form to display depending on the answers
+    useEffect(() => {
+        if (answer1 === 'Yes') {
+            history.push(`${process.env.PUBLIC_URL}/`)
+        }
+        if (answer1 === 'No') {
+            history.push(`${process.env.PUBLIC_URL}/form`)
+        }
+        if (answer2 === 'Yes') {
+            alert("Form for published manuscript not indexed in PubMed")
+            history.push(`${process.env.PUBLIC_URL}/`)
+        }
+        if (answer3 === 'Yes') {
+            alert("Form for submitted/accepted publication")
+            history.push(`${process.env.PUBLIC_URL}/`)
+        }
+        if (answer4 === 'Yes') {
+            alert("Form for Pre-print server")
+            history.push(`${process.env.PUBLIC_URL}/`)
+        }
+    })
 
     let mobile_stepper_navigation =
         <MobileStepper
@@ -154,11 +184,11 @@ export default function TextMobileStepper(props) {
 
     return (
         <div className={classes.root}>
-            <Paper square elevation={0} className={classes.header}>
-                <Typography>{allQuestions[activeStep].question}</Typography>
-            </Paper>
+            <Fragment>
+                <Paper square elevation={0} className={classes.header}>
+                    <Typography>{allQuestions[activeStep].question}</Typography>
+                </Paper>
 
-            {activeStep !== 4 && (
                 <FormControl component="fieldset">
                     {/* <FormLabel component="legend">{allQuestions[activeStep].question}</FormLabel> */}
                     <RadioGroup aria-label="position" name="position" row
@@ -183,42 +213,9 @@ export default function TextMobileStepper(props) {
                         />
                     </RadioGroup>
                 </FormControl>
-            )}
 
-            {/* {activeStep === 4 && (
-                <Typography>
-                    This is the END!
-                </Typography>
-            )} */}
-
-            {mobile_stepper_navigation}
-
-            {/* <MobileStepper
-                    steps={maxSteps}
-                    position="static"
-                    variant="progress"
-                    activeStep={activeStep}
-                    nextButton={
-                        <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-                            Next
-                        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                        </Button>
-                    }
-                    backButton={
-                        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-                            {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                            Back
-                    </Button>
-                    }
-                /> */}
-
-            {/* Pass answers to form */}
-            <Test
-                answer0={answer0}
-                answer1={answer1}
-                answer2={answer2}
-                answer3={answer3}>
-            </Test>
+                {mobile_stepper_navigation}
+            </Fragment>
         </div>
     );
 }

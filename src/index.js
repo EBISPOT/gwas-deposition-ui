@@ -6,7 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from './theme';
 
-import { Router} from 'react-router-dom';
+import { Router } from 'react-router-dom';
 
 import { UserProvider } from './user-context';
 import { AuthProvider } from './auth-context';

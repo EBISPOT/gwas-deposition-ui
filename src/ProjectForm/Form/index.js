@@ -4,29 +4,34 @@ import { withFormik } from 'formik';
 import { Grid, TextField, Button, Typography, FormControl, InputLabel } from '@material-ui/core';
 import { makeStyles, withStyles, fade } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
-// import TextMobileStepper from '../TextMobileStepper';
-// import Test from '../Test';
+
+import {
+    Header, Title, Description, JournalName, JournalDOI,
+    PrePrintName, PrePrintDOI, AuthorName, CorrespondingAuthor, BasicDatePicker, DatePicker2
+} from "./FormComponents";
 
 // Helper for the demo
 import {
     DisplayFormikState,
 } from './helper.js';
 import { isBlock } from 'typescript';
-// import { green, blue } from '@material-ui/core/colors';
 
 
 const useStyles = makeStyles(theme => ({
-    root: {
-        '& .MuiTextField-root': {
-            // margin: theme.spacing(1),
-            width: 400,
-        },
-        // '& .MuiFormLabel-root': {
-        //     '&.Mui-focused': {
-        //         color: "red",
-        //     },
-        // },
-    },
+    // root: {
+    //     flexGrow: 1
+    // },
+    // root: {
+    //     '& .MuiTextField-root': {
+    //         // margin: theme.spacing(1),
+    //         // width: 400,
+    //     },
+    //     // '& .MuiFormLabel-root': {
+    //     //     '&.Mui-focused': {
+    //     //         color: "red",
+    //     //     },
+    //     // },
+    // },
     focused: {},
     label: {
         color: theme.palette.primary.main,
@@ -52,14 +57,15 @@ const useStyles = makeStyles(theme => ({
         color: '#333',
         background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
         borderRadius: 4,
-        border: '1px solid #ccc',
+        border: '1px solid #aaa',
         fontWeight: 'bold',
         textShadow: '0 1px 0 #fff',
         textTransform: 'none',
+        boxShadow: 'none',
         '&:disabled': {
             textShadow: 'none',
         },
-        boxShadow: 'none',
+
     },
     buttonReset: {
         margin: theme.spacing(1),
@@ -72,6 +78,9 @@ const useStyles = makeStyles(theme => ({
         textShadow: '0 1px 0 #fff',
         textTransform: 'none',
         boxShadow: 'none',
+        '&:disabled': {
+            textShadow: 'none',
+        },
     },
     header: {
         fontWeight: "bold",
@@ -79,50 +88,8 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const CssTextField = withStyles(theme => ({
-    root: {
-        'label + &': {
-            marginTop: theme.spacing(3),
-        },
-        '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-                borderColor: 'gray',
-            },
-            '&.Mui-focused fieldset': {
-                boxShadow: `${fade('#1976d2', 0.25)} 0 0 0 0.2rem`,
-                borderColor: '#1976d2',
-                border: '1px solid #ced4da',
-            },
-            '&.Mui-error fieldset': {
-                boxShadow: `${fade('#f44336', 0.25)} 0 0 0 0.2rem`,
-                borderColor: '#f44336',
-                border: '1px solid #ced4da',
-            },
-        },
-    },
-    // input: {
-    //     borderRadius: 4,
-    //     position: 'relative',
-    //     backgroundColor: theme.palette.common.white,
-    //     border: '1px solid #ced4da',
-    //     fontSize: 16,
-    //     width: 'auto',
-    //     padding: '10px 12px',
-    //     transition: theme.transitions.create(['border-color', 'box-shadow']),
-    // },
-}))(TextField);
-
-
 const MyForm = props => {
     const classes = useStyles();
-
-    // const [answer00, setAnswer00State] = React.useState('');
-    // function answerChangeHandler(event) {
-    //     setAnswer00State(event.target.value);
-    //     console.log("** answerChangeHandler - value: ", event.target.value)
-    // }
-    // console.log("** Ans0 Form: ", answer00);
-
 
     const {
         values,
@@ -133,118 +100,39 @@ const MyForm = props => {
         handleBlur,
         handleSubmit,
         handleReset,
+        setFieldValue,
         dirty,
     } = props;
     return (
-        <Grid container
-            direction="column"
-            justify="center"
-            alignItems="center"
-            spacing={4}>
+        <div>
+            {/* <Grid container
+            direction="row"
+            justify="flex-start"
+            alignItems="flex-start"
+            > */}
 
-            {/* <TextMobileStepper changedAnswers={answerChangeHandler} /> */}
 
-            <Grid item>
-                <Typography gutterBottom variant="body1" className={classes.fontStyle}>
-                    Some details on how to fill out the form...
-                </Typography>
+            <form onSubmit={handleSubmit}>
+                <Header />
 
-            </Grid>
+                <Title {...props} />
 
-            <form onSubmit={handleSubmit} className={classes.root}>
+                <Description {...props} />
 
-                {props.test !== 'No' && (
-                    <Grid item>
-                        {/* <FormControl variant="outlined">
-                        <InputLabel htmlFor="component-outlined">Name</InputLabel>
-                        <OutlinedInput id="component-outlined" value={name} onChange={handleChange} label="Name" />
-                    </FormControl> */}
+                <JournalName {...props} />
 
-                        <FormControl className={classes.margin}>
-                            <InputLabel
-                                // focused
-                                shrink required htmlFor="title"
-                                className={classes.label}
-                            // style={{
-                            //     fontSize: 18,
-                            //     color: '#00cc00',
-                            // }}
-                            >
-                                Title
-                            </InputLabel>
+                <JournalDOI {...props} />
 
-                            {/* <OutlinedInput */}
-                            <CssTextField
-                                id="title"
-                                type="input"
-                                variant="outlined"
-                                placeholder="Enter project title"
-                                value={values.title}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={errors.title && touched.title}
-                            />
-                            {errors.title &&
-                                touched.title && (
-                                    <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                        {errors.title}
-                                    </div>
-                                )}
-                        </FormControl>
-                    </Grid>
-                )}
+                <AuthorName {...props} />
 
-                <Grid item>
-                    <FormControl className={classes.margin}>
-                        <InputLabel shrink required htmlFor="title" className={classes.label}>
-                            Email
-                        </InputLabel>
+                <CorrespondingAuthor {...props} />
 
-                        <CssTextField
-                            id="email"
-                            type="input"
-                            variant="outlined"
-                            placeholder="Enter your email"
-                            value={values.email}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            error={errors.email && touched.email}
-                        />
-                        {errors.email &&
-                            touched.email && (
-                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                    {errors.email}
-                                </div>
-                            )}
-                    </FormControl>
-                </Grid>
+                <PrePrintName {...props} />
 
-                <Grid item>
-                    <FormControl className={classes.margin}>
-                        <InputLabel shrink htmlFor="project_desc" className={classes.label}>
-                            Project description
-                        </InputLabel>
+                <PrePrintDOI {...props} />
 
-                        <CssTextField
-                            id="project_desc"
-                            variant="outlined"
-                            placeholder="Enter the project description"
-                            multiline
-                            rows="4"
-                            rowsMax="8"
-                            value={values.project_desc}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                        />
-                        {errors.project_desc &&
-                            touched.project_desc && (
-                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                    {errors.project_desc}
-                                </div>
-                            )}
-                    </FormControl>
-                </Grid>
-
+                {/* <DatePicker2 {...props} /> */}
+                <BasicDatePicker name="date" />
 
                 <Button
                     type="button"
@@ -267,17 +155,53 @@ const MyForm = props => {
                 <DisplayFormikState {...props} />
 
             </form>
-        </Grid>
+            {/* </Grid> */}
+        </div>
     );
 };
 
 const MyEnhancedForm = withFormik({
-    mapPropsToValues: (props) => ({ email: '', title: '', }),
+    mapPropsToValues: (props) => ({
+        title: '', description: '', first_author_first_name: '', first_author_last_name: '',
+        email: '', embargo_date: ''
+    }),
 
     // Custom sync validation
     validate: values => {
-
         let errors = {};
+
+        // Title of work
+        // if (values.test !== '') {
+        if (!values.title) {
+            errors.title = 'Required';
+        }
+        // }
+        if (values.title && values.title.length > 150) {
+            errors.title = 'The title field is limited to 150 characters.'
+        }
+
+        // Description of work
+        if (values.description && values.description.length > 4) {
+            errors.description = 'The project description field is limited to 500 characters.'
+        }
+
+        // First Author name
+        if (!values.first_author_first_name) {
+            errors.first_author_first_name = 'Required';
+        }
+        if (values.first_author_first_name && values.first_author_first_name.length > 60) {
+            errors.first_author_first_name = 'The author field is limited to 60 characters.'
+        }
+
+        // Last Author name
+        if (!values.first_author_last_name) {
+            errors.first_author_last_name = 'Required';
+        }
+        if (values.first_author_last_name && values.first_author_last_name.length > 60) {
+            errors.first_author_last_name = 'The author field is limited to 60 characters.'
+        }
+
+        // Email
         if (!values.email) {
             errors.email = 'Required';
         } else if (
@@ -288,18 +212,18 @@ const MyEnhancedForm = withFormik({
             errors.email = 'Invalid email address';
         }
 
-        if (values.test !== '') {
-            if (!values.title) {
-                errors.title = 'Required';
-            }
-        }
-        if (values.title && values.title.length > 150) {
-            errors.title = 'The title field is limited to 150 characters.'
-        }
+        // Journal name
 
-        if (values.project_desc && values.project_desc.length > 4) {
-            errors.project_desc = 'The project description field is limited to 500 characters.'
-        }
+        // Journal article DOI/URL
+
+        // Corresponding Author -- will include 1 name field and email 
+        // Pre-print name
+        // Pre-print DOI
+
+        // Embargo date
+        console.log("** Date: ", values.date);
+
+
         return errors;
     },
 
@@ -323,14 +247,9 @@ const MaterialSyncValidationForm = () => (
             spacing={4}
         >
             <Typography variant="h5" style={{ fontWeight: 'bold', margin: 12 }}>
-                Start Submission
+                Submission Form
             </Typography>
         </Grid>
-
-        {/* <TextMobileStepper /> */}
-
-        {/* <Test answer0="YES">This is a TEST!!!</Test> */}
-
         <MyEnhancedForm />
     </div>
 );
