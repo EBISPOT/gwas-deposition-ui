@@ -1,13 +1,13 @@
 import React from 'react';
 import './style.css';
-import { withFormik } from 'formik';
+import { withFormik, getIn } from 'formik';
 import { Grid, TextField, Button, Typography, FormControl, InputLabel } from '@material-ui/core';
 import { makeStyles, withStyles, fade } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
 
 import {
     Header, Title, Description, JournalName, JournalDOI,
-    PrePrintName, PrePrintDOI, AuthorName, CorrespondingAuthor, BasicDatePicker, DatePicker2
+    PrePrintName, PrePrintDOI, AuthorName, CorrespondingAuthor, EmbargoDate
 } from "./FormComponents";
 
 // Helper for the demo
@@ -65,7 +65,6 @@ const useStyles = makeStyles(theme => ({
         '&:disabled': {
             textShadow: 'none',
         },
-
     },
     buttonReset: {
         margin: theme.spacing(1),
@@ -131,8 +130,7 @@ const MyForm = props => {
 
                 <PrePrintDOI {...props} />
 
-                {/* <DatePicker2 {...props} /> */}
-                <BasicDatePicker name="date" />
+                <EmbargoDate name="date" />
 
                 <Button
                     type="button"
@@ -162,20 +160,22 @@ const MyForm = props => {
 
 const MyEnhancedForm = withFormik({
     mapPropsToValues: (props) => ({
-        title: '', description: '', first_author_first_name: '', first_author_last_name: '',
-        email: '', embargo_date: ''
+        title: '', description: '', journal_name: '', journal_doi: '',
+        first_author_first_name: '', first_author_last_name: '',
+        authors: { corresponding_author: '', email: '' }
     }),
 
     // Custom sync validation
     validate: values => {
         let errors = {};
+        console.log("** Errors: ", errors);
+
+        console.log("** Values: ", values);
 
         // Title of work
-        // if (values.test !== '') {
         if (!values.title) {
             errors.title = 'Required';
         }
-        // }
         if (values.title && values.title.length > 150) {
             errors.title = 'The title field is limited to 150 characters.'
         }
@@ -201,22 +201,34 @@ const MyEnhancedForm = withFormik({
             errors.first_author_last_name = 'The author field is limited to 60 characters.'
         }
 
-        // Email
-        if (!values.email) {
-            errors.email = 'Required';
-        } else if (
-            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-                values.email
-            )
-        ) {
-            errors.email = 'Invalid email address';
-        }
-
         // Journal name
+        if (!values.journal_name) {
+            errors.journal_name = 'Required';
+        }
 
         // Journal article DOI/URL
 
-        // Corresponding Author -- will include 1 name field and email 
+        // TODO: Tie validation for author and email together
+        // Corresponding Author -- will include 1 name field and email
+        if (!values.authors.corresponding_author) {
+            // errors = { authors: { corresponding_author: 'Required' } }  // Resets errors, but looses existing values
+            let corr_auth_error = { authors: { corresponding_author: 'Required' } }
+            Object.assign(errors, corr_auth_error)
+            console.log("** CorrAuth Error", errors);
+        }
+
+        // Email
+        if (!values.authors.email) {
+            let corr_auth_email = { authors: { email: 'Required' } }
+            Object.assign(errors, corr_auth_email)
+        } else if (
+            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                values.authors.email
+            )
+        ) {
+            errors.authors.email = 'Invalid email address';
+        }
+
         // Pre-print name
         // Pre-print DOI
 

@@ -1,14 +1,16 @@
 import React, { Fragment } from 'react';
-import { Grid, Typography, TextField, FormControl, InputLabel } from '@material-ui/core';
+import { Grid, Typography, TextField, Button, FormControl, InputLabel } from '@material-ui/core';
 import { makeStyles, withStyles, fade } from '@material-ui/core/styles';
 
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
-    KeyboardDatePicker
+    KeyboardDatePicker,
+    DatePicker
 } from '@material-ui/pickers';
 import { useField, useFormikContext } from "formik";
+import theme from '../../theme';
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -16,6 +18,24 @@ const useStyles = makeStyles(theme => ({
     },
     margin: {
         margin: theme.spacing(1),
+    },
+    button: {
+        margin: theme.spacing(1),
+        padding: theme.spacing(1),
+        color: '#333',
+        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
+        borderRadius: 4,
+        border: '1px solid #aaa',
+        fontWeight: 'bold',
+        textShadow: '0 1px 0 #fff',
+        textTransform: 'none',
+        boxShadow: 'none',
+        '&:disabled': {
+            textShadow: 'none',
+        },
+    },
+    embargoDateLabel: {
+        margin: theme.spacing(1)
     },
 }));
 
@@ -41,6 +61,37 @@ const CssTextField = withStyles(theme => ({
         },
     },
 }))(TextField);
+
+
+const CustomKeyboardDatePicker = withStyles(theme => ({
+    root: {
+        'label + &': {
+            // marginTop: theme.spacing(1),
+        },
+        '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+                borderColor: 'gray',
+            },
+            '&.Mui-focused fieldset': {
+                boxShadow: `${fade('#1976d2', 0.25)} 0 0 0 0.2rem`,
+                borderColor: '#1976d2',
+                border: '1px solid #ced4da',
+            },
+            '&.Mui-error fieldset': {
+                boxShadow: `${fade('#f44336', 0.25)} 0 0 0 0.2rem`,
+                borderColor: '#f44336',
+                border: '1px solid #ced4da',
+            },
+        },
+        '& .MuiInputBase-root': {
+            color: 'gray'
+        },
+        margin: theme.spacing(1),
+        // '& .MuiInputLabel-root': {
+        //     margin: theme.spacing(4)
+        // },
+    },
+}))(KeyboardDatePicker)
 
 // Form header text
 export const Header = () => {
@@ -230,46 +281,63 @@ export const CorrespondingAuthor = (props) => {
         errors,
         handleChange,
         handleBlur,
+        isSubmitting,
+        dirty
     } = props;
     return (
-        <Grid
-            container
-            direction="row"
-            justify="flex-start"
-            alignItems="flex-start"
-        >
-            <Grid item >
-                <FormControl className={classes.margin}>
-                    <InputLabel
-                        shrink required htmlFor="corresponding_author"
-                        className={classes.label}
-                    >
-                        Corresponding Author Name
-                </InputLabel>
+        <Grid>
+            <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start"
+            >
+                <Grid item >
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="corresponding_author"
+                            className={classes.label}
+                        >
+                            Corresponding Author Name -- Split into first and last name fields
+                        </InputLabel>
 
-                    <CssTextField
-                        id="corresponding_author"
-                        type="input"
-                        variant="outlined"
-                        placeholder="Add corresponding author name"
-                        value={values.corresponding_author}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={errors.corresponding_author && touched.corresponding_author}
-                        style={{ width: 600 }}
-                    />
-                    {errors.corresponding_author &&
-                        touched.corresponding_author && (
-                            <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                {errors.corresponding_author}
-                            </div>
-                        )}
-                </FormControl>
+                        <CssTextField
+                            id="authors.corresponding_author"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add corresponding author name"
+                            value={values.authors.corresponding_author}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={errors.authors && touched.authors &&
+                                errors.authors.corresponding_author && touched.authors.corresponding_author}
+                            style={{ width: 600 }}
+                        />
+
+                        {errors.authors && touched.authors &&
+                            errors.authors.corresponding_author &&
+                            touched.authors.corresponding_author && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.authors.corresponding_author}
+                                </div>
+                            )}
+                    </FormControl>
+                </Grid>
+
+                <Grid item>
+                    <Email {...props} />
+                </Grid>
             </Grid>
 
-            <Grid item>
-                <Email {...props} />
-            </Grid>
+            <Button
+                type="button"
+                className={classes.button}
+                variant="outlined"
+                // onClick={handleReset}
+                disabled={!dirty || isSubmitting}
+            >
+                Add more Corresponding authors
+            </Button>
         </Grid>
     )
 }
@@ -293,19 +361,21 @@ export const Email = props => {
                         </InputLabel>
 
                 <CssTextField
-                    id="email"
+                    id="authors.email"
                     type="input"
                     variant="outlined"
                     placeholder="Enter your email"
-                    value={values.email}
+                    value={values.authors.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={errors.email && touched.email}
+                    error={errors.authors && touched.authors &&
+                        errors.authors.email && touched.authors.email}
                 />
-                {errors.email &&
-                    touched.email && (
+                {errors.authors && touched.authors &&
+                    errors.authors.email &&
+                    touched.authors.email && (
                         <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                            {errors.email}
+                            {errors.authors.email}
                         </div>
                     )}
             </FormControl>
@@ -327,17 +397,19 @@ export const JournalName = props => {
     return (
         <Grid item>
             <FormControl className={classes.margin}>
-                <InputLabel shrink htmlFor="journal_name" className={classes.label}>
+                <InputLabel shrink required htmlFor="journal_name" className={classes.label}>
                     Journal Name
                 </InputLabel>
 
                 <CssTextField
                     id="journal_name"
+                    type="input"
                     variant="outlined"
                     placeholder="Enter the Journal name"
                     value={values.journal_name}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    error={errors.journal_name && touched.journal_name}
                     style={{ width: 600 }}
                 />
                 {errors.journal_name &&
@@ -372,11 +444,13 @@ export const JournalDOI = props => {
 
                 <CssTextField
                     id="journal_doi"
+                    type="input"
                     variant="outlined"
                     placeholder="Enter the Journal DOI"
                     value={values.journal_doi}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    error={errors.journal_doi && touched.journal_doi}
                     style={{ width: 600 }}
                 />
                 {errors.journal_doi &&
@@ -455,6 +529,7 @@ export const PrePrintDOI = props => {
                     value={values.preprint_doi}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    error={errors.preprint_doi && touched.preprint_doi}
                     style={{ width: 600 }}
                 />
                 {errors.preprint_doi &&
@@ -469,7 +544,7 @@ export const PrePrintDOI = props => {
 }
 
 
-export const BasicDatePicker = (props, theme) => {
+export const EmbargoDate = (props) => {
     const classes = useStyles();
 
     // const maxDate = new Date('2025-01-01')
@@ -477,13 +552,13 @@ export const BasicDatePicker = (props, theme) => {
     const [field] = useField(props);
 
     return (
-        <Grid item xs={3}>
+        <Grid item>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <InputLabel shrink required htmlFor="embargo_date" className={classes.label}>
+                <InputLabel shrink required htmlFor="embargo_date" className={classes.embargoDateLabel}>
                     Embargo Date (Month/Day/Year)
                 </InputLabel>
 
-                <KeyboardDatePicker
+                <CustomKeyboardDatePicker
                     {...field}
                     {...props}
                     autoOk
@@ -491,7 +566,7 @@ export const BasicDatePicker = (props, theme) => {
                     variant="inline"
                     inputVariant="outlined"
                     format="MM/dd/yyyy"
-                    id="embargo_date"
+                    id="date"
                     minDate={new Date()}
                     // maxDate={maxDate}
                     selected={(field.value && new Date(field.value)) || null}

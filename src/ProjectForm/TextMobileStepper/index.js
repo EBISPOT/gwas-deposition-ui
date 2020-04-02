@@ -149,15 +149,15 @@ export default function TextMobileStepper(props) {
         }
         if (answer2 === 'Yes') {
             alert("Form for published manuscript not indexed in PubMed")
-            history.push(`${process.env.PUBLIC_URL}/`)
+            history.push(`${process.env.PUBLIC_URL}/form`)
         }
         if (answer3 === 'Yes') {
             alert("Form for submitted/accepted publication")
-            history.push(`${process.env.PUBLIC_URL}/`)
+            history.push(`${process.env.PUBLIC_URL}/form`)
         }
         if (answer4 === 'Yes') {
             alert("Form for Pre-print server")
-            history.push(`${process.env.PUBLIC_URL}/`)
+            history.push(`${process.env.PUBLIC_URL}/form`)
         }
     })
 
