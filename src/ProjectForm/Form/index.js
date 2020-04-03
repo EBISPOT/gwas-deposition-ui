@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 
 import {
     Header, Title, Description, JournalName, JournalDOI,
-    PrePrintName, PrePrintDOI, AuthorName, CorrespondingAuthor, EmbargoDate
+    PrePrintName, PrePrintDOI, AuthorName, CorrespondingAuthor, EmbargoDate, EmbargoDateCheckbox
 } from "./FormComponents";
 
 // Helper for the demo
@@ -132,6 +132,8 @@ const MyForm = props => {
 
                 <EmbargoDate name="date" />
 
+                <EmbargoDateCheckbox />
+
                 <Button
                     type="button"
                     className={classes.buttonReset}
@@ -162,7 +164,8 @@ const MyEnhancedForm = withFormik({
     mapPropsToValues: (props) => ({
         title: '', description: '', journal_name: '', journal_doi: '',
         first_author_first_name: '', first_author_last_name: '',
-        authors: { corresponding_author: '', email: '' }
+        authors: { corresponding_author: '', email: '' },
+        embargo_checked: true
     }),
 
     // Custom sync validation
@@ -234,6 +237,9 @@ const MyEnhancedForm = withFormik({
 
         // Embargo date
         console.log("** Date: ", values.date);
+
+        // Embargo Until Published
+
 
 
         return errors;

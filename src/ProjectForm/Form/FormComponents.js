@@ -1,16 +1,14 @@
 import React, { Fragment } from 'react';
-import { Grid, Typography, TextField, Button, FormControl, InputLabel } from '@material-ui/core';
+import { Grid, Typography, TextField, Button, FormControl, FormControlLabel, InputLabel, Checkbox } from '@material-ui/core';
 import { makeStyles, withStyles, fade } from '@material-ui/core/styles';
 
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
-    KeyboardDatePicker,
-    DatePicker
+    KeyboardDatePicker
 } from '@material-ui/pickers';
 import { useField, useFormikContext } from "formik";
-import theme from '../../theme';
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -581,6 +579,39 @@ export const EmbargoDate = (props) => {
             </MuiPickersUtilsProvider>
         </Grid>
     );
+}
+
+
+export const CustomCheckbox = withStyles({
+    root: {
+        '&$checked': {
+            color: "rgb(57, 138, 150);",
+        },
+    },
+    checked: {},
+})(props => <Checkbox color="default" {...props} />)
+
+
+// Embargo Checkbox
+export const EmbargoDateCheckbox = (props) => {
+
+    const { setFieldValue } = useFormikContext();
+    const [field] = useField(props);
+    console.log("Checked value: ", field.value.embargo_checked)
+
+    return (
+        <Grid item>
+            <FormControlLabel
+                control={<CustomCheckbox
+                    id="embargo_checked"
+                    checked={field.value.embargo_checked}
+                    onChange={() => setFieldValue("embargo_checked", !field.value.embargo_checked)}
+                />
+                }
+                label="Embargo until published"
+            />
+        </Grid>
+    )
 }
 
 
