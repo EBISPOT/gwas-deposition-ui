@@ -98,7 +98,7 @@ export const Header = () => {
     return (
         <Grid item xs={12}>
             <Typography gutterBottom variant="body1" className={classes.header}>
-                TEST - Published manuscript, but no PMID
+                TEST - All Fields
             </Typography>
         </Grid>
     )
@@ -116,7 +116,7 @@ export const Title = (props) => {
         handleBlur,
     } = props;
     return (
-        <Grid item xs={12}>
+        <Grid item>
             <FormControl className={classes.margin}>
                 <InputLabel
                     shrink required htmlFor="title"
@@ -147,8 +147,8 @@ export const Title = (props) => {
     )
 }
 
-// Author Name - First name and Last name fields
-export const AuthorName = (props) => {
+// First Author - Author Name
+export const FirstAuthorName = (props) => {
     const classes = useStyles();
 
     const {
@@ -168,27 +168,29 @@ export const AuthorName = (props) => {
             <Grid item >
                 <FormControl className={classes.margin}>
                     <InputLabel
-                        shrink required htmlFor="first_author_first_name"
+                        shrink required htmlFor="firstName"
                         className={classes.label}
                     >
                         First Name/Given Name
                 </InputLabel>
 
                     <CssTextField
-                        id="first_author_first_name"
+                        id="firstAuthor.firstName"
                         type="input"
                         variant="outlined"
                         placeholder="Add first/given name"
-                        value={values.first_author_first_name}
+                        value={values.firstAuthor.firstName}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={errors.first_author_first_name && touched.first_author_first_name}
+                        error={errors.firstAuthor && touched.firstAuthor &&
+                            errors.firstAuthor.firstName && touched.firstAuthor.firstName}
                         style={{ width: 300 }}
                     />
-                    {errors.first_author_first_name &&
-                        touched.first_author_first_name && (
+                    {errors.firstAuthor && touched.firstAuthor &&
+                        errors.firstAuthor.firstName &&
+                        touched.firstAuthor.firstName && (
                             <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                {errors.first_author_first_name}
+                                {errors.firstAuthor.firstName}
                             </div>
                         )}
                 </FormControl>
@@ -197,27 +199,113 @@ export const AuthorName = (props) => {
             <Grid item >
                 <FormControl className={classes.margin}>
                     <InputLabel
-                        shrink required htmlFor="first_author_last_name"
+                        shrink required htmlFor="lastName"
                         className={classes.label}
                     >
                         Last Name/Surname
                 </InputLabel>
 
                     <CssTextField
-                        id="first_author_last_name"
+                        id="firstAuthor.lastName"
                         type="input"
                         variant="outlined"
                         placeholder="Add last name/surname"
-                        value={values.first_author_last_name}
+                        value={values.firstAuthor.lastName}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={errors.first_author_last_name && touched.first_author_last_name}
+                        error={errors.firstAuthor && touched.firstAuthor &&
+                            errors.firstAuthor.lastName && touched.firstAuthor.lastName}
                         style={{ width: 300 }}
                     />
-                    {errors.first_author_last_name &&
-                        touched.first_author_last_name && (
+                    {errors.firstAuthor && touched.firstAuthor &&
+                        errors.firstAuthor.lastName &&
+                        touched.firstAuthor.lastName && (
                             <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                {errors.first_author_last_name}
+                                {errors.firstAuthor.lastName}
+                            </div>
+                        )}
+                </FormControl>
+            </Grid>
+        </Grid>
+    )
+}
+
+
+// Last Author - Author Name
+export const LastAuthorName = (props) => {
+    const classes = useStyles();
+
+    const {
+        values,
+        touched,
+        errors,
+        handleChange,
+        handleBlur,
+    } = props;
+    return (
+        <Grid
+            container
+            direction="row"
+            justify="flex-start"
+            alignItems="flex-start"
+        >
+            <Grid item >
+                <FormControl className={classes.margin}>
+                    <InputLabel
+                        shrink required htmlFor="firstName"
+                        className={classes.label}
+                    >
+                        First Name/Given Name
+                </InputLabel>
+
+                    <CssTextField
+                        id="lastAuthor.firstName"
+                        type="input"
+                        variant="outlined"
+                        placeholder="Add first/given name"
+                        value={values.lastAuthor.firstName}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={errors.lastAuthor && touched.lastAuthor &&
+                            errors.lastAuthor.firstName && touched.lastAuthor.firstName}
+                        style={{ width: 300 }}
+                    />
+                    {errors.lastAuthor && touched.lastAuthor &&
+                        errors.lastAuthor.firstName &&
+                        touched.lastAuthor.firstName && (
+                            <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                {errors.lastAuthor.firstName}
+                            </div>
+                        )}
+                </FormControl>
+            </Grid>
+
+            <Grid item >
+                <FormControl className={classes.margin}>
+                    <InputLabel
+                        shrink required htmlFor="lastName"
+                        className={classes.label}
+                    >
+                        Last Name/Surname
+                </InputLabel>
+
+                    <CssTextField
+                        id="lastAuthor.lastName"
+                        type="input"
+                        variant="outlined"
+                        placeholder="Add last name/surname"
+                        value={values.lastAuthor.lastName}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={errors.lastAuthor && touched.lastAuthor &&
+                            errors.lastAuthor.lastName && touched.lastAuthor.lastName}
+                        style={{ width: 300 }}
+                    />
+                    {errors.lastAuthor && touched.lastAuthor &&
+                        errors.lastAuthor.lastName &&
+                        touched.lastAuthor.lastName && (
+                            <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                {errors.lastAuthor.lastName}
                             </div>
                         )}
                 </FormControl>
@@ -282,6 +370,8 @@ export const CorrespondingAuthor = (props) => {
         isSubmitting,
         dirty
     } = props;
+    console.log("** Values CA[0]: ", values.correspondingAuthors[0])
+
     return (
         <Grid>
             <Grid
@@ -293,30 +383,64 @@ export const CorrespondingAuthor = (props) => {
                 <Grid item >
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink required htmlFor="corresponding_author"
+                            shrink required htmlFor="correspondingAuthors"
                             className={classes.label}
                         >
-                            Corresponding Author Name -- Split into first and last name fields
+                            Corresponding Author First Name
                         </InputLabel>
 
                         <CssTextField
-                            id="authors.corresponding_author"
+                            id="correspondingAuthors[0].firstName"
                             type="input"
                             variant="outlined"
-                            placeholder="Add corresponding author name"
-                            value={values.authors.corresponding_author}
+                            placeholder="Add corresponding author first name"
+                            value={values.correspondingAuthors[0].firstName}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            error={errors.authors && touched.authors &&
-                                errors.authors.corresponding_author && touched.authors.corresponding_author}
-                            style={{ width: 600 }}
+                            error={errors.correspondingAuthors && touched.correspondingAuthors &&
+                                errors.correspondingAuthors[0].firstName &&
+                                touched.correspondingAuthors[0].firstName}
+                            style={{ width: 300 }}
                         />
 
-                        {errors.authors && touched.authors &&
-                            errors.authors.corresponding_author &&
-                            touched.authors.corresponding_author && (
+                        {errors.correspondingAuthors && touched.correspondingAuthors &&
+                            errors.correspondingAuthors[0].firstName &&
+                            touched.correspondingAuthors[0].firstName && (
                                 <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                    {errors.authors.corresponding_author}
+                                    {errors.correspondingAuthors[0].firstName}
+                                </div>
+                            )}
+                    </FormControl>
+                </Grid>
+
+                <Grid item >
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="correspondingAuthors"
+                            className={classes.label}
+                        >
+                            Corresponding Author Last Name
+                        </InputLabel>
+
+                        <CssTextField
+                            id="correspondingAuthors[0].lastName"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add corresponding author last name"
+                            value={values.correspondingAuthors[0].lastName}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={errors.correspondingAuthors && touched.correspondingAuthors &&
+                                errors.correspondingAuthors[0].lastName &&
+                                touched.correspondingAuthors[0].lastName}
+                            style={{ width: 300 }}
+                        />
+
+                        {errors.correspondingAuthors && touched.correspondingAuthors &&
+                            errors.correspondingAuthors[0].lastName &&
+                            touched.correspondingAuthors[0].lastName && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.correspondingAuthors[0].lastName}
                                 </div>
                             )}
                     </FormControl>
@@ -359,21 +483,21 @@ export const Email = props => {
                         </InputLabel>
 
                 <CssTextField
-                    id="authors.email"
+                    id="correspondingAuthors[0].email"
                     type="input"
                     variant="outlined"
                     placeholder="Enter your email"
-                    value={values.authors.email}
+                    value={values.correspondingAuthors[0].email}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={errors.authors && touched.authors &&
-                        errors.authors.email && touched.authors.email}
+                    error={errors.correspondingAuthors && touched.correspondingAuthors &&
+                        errors.correspondingAuthors[0].email && touched.correspondingAuthors[0].email}
                 />
-                {errors.authors && touched.authors &&
-                    errors.authors.email &&
-                    touched.authors.email && (
+                {errors.correspondingAuthors && touched.correspondingAuthors &&
+                    errors.correspondingAuthors[0].email &&
+                    touched.correspondingAuthors[0].email && (
                         <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                            {errors.authors.email}
+                            {errors.correspondingAuthors[0].email}
                         </div>
                     )}
             </FormControl>
@@ -382,7 +506,7 @@ export const Email = props => {
 }
 
 // Journal Name
-export const JournalName = props => {
+export const JournalName = (props) => {
     const classes = useStyles();
 
     const {
@@ -395,25 +519,25 @@ export const JournalName = props => {
     return (
         <Grid item>
             <FormControl className={classes.margin}>
-                <InputLabel shrink required htmlFor="journal_name" className={classes.label}>
+                <InputLabel shrink required htmlFor="journal" className={classes.label}>
                     Journal Name
                 </InputLabel>
 
                 <CssTextField
-                    id="journal_name"
+                    id="journal"
                     type="input"
                     variant="outlined"
                     placeholder="Enter the Journal name"
-                    value={values.journal_name}
+                    value={values.journal}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={errors.journal_name && touched.journal_name}
+                    error={errors.journal && touched.journal}
                     style={{ width: 600 }}
                 />
-                {errors.journal_name &&
-                    touched.journal_name && (
+                {errors.journal &&
+                    touched.journal && (
                         <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                            {errors.journal_name}
+                            {errors.journal}
                         </div>
                     )}
             </FormControl>
@@ -422,8 +546,8 @@ export const JournalName = props => {
 }
 
 
-// Journal DOI
-export const JournalDOI = props => {
+// Journal URL
+export const JournalURL = props => {
     const classes = useStyles();
 
     const {
@@ -436,25 +560,25 @@ export const JournalDOI = props => {
     return (
         <Grid item>
             <FormControl className={classes.margin}>
-                <InputLabel shrink htmlFor="journal_doi" className={classes.label}>
-                    Journal DOI
+                <InputLabel shrink htmlFor="url" className={classes.label}>
+                    Journal URL
                 </InputLabel>
 
                 <CssTextField
-                    id="journal_doi"
+                    id="url"
                     type="input"
                     variant="outlined"
-                    placeholder="Enter the Journal DOI"
-                    value={values.journal_doi}
+                    placeholder="Enter the Journal URL"
+                    value={values.url}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={errors.journal_doi && touched.journal_doi}
+                    error={errors.url && touched.url}
                     style={{ width: 600 }}
                 />
-                {errors.journal_doi &&
-                    touched.journal_doi && (
+                {errors.url &&
+                    touched.url && (
                         <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                            {errors.journal_doi}
+                            {errors.url}
                         </div>
                     )}
             </FormControl>
@@ -477,23 +601,23 @@ export const PrePrintName = props => {
     return (
         <Grid item>
             <FormControl className={classes.margin}>
-                <InputLabel shrink htmlFor="preprint_name" className={classes.label}>
+                <InputLabel shrink htmlFor="prePrintServer" className={classes.label}>
                     PrePrint server name
                 </InputLabel>
 
                 <CssTextField
-                    id="preprint_name"
+                    id="prePrintServer"
                     variant="outlined"
                     placeholder="Enter the PrePrint server name"
-                    value={values.preprint_name}
+                    value={values.prePrintServer}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     style={{ width: 600 }}
                 />
-                {errors.preprint_name &&
-                    touched.preprint_name && (
+                {errors.prePrintServer &&
+                    touched.prePrintServer && (
                         <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                            {errors.preprint_name}
+                            {errors.prePrintServer}
                         </div>
                     )}
             </FormControl>
@@ -516,24 +640,24 @@ export const PrePrintDOI = props => {
     return (
         <Grid item>
             <FormControl className={classes.margin}>
-                <InputLabel shrink htmlFor="preprint_doi" className={classes.label}>
+                <InputLabel shrink htmlFor="preprintServerDOI" className={classes.label}>
                     PrePrint DOI
                 </InputLabel>
 
                 <CssTextField
-                    id="preprint_doi"
+                    id="preprintServerDOI"
                     variant="outlined"
                     placeholder="Enter the PrePrint DOI"
-                    value={values.preprint_doi}
+                    value={values.preprintServerDOI}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={errors.preprint_doi && touched.preprint_doi}
+                    error={errors.preprintServerDOI && touched.preprintServerDOI}
                     style={{ width: 600 }}
                 />
-                {errors.preprint_doi &&
-                    touched.preprint_doi && (
+                {errors.preprintServerDOI &&
+                    touched.preprintServerDOI && (
                         <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                            {errors.preprint_doi}
+                            {errors.preprintServerDOI}
                         </div>
                     )}
             </FormControl>
@@ -597,15 +721,15 @@ export const EmbargoDateCheckbox = (props) => {
 
     const { setFieldValue } = useFormikContext();
     const [field] = useField(props);
-    console.log("Checked value: ", field.value.embargo_checked)
+    console.log("Checked value: ", field.value.embargoUntilPublished)
 
     return (
         <Grid item>
             <FormControlLabel
                 control={<CustomCheckbox
-                    id="embargo_checked"
-                    checked={field.value.embargo_checked}
-                    onChange={() => setFieldValue("embargo_checked", !field.value.embargo_checked)}
+                    id="embargoUntilPublished"
+                    checked={field.value.embargoUntilPublished}
+                    onChange={() => setFieldValue("embargoUntilPublished", !field.value.embargoUntilPublished)}
                 />
                 }
                 label="Embargo until published"

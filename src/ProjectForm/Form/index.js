@@ -6,8 +6,9 @@ import { makeStyles, withStyles, fade } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
 
 import {
-    Header, Title, Description, JournalName, JournalDOI,
-    PrePrintName, PrePrintDOI, AuthorName, CorrespondingAuthor, EmbargoDate, EmbargoDateCheckbox
+    Header, Title, Description, JournalName, JournalURL,
+    PrePrintName, PrePrintDOI, FirstAuthorName, LastAuthorName,
+    CorrespondingAuthor, EmbargoDate, EmbargoDateCheckbox
 } from "./FormComponents";
 
 // Helper for the demo
@@ -120,9 +121,11 @@ const MyForm = props => {
 
                 <JournalName {...props} />
 
-                <JournalDOI {...props} />
+                <JournalURL {...props} />
 
-                <AuthorName {...props} />
+                <FirstAuthorName {...props} />
+
+                <LastAuthorName {...props} />
 
                 <CorrespondingAuthor {...props} />
 
@@ -162,10 +165,12 @@ const MyForm = props => {
 
 const MyEnhancedForm = withFormik({
     mapPropsToValues: (props) => ({
-        title: '', description: '', journal_name: '', journal_doi: '',
-        first_author_first_name: '', first_author_last_name: '',
-        authors: { corresponding_author: '', email: '' },
-        embargo_checked: true
+        title: '', description: '', journal: '', url: '',
+        firstAuthor: { firstName: '', lastName: '', email: '' },
+        lastAuthor: { firstName: '', lastName: '', email: '' },
+        correspondingAuthors: [{ firstName: '', lastName: '', email: '' }],
+        prePrintServer: '', preprintServerDOI: '',
+        embargoUntilPublished: true
     }),
 
     // Custom sync validation
@@ -188,58 +193,75 @@ const MyEnhancedForm = withFormik({
             errors.description = 'The project description field is limited to 500 characters.'
         }
 
-        // First Author name
-        if (!values.first_author_first_name) {
-            errors.first_author_first_name = 'Required';
-        }
-        if (values.first_author_first_name && values.first_author_first_name.length > 60) {
-            errors.first_author_first_name = 'The author field is limited to 60 characters.'
+        /**
+         * First Author - First Name
+         */
+        if (!values.firstAuthor.firstName) {
+            let firstAuthorFirstNameError = { firstAuthor: { firstName: 'Required' } }
+            Object.assign(errors, firstAuthorFirstNameError)
+            console.log("** firstAuthorFirstNameError", errors);
         }
 
-        // Last Author name
-        if (!values.first_author_last_name) {
-            errors.first_author_last_name = 'Required';
+        /**
+         * First Author - Last Name
+         */
+        if (!values.firstAuthor.lastName) {
+            let firstAuthorLastNameError = { firstAuthor: { lastName: 'Required' } }
+            Object.assign(errors, firstAuthorLastNameError)
+            console.log("** firstAuthorLastNameError", errors);
         }
-        if (values.first_author_last_name && values.first_author_last_name.length > 60) {
-            errors.first_author_last_name = 'The author field is limited to 60 characters.'
+
+        /**
+         * Last Author - First Name
+         */
+        if (!values.lastAuthor.firstName) {
+            let lastAuthorFirstNameError = { lastAuthor: { firstName: 'Required' } }
+            Object.assign(errors, lastAuthorFirstNameError)
+            console.log("** lastAuthorFirstNameError", errors);
+        }
+
+        /**
+         * Last Author - Last Name
+         */
+        if (!values.lastAuthor.lastName) {
+            let lastAuthorLastNameError = { lastAuthor: { lastName: 'Required' } }
+            Object.assign(errors, lastAuthorLastNameError)
+            console.log("** lastAuthorLastNameError", errors);
         }
 
         // Journal name
-        if (!values.journal_name) {
-            errors.journal_name = 'Required';
+        if (!values.journal) {
+            errors.journal = 'Required';
         }
 
         // Journal article DOI/URL
 
         // TODO: Tie validation for author and email together
         // Corresponding Author -- will include 1 name field and email
-        if (!values.authors.corresponding_author) {
-            // errors = { authors: { corresponding_author: 'Required' } }  // Resets errors, but looses existing values
-            let corr_auth_error = { authors: { corresponding_author: 'Required' } }
-            Object.assign(errors, corr_auth_error)
-            console.log("** CorrAuth Error", errors);
-        }
+        // if (!values.authors.corresponding_author) {
+        //     // errors = { authors: { corresponding_author: 'Required' } }  // Resets errors, but looses existing values
+        //     let corr_auth_error = { authors: { corresponding_author: 'Required' } }
+        //     Object.assign(errors, corr_auth_error)
+        //     console.log("** CorrAuth Error", errors);
+        // }
 
         // Email
-        if (!values.authors.email) {
-            let corr_auth_email = { authors: { email: 'Required' } }
-            Object.assign(errors, corr_auth_email)
-        } else if (
-            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-                values.authors.email
-            )
-        ) {
-            errors.authors.email = 'Invalid email address';
-        }
+        // if (!values.correspondingAuthors.email) {
+        //     let corr_auth_email = { correspondingAuthors: { email: 'Required' } }
+        //     Object.assign(errors, corr_auth_email)
+        // } else if (
+        //     !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+        //         values.correspondingAuthors.email
+        //     )
+        // ) {
+        //     errors.correspondingAuthors.email = 'Invalid email address';
+        // }
 
         // Pre-print name
         // Pre-print DOI
 
         // Embargo date
         console.log("** Date: ", values.date);
-
-        // Embargo Until Published
-
 
 
         return errors;
