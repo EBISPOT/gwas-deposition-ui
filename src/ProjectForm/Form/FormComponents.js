@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Grid, Typography, TextField, Button, FormControl, FormControlLabel, InputLabel, Checkbox } from '@material-ui/core';
+import { Grid, Box, Typography, TextField, Button, FormControl, FormControlLabel, InputLabel, Checkbox } from '@material-ui/core';
 import { makeStyles, withStyles, fade } from '@material-ui/core/styles';
 
 import 'date-fns';
@@ -8,7 +8,7 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
-import { useField, useFormikContext } from "formik";
+import { useField, useFormikContext, FieldArray } from "formik";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -159,74 +159,208 @@ export const FirstAuthorName = (props) => {
         handleBlur,
     } = props;
     return (
-        <Grid
-            container
-            direction="row"
-            justify="flex-start"
-            alignItems="flex-start"
-        >
-            <Grid item >
-                <FormControl className={classes.margin}>
-                    <InputLabel
-                        shrink required htmlFor="firstName"
-                        className={classes.label}
-                    >
-                        First Name/Given Name
-                </InputLabel>
-
-                    <CssTextField
-                        id="firstAuthor.firstName"
-                        type="input"
-                        variant="outlined"
-                        placeholder="Add first/given name"
-                        value={values.firstAuthor.firstName}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={errors.firstAuthor && touched.firstAuthor &&
-                            errors.firstAuthor.firstName && touched.firstAuthor.firstName}
-                        style={{ width: 300 }}
-                    />
-                    {errors.firstAuthor && touched.firstAuthor &&
-                        errors.firstAuthor.firstName &&
-                        touched.firstAuthor.firstName && (
-                            <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                {errors.firstAuthor.firstName}
-                            </div>
-                        )}
-                </FormControl>
+        <Fragment>
+            <Grid item xs={12}>
+                <hr />
+                <Typography gutterBottom variant="body1" className={classes.header}>
+                    First Author
+            </Typography>
             </Grid>
 
-            <Grid item >
-                <FormControl className={classes.margin}>
-                    <InputLabel
-                        shrink required htmlFor="lastName"
-                        className={classes.label}
-                    >
-                        Last Name/Surname
+            <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start"
+            >
+                <Grid item >
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="firstName"
+                            className={classes.label}
+                        >
+                            First Name/Given Name
                 </InputLabel>
 
-                    <CssTextField
-                        id="firstAuthor.lastName"
-                        type="input"
-                        variant="outlined"
-                        placeholder="Add last name/surname"
-                        value={values.firstAuthor.lastName}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={errors.firstAuthor && touched.firstAuthor &&
-                            errors.firstAuthor.lastName && touched.firstAuthor.lastName}
-                        style={{ width: 300 }}
-                    />
-                    {errors.firstAuthor && touched.firstAuthor &&
-                        errors.firstAuthor.lastName &&
-                        touched.firstAuthor.lastName && (
-                            <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                {errors.firstAuthor.lastName}
-                            </div>
-                        )}
-                </FormControl>
+                        <CssTextField
+                            id="firstAuthor.firstName"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add first/given name"
+                            value={values.firstAuthor.firstName}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={values.firstAuthor.group !== '' ||
+                                values.firstAuthor.groupEmail !== ''}
+                            error={errors.firstAuthor && touched.firstAuthor &&
+                                errors.firstAuthor.firstName && touched.firstAuthor.firstName}
+                            style={{ width: 300 }}
+                        />
+                        {errors.firstAuthor && touched.firstAuthor &&
+                            errors.firstAuthor.firstName &&
+                            touched.firstAuthor.firstName && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.firstAuthor.firstName}
+                                </div>
+                            )}
+                    </FormControl>
+                </Grid>
+
+                <Grid item >
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="lastName"
+                            className={classes.label}
+                        >
+                            Last Name/Surname
+                </InputLabel>
+
+                        <CssTextField
+                            id="firstAuthor.lastName"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add last name/surname"
+                            value={values.firstAuthor.lastName}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={values.firstAuthor.group !== '' ||
+                                values.firstAuthor.groupEmail !== ''}
+                            error={errors.firstAuthor && touched.firstAuthor &&
+                                errors.firstAuthor.lastName && touched.firstAuthor.lastName}
+                            style={{ width: 300 }}
+                        />
+                        {errors.firstAuthor && touched.firstAuthor &&
+                            errors.firstAuthor.lastName &&
+                            touched.firstAuthor.lastName && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.firstAuthor.lastName}
+                                </div>
+                            )}
+                    </FormControl>
+                </Grid>
+
+                <Grid item >
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="email"
+                            className={classes.label}
+                        >
+                            Email
+                </InputLabel>
+
+                        <CssTextField
+                            id="firstAuthor.email"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add email"
+                            value={values.firstAuthor.email}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={values.firstAuthor.group !== '' ||
+                                values.firstAuthor.groupEmail !== ''}
+                            error={errors.firstAuthor && touched.firstAuthor &&
+                                errors.firstAuthor.email && touched.firstAuthor.email}
+                            style={{ width: 300 }}
+                        />
+                        {errors.firstAuthor && touched.firstAuthor &&
+                            errors.firstAuthor.email &&
+                            touched.firstAuthor.email && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.firstAuthor.email}
+                                </div>
+                            )}
+                    </FormControl>
+                </Grid>
             </Grid>
-        </Grid>
+
+            <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start"
+            >
+                <Grid item>
+                    <Typography>
+                        - OR -
+                    </Typography>
+                </Grid>
+            </Grid>
+
+            <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start"
+            >
+                <Grid item >
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="group"
+                            className={classes.label}
+                        >
+                            Consortium name
+                        </InputLabel>
+
+                        <CssTextField
+                            id="firstAuthor.group"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add Consortium name"
+                            value={values.firstAuthor.group}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={values.firstAuthor.firstName !== '' ||
+                                values.firstAuthor.lastName !== '' ||
+                                values.firstAuthor.email !== ''}
+                            error={errors.firstAuthor && touched.firstAuthor &&
+                                errors.firstAuthor.group && touched.firstAuthor.group}
+                            style={{ width: 300 }}
+                        />
+                        {errors.firstAuthor && touched.firstAuthor &&
+                            errors.firstAuthor.group &&
+                            touched.firstAuthor.group && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.firstAuthor.group}
+                                </div>
+                            )}
+                    </FormControl>
+                </Grid>
+
+                <Grid item >
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="groupEmail"
+                            className={classes.label}
+                        >
+                            Email
+                        </InputLabel>
+
+                        <CssTextField
+                            id="firstAuthor.groupEmail"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add email"
+                            value={values.firstAuthor.groupEmail}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={values.firstAuthor.firstName !== '' ||
+                                values.firstAuthor.lastName !== '' ||
+                                values.firstAuthor.email !== ''}
+                            error={errors.firstAuthor && touched.firstAuthor &&
+                                errors.firstAuthor.groupEmail && touched.firstAuthor.groupEmail}
+                            style={{ width: 300 }}
+                        />
+                        {errors.firstAuthor && touched.firstAuthor &&
+                            errors.firstAuthor.groupEmail &&
+                            touched.firstAuthor.groupEmail && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.firstAuthor.groupEmail}
+                                </div>
+                            )}
+                    </FormControl>
+                </Grid>
+            </Grid>
+        </Fragment>
     )
 }
 
@@ -242,75 +376,227 @@ export const LastAuthorName = (props) => {
         handleChange,
         handleBlur,
     } = props;
+
+    // console.log("\n** LA Errors: ", errors.lastAuthor);
+    // console.log("** LA Values: ", values.lastAuthor);
+
     return (
-        <Grid
-            container
-            direction="row"
-            justify="flex-start"
-            alignItems="flex-start"
-        >
-            <Grid item >
-                <FormControl className={classes.margin}>
-                    <InputLabel
-                        shrink required htmlFor="firstName"
-                        className={classes.label}
-                    >
-                        First Name/Given Name
-                </InputLabel>
-
-                    <CssTextField
-                        id="lastAuthor.firstName"
-                        type="input"
-                        variant="outlined"
-                        placeholder="Add first/given name"
-                        value={values.lastAuthor.firstName}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={errors.lastAuthor && touched.lastAuthor &&
-                            errors.lastAuthor.firstName && touched.lastAuthor.firstName}
-                        style={{ width: 300 }}
-                    />
-                    {errors.lastAuthor && touched.lastAuthor &&
-                        errors.lastAuthor.firstName &&
-                        touched.lastAuthor.firstName && (
-                            <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                {errors.lastAuthor.firstName}
-                            </div>
-                        )}
-                </FormControl>
+        <Fragment>
+            <Grid item xs={12}>
+                <hr />
+                <Typography gutterBottom variant="body1" className={classes.header}>
+                    Last Author
+                </Typography>
             </Grid>
 
-            <Grid item >
-                <FormControl className={classes.margin}>
-                    <InputLabel
-                        shrink required htmlFor="lastName"
-                        className={classes.label}
-                    >
-                        Last Name/Surname
-                </InputLabel>
+            <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start"
+            >
+                <Grid item>
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="firstName"
+                            className={classes.label}
+                        >
+                            First Name/Given Name
+                        </InputLabel>
 
-                    <CssTextField
-                        id="lastAuthor.lastName"
-                        type="input"
-                        variant="outlined"
-                        placeholder="Add last name/surname"
-                        value={values.lastAuthor.lastName}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={errors.lastAuthor && touched.lastAuthor &&
-                            errors.lastAuthor.lastName && touched.lastAuthor.lastName}
-                        style={{ width: 300 }}
-                    />
-                    {errors.lastAuthor && touched.lastAuthor &&
-                        errors.lastAuthor.lastName &&
-                        touched.lastAuthor.lastName && (
-                            <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                {errors.lastAuthor.lastName}
-                            </div>
-                        )}
-                </FormControl>
+                        <CssTextField
+                            id="lastAuthor.firstName"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add first/given name"
+                            value={values.lastAuthor.firstName}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={values.lastAuthor.group !== '' ||
+                                values.lastAuthor.groupEmail !== ''}
+                            error={errors.lastAuthor && touched.lastAuthor &&
+                                errors.lastAuthor.firstName && touched.lastAuthor.firstName &&
+                                (values.lastAuthor.group === '')}
+                            style={{ width: 300 }}
+                        />
+
+                        {
+                            errors.lastAuthor && touched.lastAuthor &&
+                            errors.lastAuthor.firstName &&
+                            touched.lastAuthor.firstName &&
+                            (values.lastAuthor.group === '') && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.lastAuthor.firstName}
+                                </div>
+                            )}
+
+                    </FormControl>
+                </Grid>
+
+                <Grid item >
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="lastName"
+                            className={classes.label}
+                        >
+                            Last Name/Surname
+                        </InputLabel>
+
+                        <CssTextField
+                            id="lastAuthor.lastName"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add last name/surname"
+                            value={values.lastAuthor.lastName}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={values.lastAuthor.group !== '' ||
+                                values.lastAuthor.groupEmail !== ''}
+                            error={errors.lastAuthor && touched.lastAuthor &&
+                                errors.lastAuthor.lastName && touched.lastAuthor.lastName &&
+                                (values.lastAuthor.group === '')}
+                            style={{ width: 300 }}
+                        />
+                        {errors.lastAuthor && touched.lastAuthor &&
+                            errors.lastAuthor.lastName &&
+                            touched.lastAuthor.lastName &&
+                            (values.lastAuthor.group === '') && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.lastAuthor.lastName}
+                                </div>
+                            )}
+                    </FormControl>
+                </Grid>
+
+                <Grid item >
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="email"
+                            className={classes.label}
+                        >
+                            Email
+                        </InputLabel>
+
+                        <CssTextField
+                            id="lastAuthor.email"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add email"
+                            value={values.lastAuthor.email}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={values.lastAuthor.group !== '' ||
+                                values.lastAuthor.groupEmail !== ''}
+                            error={errors.lastAuthor && touched.lastAuthor &&
+                                errors.lastAuthor.email && touched.lastAuthor.email &&
+                                (values.lastAuthor.group === '')}
+                            style={{ width: 300 }}
+                        />
+                        {errors.lastAuthor && touched.lastAuthor &&
+                            errors.lastAuthor.email &&
+                            touched.lastAuthor.email &&
+                            (values.lastAuthor.group === '') && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.lastAuthor.email}
+                                </div>
+                            )}
+                    </FormControl>
+                </Grid>
             </Grid>
-        </Grid>
+
+            <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start"
+            >
+                <Grid item>
+                    <Typography>
+                        - OR -
+                    </Typography>
+                </Grid>
+            </Grid>
+
+            <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start"
+            >
+                <Grid item >
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="group"
+                            className={classes.label}
+                        >
+                            Consortium name
+                        </InputLabel>
+
+                        <CssTextField
+                            id="lastAuthor.group"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add Consortium name"
+                            value={values.lastAuthor.group}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={values.lastAuthor.firstName !== '' ||
+                                values.lastAuthor.lastName !== '' ||
+                                values.lastAuthor.email !== ''}
+                            error={errors.lastAuthor && touched.lastAuthor &&
+                                errors.lastAuthor.group && touched.lastAuthor.group &&
+                                (values.lastAuthor.firstName === '')}
+                            style={{ width: 300 }}
+                        />
+                        {errors.lastAuthor && touched.lastAuthor &&
+                            errors.lastAuthor.group &&
+                            touched.lastAuthor.group &&
+                            (values.lastAuthor.firstName === '') && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.lastAuthor.group}
+                                </div>
+                            )}
+                    </FormControl>
+                </Grid>
+
+                <Grid item >
+                    <FormControl className={classes.margin}>
+                        <InputLabel
+                            shrink required htmlFor="groupEmail"
+                            className={classes.label}
+                        >
+                            Email
+                        </InputLabel>
+
+                        <CssTextField
+                            id="lastAuthor.groupEmail"
+                            type="input"
+                            variant="outlined"
+                            placeholder="Add email"
+                            value={values.lastAuthor.groupEmail}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={values.lastAuthor.firstName !== '' ||
+                                values.lastAuthor.lastName !== '' ||
+                                values.lastAuthor.email !== ''}
+                            error={errors.lastAuthor && touched.lastAuthor &&
+                                errors.lastAuthor.groupEmail && touched.lastAuthor.groupEmail &&
+                                (values.lastAuthor.firstName === '')}
+                            style={{ width: 300 }}
+                        />
+                        {errors.lastAuthor && touched.lastAuthor &&
+                            errors.lastAuthor.groupEmail &&
+                            touched.lastAuthor.groupEmail &&
+                            (values.lastAuthor.firstName === '') && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.lastAuthor.groupEmail}
+                                </div>
+                            )}
+                    </FormControl>
+                </Grid>
+            </Grid>
+
+        </Fragment>
     )
 }
 
@@ -370,97 +656,115 @@ export const CorrespondingAuthor = (props) => {
         isSubmitting,
         dirty
     } = props;
-    console.log("** Values CA[0]: ", values.correspondingAuthors[0])
+    // console.log("** Values CA[0]: ", values.correspondingAuthors[0])
 
     return (
-        <Grid>
-            <Grid
-                container
-                direction="row"
-                justify="flex-start"
-                alignItems="flex-start"
-            >
-                <Grid item >
-                    <FormControl className={classes.margin}>
-                        <InputLabel
-                            shrink required htmlFor="correspondingAuthors"
-                            className={classes.label}
-                        >
-                            Corresponding Author First Name
-                        </InputLabel>
-
-                        <CssTextField
-                            id="correspondingAuthors[0].firstName"
-                            type="input"
-                            variant="outlined"
-                            placeholder="Add corresponding author first name"
-                            value={values.correspondingAuthors[0].firstName}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            error={errors.correspondingAuthors && touched.correspondingAuthors &&
-                                errors.correspondingAuthors[0].firstName &&
-                                touched.correspondingAuthors[0].firstName}
-                            style={{ width: 300 }}
-                        />
-
-                        {errors.correspondingAuthors && touched.correspondingAuthors &&
-                            errors.correspondingAuthors[0].firstName &&
-                            touched.correspondingAuthors[0].firstName && (
-                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                    {errors.correspondingAuthors[0].firstName}
-                                </div>
-                            )}
-                    </FormControl>
-                </Grid>
-
-                <Grid item >
-                    <FormControl className={classes.margin}>
-                        <InputLabel
-                            shrink required htmlFor="correspondingAuthors"
-                            className={classes.label}
-                        >
-                            Corresponding Author Last Name
-                        </InputLabel>
-
-                        <CssTextField
-                            id="correspondingAuthors[0].lastName"
-                            type="input"
-                            variant="outlined"
-                            placeholder="Add corresponding author last name"
-                            value={values.correspondingAuthors[0].lastName}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            error={errors.correspondingAuthors && touched.correspondingAuthors &&
-                                errors.correspondingAuthors[0].lastName &&
-                                touched.correspondingAuthors[0].lastName}
-                            style={{ width: 300 }}
-                        />
-
-                        {errors.correspondingAuthors && touched.correspondingAuthors &&
-                            errors.correspondingAuthors[0].lastName &&
-                            touched.correspondingAuthors[0].lastName && (
-                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                    {errors.correspondingAuthors[0].lastName}
-                                </div>
-                            )}
-                    </FormControl>
-                </Grid>
-
-                <Grid item>
-                    <Email {...props} />
-                </Grid>
+        <Fragment>
+            <Grid item xs={12}>
+                <hr />
+                <Typography gutterBottom variant="body1" className={classes.header}>
+                    Corresponding Author(s)
+            </Typography>
             </Grid>
 
-            <Button
-                type="button"
-                className={classes.button}
-                variant="outlined"
-                // onClick={handleReset}
-                disabled={!dirty || isSubmitting}
-            >
-                Add more Corresponding authors
-            </Button>
-        </Grid>
+            <FieldArray name="correspondingAuthors">
+                {({ push, remove }) => (
+                    <Fragment>
+                        {values.correspondingAuthors &&
+                            values.correspondingAuthors.length > 0 &&
+                            values.correspondingAuthors.map((corrAuthor, index) => (
+                                <Grid
+                                    key={index}
+                                    container
+                                    direction="row"
+                                    justify="flex-start"
+                                    alignItems="flex-start"
+                                >
+                                    <Grid item >
+                                        <FormControl className={classes.margin}>
+                                            <InputLabel
+                                                shrink required htmlFor="correspondingAuthors"
+                                                className={classes.label}
+                                            >
+                                                Corresponding Author First Name
+                                            </InputLabel>
+
+                                            <CssTextField
+                                                id={`correspondingAuthors[${index}].firstName`}
+                                                type="input"
+                                                variant="outlined"
+                                                placeholder="Add corresponding author first name"
+                                                value={values.correspondingAuthors[index].firstName}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                    errors.correspondingAuthors[index].firstName &&
+                                                    touched.correspondingAuthors[index].firstName}
+                                                style={{ width: 300 }}
+                                            />
+
+                                            {/* {errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                errors.correspondingAuthors[{ index }].firstName &&
+                                                touched.correspondingAuthors[{ index }].firstName && (
+                                                    <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                                        {errors.correspondingAuthors[{ index }].firstName}
+                                                    </div>
+                                                )} */}
+                                        </FormControl>
+                                    </Grid>
+
+                                    <Grid item >
+                                        <FormControl className={classes.margin}>
+                                            <InputLabel
+                                                shrink required htmlFor="correspondingAuthors"
+                                                className={classes.label}
+                                            >
+                                                Corresponding Author Last Name
+                                            </InputLabel>
+
+                                            <CssTextField
+                                                id={`correspondingAuthors[${index}].lastName`}
+                                                type="input"
+                                                variant="outlined"
+                                                placeholder="Add corresponding author last name"
+                                                value={values.correspondingAuthors[index].lastName}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                    errors.correspondingAuthors[index].lastName &&
+                                                    touched.correspondingAuthors[index].lastName}
+                                                style={{ width: 300 }}
+                                            />
+
+                                            {/* {errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                errors.correspondingAuthors[{ index }].lastName &&
+                                                touched.correspondingAuthors[{ index }].lastName && (
+                                                    <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                                        {errors.correspondingAuthors[{ index }].lastName}
+                                                    </div>
+                                                )} */}
+                                        </FormControl>
+                                    </Grid>
+
+                                    {/* <Grid item>
+                                        <Email {...props} />
+                                    </Grid> */}
+                                </Grid>
+                            ))
+                        }
+                        <Button
+                            type="button"
+                            className={classes.button}
+                            variant="outlined"
+                            onClick={() => push({ firstName: '', lastName: '' })}
+                            disabled={!dirty || isSubmitting}
+                        >
+                            Add more Corresponding authors
+                    </Button>
+                    </Fragment>
+                )}
+            </FieldArray >
+        </Fragment>
     )
 }
 
@@ -517,37 +821,46 @@ export const JournalName = (props) => {
         handleBlur,
     } = props;
     return (
-        <Grid item>
-            <FormControl className={classes.margin}>
-                <InputLabel shrink required htmlFor="journal" className={classes.label}>
-                    Journal Name
+        <Fragment>
+            <Grid item xs={12}>
+                <hr />
+                <Typography gutterBottom variant="body1" className={classes.header}>
+                    Journal Information
+            </Typography>
+            </Grid>
+
+            <Grid item>
+                <FormControl className={classes.margin}>
+                    <InputLabel shrink required htmlFor="journal" className={classes.label}>
+                        Journal Name
                 </InputLabel>
 
-                <CssTextField
-                    id="journal"
-                    type="input"
-                    variant="outlined"
-                    placeholder="Enter the Journal name"
-                    value={values.journal}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={errors.journal && touched.journal}
-                    style={{ width: 600 }}
-                />
-                {errors.journal &&
-                    touched.journal && (
-                        <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                            {errors.journal}
-                        </div>
-                    )}
-            </FormControl>
-        </Grid>
+                    <CssTextField
+                        id="journal"
+                        type="input"
+                        variant="outlined"
+                        placeholder="Enter the Journal name"
+                        value={values.journal}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={errors.journal && touched.journal}
+                        style={{ width: 600 }}
+                    />
+                    {errors.journal &&
+                        touched.journal && (
+                            <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                {errors.journal}
+                            </div>
+                        )}
+                </FormControl>
+            </Grid>
+        </Fragment>
     )
 }
 
 
 // Journal URL
-export const JournalURL = props => {
+export const JournalURL = (props) => {
     const classes = useStyles();
 
     const {
@@ -599,29 +912,38 @@ export const PrePrintName = props => {
         handleBlur,
     } = props;
     return (
-        <Grid item>
-            <FormControl className={classes.margin}>
-                <InputLabel shrink htmlFor="prePrintServer" className={classes.label}>
-                    PrePrint server name
+        <Fragment>
+            <Grid item xs={12}>
+                <hr />
+                <Typography gutterBottom variant="body1" className={classes.header}>
+                    PrePrint Information
+            </Typography>
+            </Grid>
+
+            <Grid item>
+                <FormControl className={classes.margin}>
+                    <InputLabel shrink htmlFor="prePrintServer" className={classes.label}>
+                        PrePrint server name
                 </InputLabel>
 
-                <CssTextField
-                    id="prePrintServer"
-                    variant="outlined"
-                    placeholder="Enter the PrePrint server name"
-                    value={values.prePrintServer}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    style={{ width: 600 }}
-                />
-                {errors.prePrintServer &&
-                    touched.prePrintServer && (
-                        <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                            {errors.prePrintServer}
-                        </div>
-                    )}
-            </FormControl>
-        </Grid>
+                    <CssTextField
+                        id="prePrintServer"
+                        variant="outlined"
+                        placeholder="Enter the PrePrint server name"
+                        value={values.prePrintServer}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        style={{ width: 600 }}
+                    />
+                    {errors.prePrintServer &&
+                        touched.prePrintServer && (
+                            <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                {errors.prePrintServer}
+                            </div>
+                        )}
+                </FormControl>
+            </Grid>
+        </Fragment>
     )
 }
 
@@ -674,34 +996,43 @@ export const EmbargoDate = (props) => {
     const [field] = useField(props);
 
     return (
-        <Grid item>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <InputLabel shrink required htmlFor="embargo_date" className={classes.embargoDateLabel}>
-                    Embargo Date (Month/Day/Year)
+        <Fragment>
+            <Grid item xs={12}>
+                <hr />
+                <Typography gutterBottom variant="body1" className={classes.header}>
+                    Embargo Date
+            </Typography>
+            </Grid>
+
+            <Grid item>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <InputLabel shrink required htmlFor="embargoDate" className={classes.embargoDateLabel}>
+                        Embargo Date (Month/Day/Year)
                 </InputLabel>
 
-                <CustomKeyboardDatePicker
-                    {...field}
-                    {...props}
-                    autoOk
-                    disableToolbar
-                    variant="inline"
-                    inputVariant="outlined"
-                    format="MM/dd/yyyy"
-                    id="date"
-                    minDate={new Date()}
-                    // maxDate={maxDate}
-                    selected={(field.value && new Date(field.value)) || null}
-                    // InputAdornmentProps={{ position: "start" }}
-                    onChange={val => {
-                        setFieldValue(field.name, val);
-                    }}
-                    KeyboardButtonProps={{
-                        'aria-label': 'change date',
-                    }}
-                />
-            </MuiPickersUtilsProvider>
-        </Grid>
+                    <CustomKeyboardDatePicker
+                        {...field}
+                        {...props}
+                        autoOk
+                        disableToolbar
+                        variant="inline"
+                        inputVariant="outlined"
+                        format="MM/dd/yyyy"
+                        id="embargoDate"
+                        minDate={new Date()}
+                        // maxDate={maxDate}
+                        selected={(field.value && new Date(field.value)) || null}
+                        // InputAdornmentProps={{ position: "start" }}
+                        onChange={val => {
+                            setFieldValue(field.name, val);
+                        }}
+                        KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                        }}
+                    />
+                </MuiPickersUtilsProvider>
+            </Grid>
+        </Fragment>
     );
 }
 
@@ -719,17 +1050,19 @@ export const CustomCheckbox = withStyles({
 // Embargo Checkbox
 export const EmbargoDateCheckbox = (props) => {
 
-    const { setFieldValue } = useFormikContext();
+    // const { setFieldValue } = useFormikContext();
     const [field] = useField(props);
-    console.log("Checked value: ", field.value.embargoUntilPublished)
+    // console.log("** Field: ", field);
+    // console.log("** Checked field value: ", field.value.embargoUntilPublished)
 
     return (
         <Grid item>
             <FormControlLabel
                 control={<CustomCheckbox
+                    {...field}
                     id="embargoUntilPublished"
                     checked={field.value.embargoUntilPublished}
-                    onChange={() => setFieldValue("embargoUntilPublished", !field.value.embargoUntilPublished)}
+                // onChange={() => setFieldValue("embargoUntilPublished", !field.value.embargoUntilPublished)}
                 />
                 }
                 label="Embargo until published"
