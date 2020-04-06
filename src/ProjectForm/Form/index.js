@@ -177,16 +177,9 @@ const MyEnhancedForm = withFormik({
     // Custom sync validation
     validate: values => {
         let errors = {};
-        // let errors = {
-        //     title: '', description: '', journal: '', url: '',
-        //     firstAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
-        //     lastAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
-        //     correspondingAuthors: [{ firstName: '', lastName: '', email: '' }],
-        //     prePrintServer: '', preprintServerDOI: '',
-        //     embargoUntilPublished: true
-        // }
-        console.log("\n** All Errors: ", errors);
-        console.log("** All Values: ", values);
+
+        console.log("\n** All Values: ", values);
+        console.log("** All Errors: ", errors);
 
         /**
          * Title
@@ -273,6 +266,7 @@ const MyEnhancedForm = withFormik({
             lastAuthorError.lastAuthor.firstName = 'Required';
             Object.assign(errors, lastAuthorError);
             validLastAuthorNameFields.lastAuthor.firstName = false;
+            console.log("** la-fn: ", errors, validLastAuthorNameFields)
         }
 
         if (!values.lastAuthor.lastName) {
@@ -329,11 +323,15 @@ const MyEnhancedForm = withFormik({
         console.log("** LA VALID Name: ", validLastAuthorNameFields)
 
         // Clear errors for LastAuthor - firstName, lastName, email _if_ group and groupEmail are valid
-        console.log("** Errors-Group: ", errors)
-        if (validLastAuthorGroupFields.lastAuthor.group &&
-            validLastAuthorGroupFields.lastAuthor.groupEmail) {
-            delete errors.lastAuthor;
-            console.log("\n** Clearing lastAuthorError, Group fields all Valid: \nErrors: ", errors)
+        console.log("** Errors-Group: ", errors, "\nVal la-fn: ", values.lastAuthor.lastName)
+        if (values.lastAuthor.firstName === '' &&
+            values.lastAuthor.lastName === '' &&
+            values.lastAuthor.email === '') {
+            if (validLastAuthorGroupFields.lastAuthor.group &&
+                validLastAuthorGroupFields.lastAuthor.groupEmail) {
+                delete errors.lastAuthor;
+                console.log("\n** Clearing lastAuthorError, Group fields all Valid: \nErrors: ", errors)
+            }
         }
 
 
