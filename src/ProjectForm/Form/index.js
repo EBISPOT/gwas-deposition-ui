@@ -91,6 +91,8 @@ const useStyles = makeStyles(theme => ({
 const MyForm = props => {
     const classes = useStyles();
 
+    const test = true;
+
     const {
         values,
         touched,
@@ -115,7 +117,7 @@ const MyForm = props => {
             <form onSubmit={handleSubmit}>
                 <Header />
 
-                <Title {...props} />
+                <Title {...props} test={test} />
 
                 <Description {...props} />
 
@@ -258,7 +260,7 @@ const MyEnhancedForm = withFormik({
             }
         }
 
-        // Object to track valid LastAuthor or Group values to clear "errors" object
+        // Object to track valid LastAuthor name values to clear "errors" object
         let validLastAuthorNameFields = { lastAuthor: { firstName: true, lastName: true, email: true } }
 
         // if (!validLastAuthorNameFields) {
@@ -288,7 +290,7 @@ const MyEnhancedForm = withFormik({
         // }
         console.log("** LA VALID Name: ", validLastAuthorNameFields)
 
-        // Clear errors for LastAuthor - group, groupEmail _if_ firstName, lastName, email are valid
+        // Clear errors for LastAuthor _if_ firstName, lastName, email are valid
         if (validLastAuthorNameFields.lastAuthor.firstName &&
             validLastAuthorNameFields.lastAuthor.lastName &&
             validLastAuthorNameFields.lastAuthor.email) {
@@ -297,7 +299,7 @@ const MyEnhancedForm = withFormik({
         }
 
 
-        // Object to track valid LastAuthor or Group values to clear "errors" object
+        // Object to track valid Group values to clear "errors" object
         let validLastAuthorGroupFields = { lastAuthor: { group: true, groupEmail: true } }
 
         if (!validLastAuthorNameFields.lastAuthor.firstName &&
@@ -383,7 +385,17 @@ const MyEnhancedForm = withFormik({
 
     handleSubmit: (values, { setSubmitting }) => {
         setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
+            // Create new object to modify
+            let processedValues = {};
+            processedValues = JSON.parse(JSON.stringify(values));
+
+            // Add value of groupEmail to email before submit
+            processedValues.lastAuthor.email = processedValues.lastAuthor.groupEmail;
+            delete processedValues.lastAuthor.groupEmail
+            // TODO: Remove any properties with an empty string value
+
+            // alert(JSON.stringify(values, null, 2));
+            alert(JSON.stringify(processedValues, null, 2));
             setSubmitting(false);
         }, 1000);
     },

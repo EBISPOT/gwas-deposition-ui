@@ -32,6 +32,21 @@ const useStyles = makeStyles(theme => ({
             textShadow: 'none',
         },
     },
+    clearButton: {
+        margin: theme.spacing(1),
+        padding: theme.spacing(1),
+        color: '#333',
+        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
+        borderRadius: 4,
+        border: '1px solid #aaa',
+        fontWeight: 'bold',
+        textShadow: '0 1px 0 #fff',
+        textTransform: 'none',
+        boxShadow: 'none',
+        '&:disabled': {
+            textShadow: 'none',
+        },
+    },
     embargoDateLabel: {
         margin: theme.spacing(1)
     },
@@ -115,11 +130,12 @@ export const Title = (props) => {
         handleChange,
         handleBlur,
     } = props;
+    console.log("** PROP TEST: ", props.test)
     return (
         <Grid item>
             <FormControl className={classes.margin}>
                 <InputLabel
-                    shrink required htmlFor="title"
+                    shrink required={props.test} htmlFor="title"
                     className={classes.label}
                 >
                     Title
@@ -656,7 +672,6 @@ export const CorrespondingAuthor = (props) => {
         isSubmitting,
         dirty
     } = props;
-    // console.log("** Values CA[0]: ", values.correspondingAuthors[0])
 
     return (
         <Fragment>
@@ -678,7 +693,7 @@ export const CorrespondingAuthor = (props) => {
                                     container
                                     direction="row"
                                     justify="flex-start"
-                                    alignItems="flex-start"
+                                    alignItems="center"
                                 >
                                     <Grid item >
                                         <FormControl className={classes.margin}>
@@ -746,9 +761,51 @@ export const CorrespondingAuthor = (props) => {
                                         </FormControl>
                                     </Grid>
 
-                                    {/* <Grid item>
-                                        <Email {...props} />
-                                    </Grid> */}
+
+                                    <Grid item >
+                                        <FormControl className={classes.margin}>
+                                            <InputLabel
+                                                shrink required htmlFor="correspondingAuthorsEmail"
+                                                className={classes.label}
+                                            >
+                                                Corresponding Author Email
+                                             </InputLabel>
+
+                                            <CssTextField
+                                                id={`correspondingAuthors[${index}].email`}
+                                                type="input"
+                                                variant="outlined"
+                                                placeholder="Add email"
+                                                value={values.correspondingAuthors[index].email}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                    errors.correspondingAuthors[index].email &&
+                                                    touched.correspondingAuthors[index].email}
+                                                style={{ width: 300 }}
+                                            />
+                                            {/* {errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                errors.correspondingAuthors[{ index }].email &&
+                                                touched.correspondingAuthors[{ index }].email && (
+                                                    <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                                        {errors.correspondingAuthors[{ index }].email}
+                                                    </div>
+                                                )} */}
+                                        </FormControl>
+                                    </Grid>
+
+                                    <Grid item>
+                                        <Button
+                                            type="button"
+                                            className={classes.clearButton}
+                                            variant="outlined"
+                                            onClick={() => remove(index)}
+                                            disabled={!dirty || isSubmitting}>
+                                            <Typography>
+                                                X
+                                            </Typography>
+                                        </Button>
+                                    </Grid>
                                 </Grid>
                             ))
                         }
@@ -756,7 +813,7 @@ export const CorrespondingAuthor = (props) => {
                             type="button"
                             className={classes.button}
                             variant="outlined"
-                            onClick={() => push({ firstName: '', lastName: '' })}
+                            onClick={() => push({ firstName: '', lastName: '', email: '' })}
                             disabled={!dirty || isSubmitting}
                         >
                             Add more Corresponding authors
@@ -768,46 +825,6 @@ export const CorrespondingAuthor = (props) => {
     )
 }
 
-
-export const Email = props => {
-    const classes = useStyles();
-
-    const {
-        values,
-        touched,
-        errors,
-        handleChange,
-        handleBlur,
-    } = props;
-    return (
-        <Grid item>
-            <FormControl className={classes.margin}>
-                <InputLabel shrink required htmlFor="email" className={classes.label}>
-                    Email
-                        </InputLabel>
-
-                <CssTextField
-                    id="correspondingAuthors[0].email"
-                    type="input"
-                    variant="outlined"
-                    placeholder="Enter your email"
-                    value={values.correspondingAuthors[0].email}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={errors.correspondingAuthors && touched.correspondingAuthors &&
-                        errors.correspondingAuthors[0].email && touched.correspondingAuthors[0].email}
-                />
-                {errors.correspondingAuthors && touched.correspondingAuthors &&
-                    errors.correspondingAuthors[0].email &&
-                    touched.correspondingAuthors[0].email && (
-                        <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                            {errors.correspondingAuthors[0].email}
-                        </div>
-                    )}
-            </FormControl>
-        </Grid>
-    )
-}
 
 // Journal Name
 export const JournalName = (props) => {
