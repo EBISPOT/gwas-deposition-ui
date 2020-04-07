@@ -386,22 +386,44 @@ const MyEnhancedForm = withFormik({
     handleSubmit: (values, { setSubmitting }) => {
         setTimeout(() => {
             // Create new object to modify
-            let processedValues = {};
-            processedValues = JSON.parse(JSON.stringify(values));
+            let valuesCopy = {};
+            valuesCopy = JSON.parse(JSON.stringify(values));
 
-            // Add value of groupEmail to email before submit
-            processedValues.lastAuthor.email = processedValues.lastAuthor.groupEmail;
-            delete processedValues.lastAuthor.groupEmail
-            // TODO: Remove any properties with an empty string value
-
-            // alert(JSON.stringify(values, null, 2));
-            alert(JSON.stringify(processedValues, null, 2));
+            createBodyOfWork(valuesCopy)
+            // alert(JSON.stringify(valuesCopy, null, 2));
             setSubmitting(false);
         }, 1000);
     },
 
     displayName: 'BasicForm', // helps with React DevTools
 })(MyForm);
+
+
+const createBodyOfWork = (processedValues) => {
+    // Add value of "groupEmail" to "email"
+    if (processedValues.firstAuthor.groupEmail !== '') {
+        processedValues.firstAuthor.email = processedValues.firstAuthor.groupEmail;
+        delete processedValues.firstAuthor.groupEmail
+    }
+    if (processedValues.lastAuthor.groupEmail !== '') {
+        processedValues.lastAuthor.email = processedValues.lastAuthor.groupEmail;
+        delete processedValues.lastAuthor.groupEmail
+    }
+
+    // Remove any properties with an empty string value
+    removeEmpty(processedValues)
+    console.log("** PV: ", processedValues)
+    alert(JSON.stringify(processedValues, null, 2));
+}
+
+
+const removeEmpty = (obj) => {
+    Object.keys(obj).forEach(k =>
+        (obj[k] && typeof obj[k] === 'object') && removeEmpty(obj[k]) ||
+        (!obj[k] && obj[k] !== undefined) && delete obj[k]
+    );
+    return obj;
+};
 
 
 const MaterialSyncValidationForm = () => (
