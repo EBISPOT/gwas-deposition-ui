@@ -713,18 +713,22 @@ export const CorrespondingAuthor = (props) => {
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 error={errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                    errors.correspondingAuthors[index] &&
+                                                    touched.correspondingAuthors[index] &&
                                                     errors.correspondingAuthors[index].firstName &&
                                                     touched.correspondingAuthors[index].firstName}
                                                 style={{ width: 300 }}
                                             />
 
-                                            {/* {errors.correspondingAuthors && touched.correspondingAuthors &&
-                                                errors.correspondingAuthors[{ index }].firstName &&
-                                                touched.correspondingAuthors[{ index }].firstName && (
+                                            {errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                errors.correspondingAuthors[index] &&
+                                                touched.correspondingAuthors[index] &&
+                                                errors.correspondingAuthors[index].firstName &&
+                                                touched.correspondingAuthors[index].firstName && (
                                                     <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                                        {errors.correspondingAuthors[{ index }].firstName}
+                                                        {errors.correspondingAuthors[index].firstName}
                                                     </div>
-                                                )} */}
+                                                )}
                                         </FormControl>
                                     </Grid>
 
@@ -746,18 +750,22 @@ export const CorrespondingAuthor = (props) => {
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 error={errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                    errors.correspondingAuthors[index] &&
+                                                    touched.correspondingAuthors[index] &&
                                                     errors.correspondingAuthors[index].lastName &&
                                                     touched.correspondingAuthors[index].lastName}
                                                 style={{ width: 300 }}
                                             />
 
-                                            {/* {errors.correspondingAuthors && touched.correspondingAuthors &&
-                                                errors.correspondingAuthors[{ index }].lastName &&
-                                                touched.correspondingAuthors[{ index }].lastName && (
+                                            {errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                errors.correspondingAuthors[index] &&
+                                                touched.correspondingAuthors[index] &&
+                                                errors.correspondingAuthors[index].lastName &&
+                                                touched.correspondingAuthors[index].lastName && (
                                                     <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                                        {errors.correspondingAuthors[{ index }].lastName}
+                                                        {errors.correspondingAuthors[index].lastName}
                                                     </div>
-                                                )} */}
+                                                )}
                                         </FormControl>
                                     </Grid>
 
@@ -780,17 +788,21 @@ export const CorrespondingAuthor = (props) => {
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 error={errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                    errors.correspondingAuthors[index] &&
+                                                    touched.correspondingAuthors[index] &&
                                                     errors.correspondingAuthors[index].email &&
                                                     touched.correspondingAuthors[index].email}
                                                 style={{ width: 300 }}
                                             />
-                                            {/* {errors.correspondingAuthors && touched.correspondingAuthors &&
-                                                errors.correspondingAuthors[{ index }].email &&
-                                                touched.correspondingAuthors[{ index }].email && (
+                                            {errors.correspondingAuthors && touched.correspondingAuthors &&
+                                                errors.correspondingAuthors[index] &&
+                                                touched.correspondingAuthors[index] &&
+                                                errors.correspondingAuthors[index].email &&
+                                                touched.correspondingAuthors[index].email && (
                                                     <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                                        {errors.correspondingAuthors[{ index }].email}
+                                                        {errors.correspondingAuthors[index].email}
                                                     </div>
-                                                )} */}
+                                                )}
                                         </FormControl>
                                     </Grid>
 
@@ -800,7 +812,7 @@ export const CorrespondingAuthor = (props) => {
                                             className={classes.clearButton}
                                             variant="outlined"
                                             onClick={() => remove(index)}
-                                            disabled={!dirty || isSubmitting}>
+                                            disabled={!dirty || isSubmitting || index === 0}>
                                             <Typography>
                                                 X
                                             </Typography>

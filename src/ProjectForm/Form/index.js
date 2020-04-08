@@ -182,8 +182,8 @@ const MyEnhancedForm = withFormik({
     validate: values => {
         let errors = {};
 
-        console.log("\n** All Values: ", values);
-        console.log("** All Errors: ", errors);
+        // console.log("\n** All Values: ", values);
+        // console.log("** All Errors: ", errors);
 
         /**
          * Title
@@ -270,7 +270,7 @@ const MyEnhancedForm = withFormik({
             lastAuthorError.lastAuthor.firstName = 'Required';
             Object.assign(errors, lastAuthorError);
             validLastAuthorNameFields.lastAuthor.firstName = false;
-            console.log("** la-fn: ", errors, validLastAuthorNameFields)
+            // console.log("** la-fn: ", errors, validLastAuthorNameFields)
         }
 
         if (!values.lastAuthor.lastName) {
@@ -290,14 +290,15 @@ const MyEnhancedForm = withFormik({
             validLastAuthorNameFields.lastAuthor.email = false;
         }
         // }
-        console.log("** LA VALID Name: ", validLastAuthorNameFields)
+
+        // console.log("** LA VALID Name: ", validLastAuthorNameFields)
 
         // Clear errors for LastAuthor _if_ firstName, lastName, email are valid
         if (validLastAuthorNameFields.lastAuthor.firstName &&
             validLastAuthorNameFields.lastAuthor.lastName &&
             validLastAuthorNameFields.lastAuthor.email) {
             delete errors.lastAuthor;
-            console.log("\n** Clearing lastAuthorError, Name fields all Valid: \nErrors: ", errors)
+            // console.log("\n** Clearing lastAuthorError, Name fields all Valid: \nErrors: ", errors)
         }
 
 
@@ -324,17 +325,17 @@ const MyEnhancedForm = withFormik({
                 validLastAuthorGroupFields.lastAuthor.groupEmail = false;
             }
         }
-        console.log("** LA VALID Name: ", validLastAuthorNameFields)
+        // console.log("** LA VALID Name: ", validLastAuthorNameFields)
 
         // Clear errors for LastAuthor - firstName, lastName, email _if_ group and groupEmail are valid
-        console.log("** Errors-Group: ", errors, "\nVal la-fn: ", values.lastAuthor.lastName)
+        // console.log("** Errors-Group: ", errors, "\nVal la-fn: ", values.lastAuthor.lastName)
         if (values.lastAuthor.firstName === '' &&
             values.lastAuthor.lastName === '' &&
             values.lastAuthor.email === '') {
             if (validLastAuthorGroupFields.lastAuthor.group &&
                 validLastAuthorGroupFields.lastAuthor.groupEmail) {
                 delete errors.lastAuthor;
-                console.log("\n** Clearing lastAuthorError, Group fields all Valid: \nErrors: ", errors)
+                // console.log("\n** Clearing lastAuthorError, Group fields all Valid: \nErrors: ", errors)
             }
         }
 
@@ -354,33 +355,50 @@ const MyEnhancedForm = withFormik({
             errors.url = 'Required';
         }
 
-        // TODO: Tie validation for author and email together
-        // Corresponding Author -- will include 1 name field and email
-        // if (!values.authors.corresponding_author) {
-        //     // errors = { authors: { corresponding_author: 'Required' } }  // Resets errors, but looses existing values
-        //     let corr_auth_error = { authors: { corresponding_author: 'Required' } }
-        //     Object.assign(errors, corr_auth_error)
-        //     console.log("** CorrAuth Error", errors);
-        // }
+        /**
+         * Corresponding Authors
+         * First name
+         * Last name
+         * Email
+         */
+        let caErrors = []
 
-        // Email
-        // if (!values.correspondingAuthors.email) {
-        //     let corr_auth_email = { correspondingAuthors: { email: 'Required' } }
-        //     Object.assign(errors, corr_auth_email)
-        // } else if (
-        //     !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-        //         values.correspondingAuthors.email
-        //     )
-        // ) {
-        //     errors.correspondingAuthors.email = 'Invalid email address';
-        // }
+        if (values.correspondingAuthors) {
+            values.correspondingAuthors.forEach(function (corrAuthor, index) {
 
-        // Pre-print name
-        // Pre-print DOI
+                let corrAuthorError = { firstName: undefined, lastName: undefined, email: undefined }
 
-        // Embargo date
-        // console.log("** Date: ", values.date);
+                if (corrAuthor.firstName === '') {
+                    corrAuthorError.firstName = 'Required';
 
+                    caErrors[index] = corrAuthorError
+
+                    let caTest = { correspondingAuthors: caErrors }
+                    Object.assign(errors, caTest)
+                }
+                if (corrAuthor.lastName === '') {
+                    corrAuthorError.lastName = 'Required';
+                    caErrors[index] = corrAuthorError
+
+                    let caTest = { correspondingAuthors: caErrors }
+                    Object.assign(errors, caTest)
+
+                }
+                if (corrAuthor.email === '') {
+                    corrAuthorError.email = 'Required';
+                    caErrors[index] = corrAuthorError
+
+                    let caTest = { correspondingAuthors: caErrors }
+                    Object.assign(errors, caTest)
+
+                }
+            })
+        }
+
+        // PrePrint server name
+        if (values.prePrintServer && values.prePrintServer.length > 240) {
+            errors.prePrintServer = 'The PrePrint server field is limited to 240 characters.'
+        }
 
         return errors;
     },
