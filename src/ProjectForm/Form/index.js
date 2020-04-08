@@ -16,6 +16,8 @@ import {
     DisplayFormikState,
 } from './helper.js';
 import { isBlock } from 'typescript';
+import axios from 'axios';
+import API_CLIENT from '../../apiClient';
 
 
 const useStyles = makeStyles(theme => ({
@@ -172,7 +174,7 @@ const MyEnhancedForm = withFormik({
         firstAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
         lastAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
         correspondingAuthors: [{ firstName: '', lastName: '', email: '' }],
-        prePrintServer: '', preprintServerDOI: '',
+        prePrintServer: '', preprintServerDOI: '', embargoDate: undefined,
         embargoUntilPublished: true
     }),
 
@@ -400,20 +402,42 @@ const MyEnhancedForm = withFormik({
 
 
 const createBodyOfWork = (processedValues) => {
-    // Add value of "groupEmail" to "email"
+    // Add value of "groupEmail" to "email" for First Author
     if (processedValues.firstAuthor.groupEmail !== '') {
         processedValues.firstAuthor.email = processedValues.firstAuthor.groupEmail;
         delete processedValues.firstAuthor.groupEmail
     }
+    // Add value of "groupEmail" to "email" for First Author
     if (processedValues.lastAuthor.groupEmail !== '') {
         processedValues.lastAuthor.email = processedValues.lastAuthor.groupEmail;
         delete processedValues.lastAuthor.groupEmail
     }
+    // Format Embargo date to YYYY-MM-DD
+    let date = new Date(processedValues.embargoDate)
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1
+    let day = date.getDate();
+    processedValues.embargoDate = `${year}-${month}-${day}`;
 
     // Remove any properties with an empty string value
     removeEmpty(processedValues)
-    console.log("** PV: ", processedValues)
-    alert(JSON.stringify(processedValues, null, 2));
+
+    // Create Body of Work
+    const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
+    axios.post(BASE_URI + 'bodyofwork', processedValues,
+        // {
+        //     headers: {
+        //         'Authorization': 'Bearer ' + this.accessToken,
+        //     }
+        // }
+    ).then(response => {
+        console.log("** BOW Resp: ", response)
+        // Redirect to Body of Work details page
+
+    })
+        .catch(error => {
+            console.log(error);
+        })
 }
 
 
