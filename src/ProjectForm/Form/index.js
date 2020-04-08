@@ -18,6 +18,7 @@ import {
 import { isBlock } from 'typescript';
 import axios from 'axios';
 import API_CLIENT from '../../apiClient';
+import history from '../../history';
 
 
 const useStyles = makeStyles(theme => ({
@@ -419,7 +420,8 @@ const MyEnhancedForm = withFormik({
 })(MyForm);
 
 
-const createBodyOfWork = (processedValues) => {
+const createBodyOfWork = async (processedValues) => {
+    // const createBodyOfWork = (processedValues) => {
     // Add value of "groupEmail" to "email" for First Author
     if (processedValues.firstAuthor.groupEmail !== '') {
         processedValues.firstAuthor.email = processedValues.firstAuthor.groupEmail;
@@ -442,16 +444,18 @@ const createBodyOfWork = (processedValues) => {
 
     // Create Body of Work
     const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
-    axios.post(BASE_URI + 'bodyofwork', processedValues,
+
+    await axios.post(BASE_URI + 'bodyofwork', processedValues,
         // {
         //     headers: {
         //         'Authorization': 'Bearer ' + this.accessToken,
         //     }
         // }
     ).then(response => {
-        console.log("** BOW Resp: ", response)
+        console.log("** BOW Resp: ", response, "\n", response.data)
         // Redirect to Body of Work details page
-
+        let bodyOfWorkId = response.data.bodyOfWorkId;
+        return history.push(`${process.env.PUBLIC_URL}/${bodyOfWorkId}`);
     })
         .catch(error => {
             console.log(error);

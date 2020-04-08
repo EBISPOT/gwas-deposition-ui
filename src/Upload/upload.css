@@ -71,7 +71,7 @@ button {
   font-size: 14px;
   display: inline-block;
   height: 36px;
-  /* min-width: 88px; Breaks BasicDatePicker */
+  /* min-width: 88px; // this breaks BasicDatePicker display of days */
   padding: 6px 16px;
   line-height: 1.42857143;
   text-align: center;
