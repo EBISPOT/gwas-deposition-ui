@@ -65,7 +65,7 @@ const App = ({ classes }) => (
             <Route path={`${process.env.PUBLIC_URL}/submission/:submission_id`} exact render={props => <SubmissionDetails {...props} />} />
             <Route path={`${process.env.PUBLIC_URL}/submission_questions`} component={TextMobileStepper}></Route>
             <Route path={`${process.env.PUBLIC_URL}/form`} component={Form}></Route>
-            <Route path={`${process.env.PUBLIC_URL}/:gcp_id`} exact render={props => <ProjectDetails {...props} />} />
+            <Route path={`${process.env.PUBLIC_URL}/bodyofwork/:gcp_id`} exact render={props => <ProjectDetails {...props} />} />
             <Route path={`${process.env.PUBLIC_URL}/error`} component={ErrorPage} />
           </main>
         </div>

@@ -630,7 +630,7 @@ export const Description = props => {
     return (
         <Grid item xs={12}>
             <FormControl className={classes.margin}>
-                <InputLabel shrink htmlFor="description" className={classes.label}>
+                <InputLabel shrink required htmlFor="description" className={classes.label}>
                     Description
                 </InputLabel>
 
@@ -644,6 +644,7 @@ export const Description = props => {
                     value={values.description}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    error={errors.description && touched.description}
                     style={{ width: 600 }}
                 />
                 {errors.description &&

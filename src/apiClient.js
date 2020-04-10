@@ -111,6 +111,15 @@ class APIClient {
 
 
     /**
+     * Get details for Body of Work by GCP ID
+     * @param {*} gcpId
+     */
+    getBodyOfWork(gcpId) {
+        return this.perform('get', '/bodyofwork/' + gcpId);
+    }
+
+
+    /**
      * Get Submission by Id
      * @param {} submissionId
      */

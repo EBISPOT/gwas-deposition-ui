@@ -199,6 +199,9 @@ const MyEnhancedForm = withFormik({
         /**
          * Description
          */
+        if (!values.description) {
+            errors.description = 'Required';
+        }
         if (values.description && values.description.length > 4000) {
             errors.description = 'The project description field is limited to 4000 characters.'
         }
@@ -455,7 +458,7 @@ const createBodyOfWork = async (processedValues) => {
         console.log("** BOW Resp: ", response, "\n", response.data)
         // Redirect to Body of Work details page
         let bodyOfWorkId = response.data.bodyOfWorkId;
-        return history.push(`${process.env.PUBLIC_URL}/${bodyOfWorkId}`);
+        return history.push(`${process.env.PUBLIC_URL}/bodyofwork/${bodyOfWorkId}`);
     })
         .catch(error => {
             console.log(error);
