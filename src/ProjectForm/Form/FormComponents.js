@@ -209,12 +209,16 @@ export const FirstAuthorName = (props) => {
                             disabled={values.firstAuthor.group !== '' ||
                                 values.firstAuthor.groupEmail !== ''}
                             error={errors.firstAuthor && touched.firstAuthor &&
-                                errors.firstAuthor.firstName && touched.firstAuthor.firstName}
+                                errors.firstAuthor.firstName && touched.firstAuthor.firstName &&
+                                (values.firstAuthor.group === '')}
                             style={{ width: 300 }}
                         />
-                        {errors.firstAuthor && touched.firstAuthor &&
+
+                        {
+                            errors.firstAuthor && touched.firstAuthor &&
                             errors.firstAuthor.firstName &&
-                            touched.firstAuthor.firstName && (
+                            touched.firstAuthor.firstName &&
+                            (values.firstAuthor.group === '') && (
                                 <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
                                     {errors.firstAuthor.firstName}
                                 </div>
@@ -242,12 +246,14 @@ export const FirstAuthorName = (props) => {
                             disabled={values.firstAuthor.group !== '' ||
                                 values.firstAuthor.groupEmail !== ''}
                             error={errors.firstAuthor && touched.firstAuthor &&
-                                errors.firstAuthor.lastName && touched.firstAuthor.lastName}
+                                errors.firstAuthor.lastName && touched.firstAuthor.lastName &&
+                                (values.firstAuthor.group === '')}
                             style={{ width: 300 }}
                         />
                         {errors.firstAuthor && touched.firstAuthor &&
                             errors.firstAuthor.lastName &&
-                            touched.firstAuthor.lastName && (
+                            touched.firstAuthor.lastName &&
+                            (values.firstAuthor.group === '') && (
                                 <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
                                     {errors.firstAuthor.lastName}
                                 </div>
@@ -275,12 +281,14 @@ export const FirstAuthorName = (props) => {
                             disabled={values.firstAuthor.group !== '' ||
                                 values.firstAuthor.groupEmail !== ''}
                             error={errors.firstAuthor && touched.firstAuthor &&
-                                errors.firstAuthor.email && touched.firstAuthor.email}
+                                errors.firstAuthor.email && touched.firstAuthor.email &&
+                                (values.firstAuthor.group === '')}
                             style={{ width: 300 }}
                         />
                         {errors.firstAuthor && touched.firstAuthor &&
                             errors.firstAuthor.email &&
-                            touched.firstAuthor.email && (
+                            touched.firstAuthor.email &&
+                            (values.firstAuthor.group === '') && (
                                 <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
                                     {errors.firstAuthor.email}
                                 </div>
@@ -329,12 +337,14 @@ export const FirstAuthorName = (props) => {
                                 values.firstAuthor.lastName !== '' ||
                                 values.firstAuthor.email !== ''}
                             error={errors.firstAuthor && touched.firstAuthor &&
-                                errors.firstAuthor.group && touched.firstAuthor.group}
+                                errors.firstAuthor.group && touched.firstAuthor.group &&
+                                (values.firstAuthor.firstName === '')}
                             style={{ width: 300 }}
                         />
                         {errors.firstAuthor && touched.firstAuthor &&
                             errors.firstAuthor.group &&
-                            touched.firstAuthor.group && (
+                            touched.firstAuthor.group &&
+                            (values.firstAuthor.firstName === '') && (
                                 <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
                                     {errors.firstAuthor.group}
                                 </div>
@@ -363,12 +373,14 @@ export const FirstAuthorName = (props) => {
                                 values.firstAuthor.lastName !== '' ||
                                 values.firstAuthor.email !== ''}
                             error={errors.firstAuthor && touched.firstAuthor &&
-                                errors.firstAuthor.groupEmail && touched.firstAuthor.groupEmail}
+                                errors.firstAuthor.groupEmail && touched.firstAuthor.groupEmail &&
+                                (values.firstAuthor.firstName === '')}
                             style={{ width: 300 }}
                         />
                         {errors.firstAuthor && touched.firstAuthor &&
                             errors.firstAuthor.groupEmail &&
-                            touched.firstAuthor.groupEmail && (
+                            touched.firstAuthor.groupEmail &&
+                            (values.firstAuthor.firstName === '') && (
                                 <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
                                     {errors.firstAuthor.groupEmail}
                                 </div>

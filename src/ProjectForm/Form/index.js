@@ -212,6 +212,7 @@ const MyEnhancedForm = withFormik({
          * Last name
          * Email
          * Group
+         * Group email
          */
         let firstAuthorError = {
             firstAuthor: {
@@ -220,37 +221,74 @@ const MyEnhancedForm = withFormik({
             }
         }
 
+        // Object to track valid FirstAuthor name values to clear "errors" object
+        let validFirstAuthorNameFields = { firstAuthor: { firstName: true, lastName: true, email: true } }
+
         if (!values.firstAuthor.firstName) {
             firstAuthorError.firstAuthor.firstName = 'Required';
             Object.assign(errors, firstAuthorError);
-        }
-        if (values.firstAuthor && values.firstAuthor.firstName > 50) {
-            firstAuthorError.firstAuthor.firstName = 'The first name is limited to 50 characters.'
-            Object.assign(errors, firstAuthorError);
+            validFirstAuthorNameFields.firstAuthor.firstName = false;
         }
 
         if (!values.firstAuthor.lastName) {
             firstAuthorError.firstAuthor.lastName = 'Required';
             Object.assign(errors, firstAuthorError);
-        }
-        if (values.firstAuthor && values.firstAuthor.lastName > 50) {
-            firstAuthorError.firstAuthor.lastName = 'The last name is limited to 50 characters.'
-            Object.assign(errors, firstAuthorError);
+            validFirstAuthorNameFields.firstAuthor.lastName = false;
         }
 
         if (!values.firstAuthor.email) {
             firstAuthorError.firstAuthor.email = 'Required';
             Object.assign(errors, firstAuthorError);
+            validFirstAuthorNameFields.firstAuthor.email = false;
         } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
             values.firstAuthor.email)) {
             firstAuthorError.firstAuthor.email = 'Invalid email address';
             Object.assign(errors, firstAuthorError);
+            validFirstAuthorNameFields.lastAuthor.email = false;
         }
-        // First author - Group
-        // if (!values.firstAuthor.firstName) {
-        //     firstAuthorError.firstAuthor.firstName = 'Required';
-        //     Object.assign(errors, firstAuthorError);
-        // }
+
+        // Clear errors for FirstAuthor _if_ firstName, lastName, email are valid
+        if (validFirstAuthorNameFields.firstAuthor.firstName &&
+            validFirstAuthorNameFields.firstAuthor.lastName &&
+            validFirstAuthorNameFields.firstAuthor.email) {
+            delete errors.firstAuthor;
+        }
+
+
+        // Object to track valid First Author Group values to clear "errors" object
+        let validFirstAuthorGroupFields = { firstAuthor: { group: true, groupEmail: true } }
+
+        if (!validFirstAuthorGroupFields.firstAuthor.firstName &&
+            !validFirstAuthorGroupFields.firstAuthor.lastName &&
+            !validFirstAuthorGroupFields.firstAuthor.email) {
+            if (!values.firstAuthor.group) {
+                firstAuthorError.firstAuthor.group = 'Required';
+                Object.assign(errors, firstAuthorError);
+                validFirstAuthorGroupFields.firstAuthor.group = false;
+            }
+
+            if (!values.firstAuthor.groupEmail) {
+                firstAuthorError.firstAuthor.groupEmail = 'Required';
+                Object.assign(errors, firstAuthorError);
+                validFirstAuthorGroupFields.firstAuthor.groupEmail = false;
+            } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                values.firstAuthor.groupEmail)) {
+                firstAuthorError.firstAuthor.groupEmail = 'Invalid email address';
+                Object.assign(errors, firstAuthorError);
+                validFirstAuthorGroupFields.firstAuthor.groupEmail = false;
+            }
+        }
+
+        // Clear errors for FirstAuthor - firstName, lastName, email _if_ group and groupEmail are valid
+        if (values.firstAuthor.firstName === '' &&
+            values.firstAuthor.lastName === '' &&
+            values.firstAuthor.email === '') {
+            if (validFirstAuthorGroupFields.firstAuthor.group &&
+                validFirstAuthorGroupFields.firstAuthor.groupEmail) {
+                delete errors.firstAuthor;
+                // console.log("\n** Clearing firstAuthorError, Group fields all Valid: \nErrors: ", errors)
+            }
+        }
 
 
         /**
@@ -258,6 +296,8 @@ const MyEnhancedForm = withFormik({
          * First name
          * Last name
          * Email
+         * Group
+         * Group email
          */
         let lastAuthorError = {
             lastAuthor: {
@@ -306,7 +346,7 @@ const MyEnhancedForm = withFormik({
         }
 
 
-        // Object to track valid Group values to clear "errors" object
+        // Object to track valid Last Author Group values to clear "errors" object
         let validLastAuthorGroupFields = { lastAuthor: { group: true, groupEmail: true } }
 
         if (!validLastAuthorNameFields.lastAuthor.firstName &&
@@ -354,10 +394,6 @@ const MyEnhancedForm = withFormik({
             errors.title = 'The title journal is limited to 250 characters.'
         }
 
-        // Journal article DOI/URL
-        if (!values.url) {
-            errors.url = 'Required';
-        }
 
         /**
          * Corresponding Authors
