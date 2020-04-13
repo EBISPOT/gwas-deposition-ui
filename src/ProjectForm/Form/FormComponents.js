@@ -97,7 +97,13 @@ const CustomKeyboardDatePicker = withStyles(theme => ({
             },
         },
         '& .MuiInputBase-root': {
-            color: 'gray'
+            color: 'black',
+            '&.Mui-error': {
+                color: 'red'
+            },
+        },
+        '& .MuiFormHelperText-root': {
+            color: 'red',
         },
         margin: theme.spacing(1),
         // '& .MuiInputLabel-root': {
@@ -1033,6 +1039,17 @@ export const PrePrintDOI = props => {
 export const EmbargoDate = (props) => {
     const classes = useStyles();
 
+    const {
+        touched,
+        errors,
+    } = props;
+
+    // Handle change in touched.embargoDate after pressing "submit" button
+    let submittedTouch = true;
+    if (typeof touched.embargoDate === 'object') {
+        touched.embargoDate = submittedTouch
+    }
+
     // const maxDate = new Date('2025-01-01')
     const { setFieldValue } = useFormikContext();
     const [field] = useField(props); // ToDo: Resolve error: "Warning: Invalid field name. Either pass `useField` a string or an object containing a `name` key."
@@ -1043,24 +1060,25 @@ export const EmbargoDate = (props) => {
                 <hr />
                 <Typography gutterBottom variant="body1" className={classes.header}>
                     Embargo Date
-            </Typography>
+                </Typography>
             </Grid>
 
             <Grid item>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <InputLabel shrink required htmlFor="embargoDate" className={classes.embargoDateLabel}>
                         Embargo Date (Month/Day/Year)
-                </InputLabel>
+                    </InputLabel>
 
                     <CustomKeyboardDatePicker
                         {...field}
-                        {...props}
+                        id="embargoDate"
                         autoOk
                         disableToolbar
                         variant="inline"
                         inputVariant="outlined"
                         format="MM/dd/yyyy"
-                        id="embargoDate"
+                        invalidDateMessage="" // Use Formik "errors"
+                        error={errors.embargoDate && touched.embargoDate}
                         minDate={new Date()}
                         // maxDate={maxDate}
                         selected={(field.value && new Date(field.value)) || null}
@@ -1073,6 +1091,12 @@ export const EmbargoDate = (props) => {
                         }}
                     />
                 </MuiPickersUtilsProvider>
+                {errors.embargoDate &&
+                    touched.embargoDate && (
+                        <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                            {errors.embargoDate}
+                        </div>
+                    )}
             </Grid>
         </Fragment>
     );

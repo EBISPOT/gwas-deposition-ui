@@ -138,7 +138,7 @@ const MyForm = props => {
 
                 <PrePrintDOI {...props} />
 
-                <EmbargoDate name="embargoDate" />
+                <EmbargoDate {...props} name="embargoDate" />
 
                 <EmbargoDateCheckbox />
 
@@ -174,7 +174,7 @@ const MyEnhancedForm = withFormik({
         firstAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
         lastAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
         correspondingAuthors: [{ firstName: '', lastName: '', email: '' }],
-        prePrintServer: '', preprintServerDOI: '', embargoDate: undefined,
+        prePrintServer: '', preprintServerDOI: '', embargoDate: new Date(),
         embargoUntilPublished: true
     }),
 
@@ -250,7 +250,6 @@ const MyEnhancedForm = withFormik({
             delete errors.firstAuthor;
         }
 
-
         // Object to track valid First Author Group values to clear "errors" object
         let validFirstAuthorGroupFields = { firstAuthor: { group: true, groupEmail: true } }
 
@@ -284,7 +283,6 @@ const MyEnhancedForm = withFormik({
                 delete errors.firstAuthor;
             }
         }
-
 
         /**
          * Last Author Validation for fields:
@@ -334,7 +332,6 @@ const MyEnhancedForm = withFormik({
             delete errors.lastAuthor;
         }
 
-
         // Object to track valid Last Author Group values to clear "errors" object
         let validLastAuthorGroupFields = { lastAuthor: { group: true, groupEmail: true } }
 
@@ -369,8 +366,6 @@ const MyEnhancedForm = withFormik({
             }
         }
 
-
-
         /**
          * Journal name
          */
@@ -380,7 +375,6 @@ const MyEnhancedForm = withFormik({
         if (values.journal && values.journal.length > 250) {
             errors.title = 'The title journal is limited to 250 characters.'
         }
-
 
         /**
          * Corresponding Authors
@@ -422,16 +416,22 @@ const MyEnhancedForm = withFormik({
             })
         }
 
-        // PrePrint server name
+        /**
+         * PrePrint server name
+         */
         if (values.prePrintServer && values.prePrintServer.length > 240) {
             errors.prePrintServer = 'The PrePrint server field is limited to 240 characters.'
         }
 
-        // Embargo date
-        // if (!values.embargoDate) {
-        //     console.log("** Embargo  Date Required: ", values.embargoDate)
-        //     errors.embargoDate = 'Required'
-        // }
+        /**
+         * Embargo date
+         */
+        if (!values.embargoDate) {
+            errors.embargoDate = 'Required'
+        }
+        if (values.embargoDate && isNaN(Date.parse(values.embargoDate))) {
+            errors.embargoDate = "Valid date format MM/DD/YYYY required."
+        }
 
         return errors;
     },
