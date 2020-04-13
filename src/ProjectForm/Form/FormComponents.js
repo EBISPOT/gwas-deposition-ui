@@ -130,7 +130,7 @@ export const Title = (props) => {
         handleChange,
         handleBlur,
     } = props;
-    console.log("** PROP TEST: ", props.test)
+    // console.log("** PROP TEST: ", props.test)
     return (
         <Grid item>
             <FormControl className={classes.margin}>
@@ -192,7 +192,7 @@ export const FirstAuthorName = (props) => {
                 <Grid item >
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink required htmlFor="firstName"
+                            shrink required htmlFor="firstAuthor.firstName"
                             className={classes.label}
                         >
                             First Name/Given Name
@@ -229,7 +229,7 @@ export const FirstAuthorName = (props) => {
                 <Grid item >
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink required htmlFor="lastName"
+                            shrink required htmlFor="firstAuthor.lastName"
                             className={classes.label}
                         >
                             Last Name/Surname
@@ -264,11 +264,11 @@ export const FirstAuthorName = (props) => {
                 <Grid item >
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink required htmlFor="email"
+                            shrink required htmlFor="firstAuthor.email"
                             className={classes.label}
                         >
                             Email
-                </InputLabel>
+                        </InputLabel>
 
                         <CssTextField
                             id="firstAuthor.email"
@@ -319,7 +319,7 @@ export const FirstAuthorName = (props) => {
                 <Grid item >
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink required htmlFor="group"
+                            shrink required htmlFor="firstAuthor.group"
                             className={classes.label}
                         >
                             Consortium name
@@ -355,7 +355,7 @@ export const FirstAuthorName = (props) => {
                 <Grid item >
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink required htmlFor="groupEmail"
+                            shrink required htmlFor="firstAuthor.groupEmail"
                             className={classes.label}
                         >
                             Email
@@ -1035,7 +1035,7 @@ export const EmbargoDate = (props) => {
 
     // const maxDate = new Date('2025-01-01')
     const { setFieldValue } = useFormikContext();
-    const [field] = useField(props);
+    const [field] = useField(props); // ToDo: Resolve error: "Warning: Invalid field name. Either pass `useField` a string or an object containing a `name` key."
 
     return (
         <Fragment>

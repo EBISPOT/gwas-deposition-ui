@@ -138,7 +138,6 @@ const MyForm = props => {
 
                 <PrePrintDOI {...props} />
 
-                {/* <EmbargoDate name="date" /> */}
                 <EmbargoDate name="embargoDate" />
 
                 <EmbargoDateCheckbox />
@@ -182,9 +181,6 @@ const MyEnhancedForm = withFormik({
     // Custom sync validation
     validate: values => {
         let errors = {};
-
-        // console.log("\n** All Values: ", values);
-        // console.log("** All Errors: ", errors);
 
         /**
          * Title
@@ -258,9 +254,9 @@ const MyEnhancedForm = withFormik({
         // Object to track valid First Author Group values to clear "errors" object
         let validFirstAuthorGroupFields = { firstAuthor: { group: true, groupEmail: true } }
 
-        if (!validFirstAuthorGroupFields.firstAuthor.firstName &&
-            !validFirstAuthorGroupFields.firstAuthor.lastName &&
-            !validFirstAuthorGroupFields.firstAuthor.email) {
+        if (!validFirstAuthorNameFields.firstAuthor.firstName &&
+            !validFirstAuthorNameFields.firstAuthor.lastName &&
+            !validFirstAuthorNameFields.firstAuthor.email) {
             if (!values.firstAuthor.group) {
                 firstAuthorError.firstAuthor.group = 'Required';
                 Object.assign(errors, firstAuthorError);
@@ -286,7 +282,6 @@ const MyEnhancedForm = withFormik({
             if (validFirstAuthorGroupFields.firstAuthor.group &&
                 validFirstAuthorGroupFields.firstAuthor.groupEmail) {
                 delete errors.firstAuthor;
-                // console.log("\n** Clearing firstAuthorError, Group fields all Valid: \nErrors: ", errors)
             }
         }
 
@@ -309,12 +304,10 @@ const MyEnhancedForm = withFormik({
         // Object to track valid LastAuthor name values to clear "errors" object
         let validLastAuthorNameFields = { lastAuthor: { firstName: true, lastName: true, email: true } }
 
-        // if (!validLastAuthorNameFields) {
         if (!values.lastAuthor.firstName) {
             lastAuthorError.lastAuthor.firstName = 'Required';
             Object.assign(errors, lastAuthorError);
             validLastAuthorNameFields.lastAuthor.firstName = false;
-            // console.log("** la-fn: ", errors, validLastAuthorNameFields)
         }
 
         if (!values.lastAuthor.lastName) {
@@ -333,16 +326,12 @@ const MyEnhancedForm = withFormik({
             Object.assign(errors, lastAuthorError);
             validLastAuthorNameFields.lastAuthor.email = false;
         }
-        // }
-
-        // console.log("** LA VALID Name: ", validLastAuthorNameFields)
 
         // Clear errors for LastAuthor _if_ firstName, lastName, email are valid
         if (validLastAuthorNameFields.lastAuthor.firstName &&
             validLastAuthorNameFields.lastAuthor.lastName &&
             validLastAuthorNameFields.lastAuthor.email) {
             delete errors.lastAuthor;
-            // console.log("\n** Clearing lastAuthorError, Name fields all Valid: \nErrors: ", errors)
         }
 
 
@@ -369,19 +358,17 @@ const MyEnhancedForm = withFormik({
                 validLastAuthorGroupFields.lastAuthor.groupEmail = false;
             }
         }
-        // console.log("** LA VALID Name: ", validLastAuthorNameFields)
 
         // Clear errors for LastAuthor - firstName, lastName, email _if_ group and groupEmail are valid
-        // console.log("** Errors-Group: ", errors, "\nVal la-fn: ", values.lastAuthor.lastName)
         if (values.lastAuthor.firstName === '' &&
             values.lastAuthor.lastName === '' &&
             values.lastAuthor.email === '') {
             if (validLastAuthorGroupFields.lastAuthor.group &&
                 validLastAuthorGroupFields.lastAuthor.groupEmail) {
                 delete errors.lastAuthor;
-                // console.log("\n** Clearing lastAuthorError, Group fields all Valid: \nErrors: ", errors)
             }
         }
+
 
 
         /**
@@ -440,6 +427,12 @@ const MyEnhancedForm = withFormik({
             errors.prePrintServer = 'The PrePrint server field is limited to 240 characters.'
         }
 
+        // Embargo date
+        // if (!values.embargoDate) {
+        //     console.log("** Embargo  Date Required: ", values.embargoDate)
+        //     errors.embargoDate = 'Required'
+        // }
+
         return errors;
     },
 
@@ -449,8 +442,10 @@ const MyEnhancedForm = withFormik({
             let valuesCopy = {};
             valuesCopy = JSON.parse(JSON.stringify(values));
 
-            createBodyOfWork(valuesCopy)
-            // alert(JSON.stringify(valuesCopy, null, 2));
+            // Post form data to bodyofwork endpoint
+            // createBodyOfWork(valuesCopy)
+
+            alert(JSON.stringify(valuesCopy, null, 2));
             setSubmitting(false);
         }, 1000);
     },
@@ -460,7 +455,6 @@ const MyEnhancedForm = withFormik({
 
 
 const createBodyOfWork = async (processedValues) => {
-    // const createBodyOfWork = (processedValues) => {
     // Add value of "groupEmail" to "email" for First Author
     if (processedValues.firstAuthor.groupEmail !== '') {
         processedValues.firstAuthor.email = processedValues.firstAuthor.groupEmail;
