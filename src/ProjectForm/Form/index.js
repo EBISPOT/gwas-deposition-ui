@@ -6,6 +6,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
 import ElixirAuthService from '../../ElixirAuthService';
 import jwt_decode from 'jwt-decode';
+import { Persist } from 'formik-persist'
 
 import {
     Header, Title, Description, JournalName, JournalURL,
@@ -144,6 +145,8 @@ const MyForm = props => {
 
                 <EmbargoDateCheckbox />
 
+                <Persist name="form_data" />
+
                 <Button
                     type="button"
                     className={classes.buttonReset}
@@ -158,6 +161,7 @@ const MyForm = props => {
                     type="submit"
                     disabled={isSubmitting}
                     className={classes.button}
+                    onClick={checkUserAuthStatus}
                 >
                     Submit
                     </Button>
@@ -171,24 +175,11 @@ const MyForm = props => {
 };
 
 const MyEnhancedForm = withFormik({
-    // mapPropsToValues: (props) => ({
-    //     title: '', description: '', journal: '', url: '',
-    //     firstAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
-    //     lastAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
-    //     correspondingAuthors: [{ firstName: '', lastName: '', email: '' }],
-    //     prePrintServer: '', preprintServerDOI: '', embargoDate: new Date(),
-    //     embargoUntilPublished: true
-    // }),
-
-
-    // TODO: Check localstorage for form values in case login needed before submit and
-    // are now being redirected back to the form
-    // Set values for debugging Auth process
     mapPropsToValues: (props) => ({
-        title: 'title', description: 'desc', journal: 'journal name', url: '',
-        firstAuthor: { firstName: 'a', lastName: 'b', email: 'a@b.com', group: '', groupEmail: '' },
-        lastAuthor: { firstName: '', lastName: '', email: '', group: 'cons', groupEmail: 'a@b.com' },
-        correspondingAuthors: [{ firstName: 'ca - first author', lastName: 'ca - last author', email: 'a@b.com' }],
+        title: '', description: '', journal: '', url: '',
+        firstAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
+        lastAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
+        correspondingAuthors: [{ firstName: '', lastName: '', email: '' }],
         prePrintServer: '', preprintServerDOI: '', embargoDate: new Date(),
         embargoUntilPublished: true
     }),
@@ -451,7 +442,9 @@ const MyEnhancedForm = withFormik({
         return errors;
     },
 
-    handleSubmit: (values, { setSubmitting }) => {
+    // handleSubmit: (values) => {
+    handleSubmit: (values, { setSubmitting, resetForm }) => {
+
         setTimeout(() => {
             // Create new object to modify
             let valuesCopy = {};
@@ -464,46 +457,58 @@ const MyEnhancedForm = withFormik({
 
             // alert(JSON.stringify(valuesCopy, null, 2));
             // setSubmitting(false) // With async call, Formik will automatically set to false once resolved
+
+            // Clear form_data values in localstorage
+            resetForm();
         }, 1000);
     },
-
     displayName: 'BasicForm', // helps with React DevTools
 })(MyForm);
 
 
-const createBodyOfWork = async (processedValues) => {
+/**
+ * Check if user is logged in and if token is still valid and if GDPR accepted.
+ */
+const checkUserAuthStatus = () => {
     const token = getToken().auth;
     const gdprAccepted = JSON.parse(localStorage.getItem('gdpr-accepted'));
     const eas = new ElixirAuthService();
 
-    // Check if user is logged in and if token is still valid and if GDPR accepted
     if (token && !eas.isTokenExpired(token) && gdprAccepted) {
-        // Create Body of Work
-        const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
-        const header = { headers: { 'Authorization': 'Bearer ' + token } }
-
-        let debug = true;
-        if (!debug) {
-            await axios.post(BASE_URI + 'bodyofwork', processedValues, header
-            ).then(response => {
-                console.log("** BOW Resp: ", response, "\n", response.data)
-                // Redirect to Body of Work details page
-                let bodyOfWorkId = response.data.bodyOfWorkId;
-                return history.push(`${process.env.PUBLIC_URL}/bodyofwork/${bodyOfWorkId}`);
-            })
-                .catch(error => {
-                    console.log(error);
-                })
-        }
-    }
-    else {
-        // TODO: Save form data into localstorage to retrieve to populate the form
+        return;
+    } else {
         if (!JSON.parse(gdprAccepted)) {
             history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: `/form` }));
         }
         else {
             history.push(`${process.env.PUBLIC_URL}/login`, ({ from: `/form` }));
         }
+    }
+    return;
+}
+
+/**
+ * Create BodyOfWork
+ * @param {*} processedValues 
+ * @param {*} userAuthToken 
+ */
+const createBodyOfWork = async (processedValues, userAuthToken) => {
+    const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
+    const header = { headers: { 'Authorization': 'Bearer ' + userAuthToken } }
+
+    let debug = false;
+    if (!debug) {
+        await axios.post(BASE_URI + 'bodyofwork', processedValues, header
+        ).then(response => {
+            console.log("** BOW Resp: ", response, "\n", response.data)
+
+            // Redirect to Body of Work details page
+            let bodyOfWorkId = response.data.bodyOfWorkId;
+            return history.push(`${process.env.PUBLIC_URL}/bodyofwork/${bodyOfWorkId}`);
+        })
+            .catch(error => {
+                console.log(error);
+            })
     }
 }
 
