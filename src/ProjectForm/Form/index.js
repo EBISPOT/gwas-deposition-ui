@@ -1,9 +1,11 @@
 import React from 'react';
 import './style.css';
 import { withFormik } from 'formik';
-import { Grid, TextField, Button, Typography, FormControl, InputLabel } from '@material-ui/core';
-import { makeStyles, withStyles, fade } from '@material-ui/core/styles';
+import { Grid, Button, Typography } from '@material-ui/core';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
+import ElixirAuthService from '../../ElixirAuthService';
+import jwt_decode from 'jwt-decode';
 
 import {
     Header, Title, Description, JournalName, JournalURL,
@@ -17,7 +19,7 @@ import {
 } from './helper.js';
 import { isBlock } from 'typescript';
 import axios from 'axios';
-import API_CLIENT from '../../apiClient';
+// import API_CLIENT from '../../apiClient';
 import history from '../../history';
 
 
@@ -169,11 +171,24 @@ const MyForm = props => {
 };
 
 const MyEnhancedForm = withFormik({
+    // mapPropsToValues: (props) => ({
+    //     title: '', description: '', journal: '', url: '',
+    //     firstAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
+    //     lastAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
+    //     correspondingAuthors: [{ firstName: '', lastName: '', email: '' }],
+    //     prePrintServer: '', preprintServerDOI: '', embargoDate: new Date(),
+    //     embargoUntilPublished: true
+    // }),
+
+
+    // TODO: Check localstorage for form values in case login needed before submit and
+    // are now being redirected back to the form
+    // Set values for debugging Auth process
     mapPropsToValues: (props) => ({
-        title: '', description: '', journal: '', url: '',
-        firstAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
-        lastAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
-        correspondingAuthors: [{ firstName: '', lastName: '', email: '' }],
+        title: 'title', description: 'desc', journal: 'journal name', url: '',
+        firstAuthor: { firstName: 'a', lastName: 'b', email: 'a@b.com', group: '', groupEmail: '' },
+        lastAuthor: { firstName: '', lastName: '', email: '', group: 'cons', groupEmail: 'a@b.com' },
+        correspondingAuthors: [{ firstName: 'ca - first author', lastName: 'ca - last author', email: 'a@b.com' }],
         prePrintServer: '', preprintServerDOI: '', embargoDate: new Date(),
         embargoUntilPublished: true
     }),
@@ -442,11 +457,13 @@ const MyEnhancedForm = withFormik({
             let valuesCopy = {};
             valuesCopy = JSON.parse(JSON.stringify(values));
 
-            // Post form data to bodyofwork endpoint
-            // createBodyOfWork(valuesCopy)
+            processValues(valuesCopy)
 
-            alert(JSON.stringify(valuesCopy, null, 2));
-            setSubmitting(false);
+            // Post form data to bodyofwork endpoint
+            createBodyOfWork(valuesCopy)
+
+            // alert(JSON.stringify(valuesCopy, null, 2));
+            // setSubmitting(false) // With async call, Formik will automatically set to false once resolved
         }, 1000);
     },
 
@@ -455,47 +472,74 @@ const MyEnhancedForm = withFormik({
 
 
 const createBodyOfWork = async (processedValues) => {
+    const token = getToken().auth;
+    const gdprAccepted = JSON.parse(localStorage.getItem('gdpr-accepted'));
+    const eas = new ElixirAuthService();
+
+    // Check if user is logged in and if token is still valid and if GDPR accepted
+    if (token && !eas.isTokenExpired(token) && gdprAccepted) {
+        // Create Body of Work
+        const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
+        const header = { headers: { 'Authorization': 'Bearer ' + token } }
+
+        let debug = true;
+        if (!debug) {
+            await axios.post(BASE_URI + 'bodyofwork', processedValues, header
+            ).then(response => {
+                console.log("** BOW Resp: ", response, "\n", response.data)
+                // Redirect to Body of Work details page
+                let bodyOfWorkId = response.data.bodyOfWorkId;
+                return history.push(`${process.env.PUBLIC_URL}/bodyofwork/${bodyOfWorkId}`);
+            })
+                .catch(error => {
+                    console.log(error);
+                })
+        }
+    }
+    else {
+        // TODO: Save form data into localstorage to retrieve to populate the form
+        if (!JSON.parse(gdprAccepted)) {
+            history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: `/form` }));
+        }
+        else {
+            history.push(`${process.env.PUBLIC_URL}/login`, ({ from: `/form` }));
+        }
+    }
+}
+
+/**
+ * Modify object before sending to BodyOfWork endpoint to
+ * match expected endpoint attributes.
+ * @param {*} formValues
+ */
+const processValues = (formValues) => {
     // Add value of "groupEmail" to "email" for First Author
-    if (processedValues.firstAuthor.groupEmail !== '') {
-        processedValues.firstAuthor.email = processedValues.firstAuthor.groupEmail;
-        delete processedValues.firstAuthor.groupEmail
+    if (formValues.firstAuthor.groupEmail !== '') {
+        formValues.firstAuthor.email = formValues.firstAuthor.groupEmail;
+        delete formValues.firstAuthor.groupEmail
     }
     // Add value of "groupEmail" to "email" for First Author
-    if (processedValues.lastAuthor.groupEmail !== '') {
-        processedValues.lastAuthor.email = processedValues.lastAuthor.groupEmail;
-        delete processedValues.lastAuthor.groupEmail
+    if (formValues.lastAuthor.groupEmail !== '') {
+        formValues.lastAuthor.email = formValues.lastAuthor.groupEmail;
+        delete formValues.lastAuthor.groupEmail
     }
     // Format Embargo date to YYYY-MM-DD
-    let date = new Date(processedValues.embargoDate)
+    let date = new Date(formValues.embargoDate)
     let year = date.getFullYear();
     let month = date.getMonth() + 1
     let day = date.getDate();
-    processedValues.embargoDate = `${year}-${month}-${day}`;
+    formValues.embargoDate = `${year}-${month}-${day}`;
 
     // Remove any properties with an empty string value
-    removeEmpty(processedValues)
+    removeEmpty(formValues)
 
-    // Create Body of Work
-    const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
-
-    await axios.post(BASE_URI + 'bodyofwork', processedValues,
-        // {
-        //     headers: {
-        //         'Authorization': 'Bearer ' + this.accessToken,
-        //     }
-        // }
-    ).then(response => {
-        console.log("** BOW Resp: ", response, "\n", response.data)
-        // Redirect to Body of Work details page
-        let bodyOfWorkId = response.data.bodyOfWorkId;
-        return history.push(`${process.env.PUBLIC_URL}/bodyofwork/${bodyOfWorkId}`);
-    })
-        .catch(error => {
-            console.log(error);
-        })
+    return formValues
 }
 
-
+/**
+ * Remove key/value when the value is empty.
+ * @param {} obj
+ */
 const removeEmpty = (obj) => {
     Object.keys(obj).forEach(k =>
         (obj[k] && typeof obj[k] === 'object') && removeEmpty(obj[k]) ||
@@ -503,6 +547,21 @@ const removeEmpty = (obj) => {
     );
     return obj;
 };
+
+
+/**
+     * Check for token in local storage
+     * and parse out email if token is present.
+     */
+const getToken = () => {
+    let token = null;
+    let userEmail = null;
+    if (localStorage.getItem('id_token')) {
+        token = localStorage.getItem('id_token');
+        userEmail = jwt_decode(token).email;
+    }
+    return { authEmail: userEmail, auth: token };
+}
 
 
 const MaterialSyncValidationForm = () => (
