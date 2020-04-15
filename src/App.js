@@ -11,7 +11,7 @@ import ErrorPage from './ErrorPage';
 import Feedback from './Feedback';
 
 import Form from './ProjectForm/Form';
-import Test from './ProjectForm/Test';
+// import Test from './ProjectForm/Test';
 import TextMobileStepper from './ProjectForm/TextMobileStepper';
 
 import { Route } from "react-router-dom";
@@ -26,7 +26,7 @@ import PublicationDetails from './PublicationDetails';
 
 import ReactGA from 'react-ga';
 import history from "./history";
-import ProjectDetails from './ProjectDetails';
+import BodyOfWorkDetails from './BodyOfWorkDetails';
 
 ReactGA.initialize('UA-60195133-1');
 //Initialize google analytics page view tracking
@@ -65,7 +65,7 @@ const App = ({ classes }) => (
             <Route path={`${process.env.PUBLIC_URL}/submission/:submission_id`} exact render={props => <SubmissionDetails {...props} />} />
             <Route path={`${process.env.PUBLIC_URL}/submission_questions`} component={TextMobileStepper}></Route>
             <Route path={`${process.env.PUBLIC_URL}/form`} component={Form}></Route>
-            <Route path={`${process.env.PUBLIC_URL}/bodyofwork/:gcp_id`} exact render={props => <ProjectDetails {...props} />} />
+            <Route path={`${process.env.PUBLIC_URL}/bodyofwork/:gcp_id`} exact render={props => <BodyOfWorkDetails {...props} />} />
             <Route path={`${process.env.PUBLIC_URL}/error`} component={ErrorPage} />
           </main>
         </div>
