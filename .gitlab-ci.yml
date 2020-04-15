@@ -76,7 +76,7 @@ deploy-sandbox:
   environment:
     name: sandbox
   only:
-    - master
+    - develop
 
 deploy-fallback:
   image: dtzar/helm-kubectl:2.13.1
