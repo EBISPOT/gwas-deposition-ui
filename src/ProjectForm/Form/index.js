@@ -15,39 +15,19 @@ import {
 } from "./FormComponents";
 
 // Helper for the demo
-import {
-    DisplayFormikState,
-} from './helper.js';
+import { DisplayFormikState } from './helper.js';
 import { isBlock } from 'typescript';
+
 import axios from 'axios';
-// import API_CLIENT from '../../apiClient';
 import history from '../../history';
 
 
 const useStyles = makeStyles(theme => ({
-    // root: {
-    //     flexGrow: 1
-    // },
-    // root: {
-    //     '& .MuiTextField-root': {
-    //         // margin: theme.spacing(1),
-    //         // width: 400,
-    //     },
-    //     // '& .MuiFormLabel-root': {
-    //     //     '&.Mui-focused': {
-    //     //         color: "red",
-    //     //     },
-    //     // },
-    // },
     focused: {},
     label: {
         color: theme.palette.primary.main,
         fontSize: 22,
-        // "&.Mui-focused": {
-        //     color: "red"
-        // }
     },
-    // focused: {},
     margin: {
         margin: theme.spacing(1),
     },
@@ -100,26 +80,13 @@ const MyForm = props => {
     const test = true;
 
     const {
-        values,
-        touched,
-        errors,
         isSubmitting,
-        handleChange,
-        handleBlur,
         handleSubmit,
         handleReset,
-        setFieldValue,
         dirty,
     } = props;
     return (
         <div>
-            {/* <Grid container
-            direction="row"
-            justify="flex-start"
-            alignItems="flex-start"
-            > */}
-
-
             <form onSubmit={handleSubmit}>
                 <Header />
 
@@ -167,9 +134,7 @@ const MyForm = props => {
                     </Button>
 
                 <DisplayFormikState {...props} />
-
             </form>
-            {/* </Grid> */}
         </div>
     );
 };
@@ -468,7 +433,6 @@ const MyEnhancedForm = withFormik({
         return errors;
     },
 
-    // handleSubmit: (values) => {
     handleSubmit: (values, { setSubmitting, resetForm }) => {
 
         setTimeout(() => {
@@ -477,11 +441,11 @@ const MyEnhancedForm = withFormik({
             valuesCopy = JSON.parse(JSON.stringify(values));
 
             processValues(valuesCopy)
+            // alert(JSON.stringify(valuesCopy, null, 2));
 
             // Post form data to bodyofwork endpoint
             createBodyOfWork(valuesCopy)
 
-            // alert(JSON.stringify(valuesCopy, null, 2));
             // setSubmitting(false) // With async call, Formik will automatically set to false once resolved
 
             // Clear form_data values in localstorage
@@ -522,19 +486,16 @@ const createBodyOfWork = async (processedValues, userAuthToken) => {
     const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
     const header = { headers: { 'Authorization': 'Bearer ' + userAuthToken } }
 
-    let debug = false;
+    let debug = true;
     if (!debug) {
         await axios.post(BASE_URI + 'bodyofwork', processedValues, header
         ).then(response => {
-            console.log("** BOW Resp: ", response, "\n", response.data)
-
             // Redirect to Body of Work details page
             let bodyOfWorkId = response.data.bodyOfWorkId;
             return history.push(`${process.env.PUBLIC_URL}/bodyofwork/${bodyOfWorkId}`);
+        }).catch(error => {
+            console.log(error);
         })
-            .catch(error => {
-                console.log(error);
-            })
     }
 }
 
@@ -573,8 +534,8 @@ const processValues = (formValues) => {
  */
 const removeEmpty = (obj) => {
     Object.keys(obj).forEach(k =>
-        (obj[k] && typeof obj[k] === 'object') && removeEmpty(obj[k]) ||
-        (!obj[k] && obj[k] !== undefined) && delete obj[k]
+        ((obj[k] && typeof obj[k] === 'object') && removeEmpty(obj[k])) ||
+        ((!obj[k] && obj[k] !== undefined) && delete obj[k])
     );
     return obj;
 };

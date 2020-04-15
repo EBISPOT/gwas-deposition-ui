@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Grid, Box, Typography, TextField, Button, FormControl, FormControlLabel, InputLabel, Checkbox } from '@material-ui/core';
+import { Grid, Typography, TextField, Button, FormControl, FormControlLabel, InputLabel, Checkbox } from '@material-ui/core';
 import { makeStyles, withStyles, fade } from '@material-ui/core/styles';
 
 import 'date-fns';
@@ -410,9 +410,6 @@ export const LastAuthorName = (props) => {
         handleChange,
         handleBlur,
     } = props;
-
-    // console.log("\n** LA Errors: ", errors.lastAuthor);
-    // console.log("** LA Values: ", values.lastAuthor);
 
     return (
         <Fragment>
@@ -1118,8 +1115,6 @@ export const EmbargoDateCheckbox = (props) => {
 
     // const { setFieldValue } = useFormikContext();
     const [field] = useField(props);
-    // console.log("** Field: ", field);
-    // console.log("** Checked field value: ", field.value.embargoUntilPublished)
 
     return (
         <Grid item>
@@ -1134,39 +1129,5 @@ export const EmbargoDateCheckbox = (props) => {
                 label="Embargo until published"
             />
         </Grid>
-    )
-}
-
-
-export const DatePicker2 = props => {
-    const classes = useStyles();
-
-    const {
-        values,
-        touched,
-        errors,
-        handleChange,
-        handleBlur,
-    } = props;
-
-    return (
-        <Fragment>
-            <InputLabel shrink htmlFor="embargo_date2" className={classes.label}>
-                Embargo Date2
-            </InputLabel>
-
-            <TextField
-                id="embargo_date2"
-                type="date"
-                variant="outlined"
-                value={values.embargo_date2}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={classes.textField}
-                InputLabelProps={{
-                    shrink: true,
-                }}
-            />
-        </Fragment>
     )
 }
