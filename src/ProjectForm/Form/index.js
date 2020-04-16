@@ -79,10 +79,6 @@ const MyForm = props => {
 
     const isFieldRequired = true;
 
-    console.log("** PROP ANSWER: ", props.answer,
-        "\n** ID: ", JSON.parse(props.answer).answerId
-    )
-
     const {
         isSubmitting,
         handleSubmit,
@@ -92,9 +88,9 @@ const MyForm = props => {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                <Header />
+                {/* <Header /> */}
 
-                <Title {...props} required={isFieldRequired} />
+                <Title {...props} />
 
                 <Description {...props} />
 
@@ -105,7 +101,6 @@ const MyForm = props => {
                 {[1].includes(JSON.parse(props.answer).answerId) && (
                     <JournalURL {...props} />
                 )}
-
 
                 {[1, 2, 3].includes(JSON.parse(props.answer).answerId) && (
                     <Fragment>
@@ -189,14 +184,12 @@ const MyEnhancedForm = withFormik({
     validate: (values, props) => {
         let errors = {};
 
-        console.log("** MEF validate: ", props.answer)
         let answerPropsObj = JSON.parse(props.answer)
-        console.log("** APO-Validate: ", answerPropsObj)
 
         /**
          * Title
          */
-        if (!values.title) {
+        if (!values.title || /^\s*$/.test(values.title)) {
             errors.title = 'Required';
         }
         if (values.title && values.title.length > 350) {
@@ -206,7 +199,7 @@ const MyEnhancedForm = withFormik({
         /**
          * Description
          */
-        if (!values.description) {
+        if (!values.description || /^\s*$/.test(values.description)) {
             errors.description = 'Required';
         }
         if (values.description && values.description.length > 4000) {
@@ -217,13 +210,13 @@ const MyEnhancedForm = withFormik({
          * Journal URL
          */
         // From:  https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
+        var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+            '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
         if (answerPropsObj.answerId === 1) {
-            var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
-                '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-                '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-                '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
             if (values.url) {
                 if (!pattern.test(values.url)) {
                     errors.url = "Add valid URL"
@@ -234,12 +227,32 @@ const MyEnhancedForm = withFormik({
         /**
         * PrePrint URL
         */
-        if (values.preprintServerDOI) {
-            if (!pattern.test(values.preprintServerDOI)) {
-                errors.preprintServerDOI = "Add valid URL"
+        if ([3].includes(answerPropsObj.answerId)) {
+            if (!values.preprintServerDOI || /^\s*$/.test(values.preprintServerDOI)) {
+                errors.preprintServerDOI = 'Required'
+            }
+        }
+        if ([1, 2, 3].includes(answerPropsObj.answerId)) {
+            if (values.preprintServerDOI) {
+                if (!pattern.test(values.preprintServerDOI)) {
+                    errors.preprintServerDOI = "Add valid URL"
+                }
             }
         }
 
+        /**
+        * PrePrint server name
+        */
+        if ([3].includes(answerPropsObj.answerId)) {
+            if (!values.prePrintServer || /^\s*$/.test(values.prePrintServer)) {
+                errors.prePrintServer = 'Required'
+            }
+        }
+        if ([1, 2, 3].includes(answerPropsObj.answerId)) {
+            if (values.prePrintServer && values.prePrintServer.length > 240) {
+                errors.prePrintServer = 'The PrePrint server field is limited to 240 characters.'
+            }
+        }
 
         /**
          * First Author Validation for fields:
@@ -249,77 +262,79 @@ const MyEnhancedForm = withFormik({
          * Group
          * Group email
          */
-        let firstAuthorError = {
-            firstAuthor: {
-                firstName: undefined, lastName: undefined, email: undefined,
-                group: undefined, groupEmail: undefined
-            }
-        }
-
-        // Object to track valid FirstAuthor name values to clear "errors" object
-        let validFirstAuthorNameFields = { firstAuthor: { firstName: true, lastName: true, email: true } }
-
-        if (!values.firstAuthor.firstName) {
-            firstAuthorError.firstAuthor.firstName = 'Required';
-            Object.assign(errors, firstAuthorError);
-            validFirstAuthorNameFields.firstAuthor.firstName = false;
-        }
-
-        if (!values.firstAuthor.lastName) {
-            firstAuthorError.firstAuthor.lastName = 'Required';
-            Object.assign(errors, firstAuthorError);
-            validFirstAuthorNameFields.firstAuthor.lastName = false;
-        }
-
-        if (!values.firstAuthor.email) {
-            firstAuthorError.firstAuthor.email = 'Required';
-            Object.assign(errors, firstAuthorError);
-            validFirstAuthorNameFields.firstAuthor.email = false;
-        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-            values.firstAuthor.email)) {
-            firstAuthorError.firstAuthor.email = 'Invalid email address';
-            Object.assign(errors, firstAuthorError);
-            validFirstAuthorNameFields.lastAuthor.email = false;
-        }
-
-        // Clear errors for FirstAuthor _if_ firstName, lastName, email are valid
-        if (validFirstAuthorNameFields.firstAuthor.firstName &&
-            validFirstAuthorNameFields.firstAuthor.lastName &&
-            validFirstAuthorNameFields.firstAuthor.email) {
-            delete errors.firstAuthor;
-        }
-
-        // Object to track valid First Author Group values to clear "errors" object
-        let validFirstAuthorGroupFields = { firstAuthor: { group: true, groupEmail: true } }
-
-        if (!validFirstAuthorNameFields.firstAuthor.firstName &&
-            !validFirstAuthorNameFields.firstAuthor.lastName &&
-            !validFirstAuthorNameFields.firstAuthor.email) {
-            if (!values.firstAuthor.group) {
-                firstAuthorError.firstAuthor.group = 'Required';
-                Object.assign(errors, firstAuthorError);
-                validFirstAuthorGroupFields.firstAuthor.group = false;
+        if ([1, 2, 3].includes(answerPropsObj.answerId)) {
+            let firstAuthorError = {
+                firstAuthor: {
+                    firstName: undefined, lastName: undefined, email: undefined,
+                    group: undefined, groupEmail: undefined
+                }
             }
 
-            if (!values.firstAuthor.groupEmail) {
-                firstAuthorError.firstAuthor.groupEmail = 'Required';
+            // Object to track valid FirstAuthor name values to clear "errors" object
+            let validFirstAuthorNameFields = { firstAuthor: { firstName: true, lastName: true, email: true } }
+
+            if (!values.firstAuthor.firstName || /^\s*$/.test(values.firstAuthor.firstName)) {
+                firstAuthorError.firstAuthor.firstName = 'Required';
                 Object.assign(errors, firstAuthorError);
-                validFirstAuthorGroupFields.firstAuthor.groupEmail = false;
+                validFirstAuthorNameFields.firstAuthor.firstName = false;
+            }
+
+            if (!values.firstAuthor.lastName || /^\s*$/.test(values.firstAuthor.lastName)) {
+                firstAuthorError.firstAuthor.lastName = 'Required';
+                Object.assign(errors, firstAuthorError);
+                validFirstAuthorNameFields.firstAuthor.lastName = false;
+            }
+
+            if (!values.firstAuthor.email || /^\s*$/.test(values.firstAuthor.email)) {
+                firstAuthorError.firstAuthor.email = 'Required';
+                Object.assign(errors, firstAuthorError);
+                validFirstAuthorNameFields.firstAuthor.email = false;
             } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-                values.firstAuthor.groupEmail)) {
-                firstAuthorError.firstAuthor.groupEmail = 'Invalid email address';
+                values.firstAuthor.email)) {
+                firstAuthorError.firstAuthor.email = 'Invalid email address';
                 Object.assign(errors, firstAuthorError);
-                validFirstAuthorGroupFields.firstAuthor.groupEmail = false;
+                validFirstAuthorNameFields.lastAuthor.email = false;
             }
-        }
 
-        // Clear errors for FirstAuthor - firstName, lastName, email _if_ group and groupEmail are valid
-        if (values.firstAuthor.firstName === '' &&
-            values.firstAuthor.lastName === '' &&
-            values.firstAuthor.email === '') {
-            if (validFirstAuthorGroupFields.firstAuthor.group &&
-                validFirstAuthorGroupFields.firstAuthor.groupEmail) {
+            // Clear errors for FirstAuthor _if_ firstName, lastName, email are valid
+            if (validFirstAuthorNameFields.firstAuthor.firstName &&
+                validFirstAuthorNameFields.firstAuthor.lastName &&
+                validFirstAuthorNameFields.firstAuthor.email) {
                 delete errors.firstAuthor;
+            }
+
+            // Object to track valid First Author Group values to clear "errors" object
+            let validFirstAuthorGroupFields = { firstAuthor: { group: true, groupEmail: true } }
+
+            if (!validFirstAuthorNameFields.firstAuthor.firstName &&
+                !validFirstAuthorNameFields.firstAuthor.lastName &&
+                !validFirstAuthorNameFields.firstAuthor.email) {
+                if (!values.firstAuthor.group || /^\s*$/.test(values.firstAuthor.group)) {
+                    firstAuthorError.firstAuthor.group = 'Required';
+                    Object.assign(errors, firstAuthorError);
+                    validFirstAuthorGroupFields.firstAuthor.group = false;
+                }
+
+                if (!values.firstAuthor.groupEmail || /^\s*$/.test(values.firstAuthor.groupEmail)) {
+                    firstAuthorError.firstAuthor.groupEmail = 'Required';
+                    Object.assign(errors, firstAuthorError);
+                    validFirstAuthorGroupFields.firstAuthor.groupEmail = false;
+                } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                    values.firstAuthor.groupEmail)) {
+                    firstAuthorError.firstAuthor.groupEmail = 'Invalid email address';
+                    Object.assign(errors, firstAuthorError);
+                    validFirstAuthorGroupFields.firstAuthor.groupEmail = false;
+                }
+            }
+
+            // Clear errors for FirstAuthor - firstName, lastName, email _if_ group and groupEmail are valid
+            if (values.firstAuthor.firstName === '' &&
+                values.firstAuthor.lastName === '' &&
+                values.firstAuthor.email === '') {
+                if (validFirstAuthorGroupFields.firstAuthor.group &&
+                    validFirstAuthorGroupFields.firstAuthor.groupEmail) {
+                    delete errors.firstAuthor;
+                }
             }
         }
 
@@ -331,88 +346,92 @@ const MyEnhancedForm = withFormik({
          * Group
          * Group email
          */
-        let lastAuthorError = {
-            lastAuthor: {
-                firstName: undefined, lastName: undefined, email: undefined,
-                group: undefined, groupEmail: undefined
-            }
-        }
-
-        // Object to track valid LastAuthor name values to clear "errors" object
-        let validLastAuthorNameFields = { lastAuthor: { firstName: true, lastName: true, email: true } }
-
-        if (!values.lastAuthor.firstName) {
-            lastAuthorError.lastAuthor.firstName = 'Required';
-            Object.assign(errors, lastAuthorError);
-            validLastAuthorNameFields.lastAuthor.firstName = false;
-        }
-
-        if (!values.lastAuthor.lastName) {
-            lastAuthorError.lastAuthor.lastName = 'Required';
-            Object.assign(errors, lastAuthorError);
-            validLastAuthorNameFields.lastAuthor.lastName = false;
-        }
-
-        if (!values.lastAuthor.email) {
-            lastAuthorError.lastAuthor.email = 'Required';
-            Object.assign(errors, lastAuthorError);
-            validLastAuthorNameFields.lastAuthor.email = false;
-        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-            values.lastAuthor.email)) {
-            lastAuthorError.firstAuthor.email = 'Invalid email address';
-            Object.assign(errors, lastAuthorError);
-            validLastAuthorNameFields.lastAuthor.email = false;
-        }
-
-        // Clear errors for LastAuthor _if_ firstName, lastName, email are valid
-        if (validLastAuthorNameFields.lastAuthor.firstName &&
-            validLastAuthorNameFields.lastAuthor.lastName &&
-            validLastAuthorNameFields.lastAuthor.email) {
-            delete errors.lastAuthor;
-        }
-
-        // Object to track valid Last Author Group values to clear "errors" object
-        let validLastAuthorGroupFields = { lastAuthor: { group: true, groupEmail: true } }
-
-        if (!validLastAuthorNameFields.lastAuthor.firstName &&
-            !validLastAuthorNameFields.lastAuthor.lastName &&
-            !validLastAuthorNameFields.lastAuthor.email) {
-            if (!values.lastAuthor.group) {
-                lastAuthorError.lastAuthor.group = 'Required';
-                Object.assign(errors, lastAuthorError);
-                validLastAuthorGroupFields.lastAuthor.group = false;
+        if ([1, 2, 3].includes(answerPropsObj.answerId)) {
+            let lastAuthorError = {
+                lastAuthor: {
+                    firstName: undefined, lastName: undefined, email: undefined,
+                    group: undefined, groupEmail: undefined
+                }
             }
 
-            if (!values.lastAuthor.groupEmail) {
-                lastAuthorError.lastAuthor.groupEmail = 'Required';
+            // Object to track valid LastAuthor name values to clear "errors" object
+            let validLastAuthorNameFields = { lastAuthor: { firstName: true, lastName: true, email: true } }
+
+            if (!values.lastAuthor.firstName || /^\s*$/.test(values.lastAuthor.firstName)) {
+                lastAuthorError.lastAuthor.firstName = 'Required';
                 Object.assign(errors, lastAuthorError);
-                validLastAuthorGroupFields.lastAuthor.groupEmail = false;
+                validLastAuthorNameFields.lastAuthor.firstName = false;
+            }
+
+            if (!values.lastAuthor.lastName || /^\s*$/.test(values.lastAuthor.lastName)) {
+                lastAuthorError.lastAuthor.lastName = 'Required';
+                Object.assign(errors, lastAuthorError);
+                validLastAuthorNameFields.lastAuthor.lastName = false;
+            }
+
+            if (!values.lastAuthor.email || /^\s*$/.test(values.lastAuthor.email)) {
+                lastAuthorError.lastAuthor.email = 'Required';
+                Object.assign(errors, lastAuthorError);
+                validLastAuthorNameFields.lastAuthor.email = false;
             } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-                values.lastAuthor.groupEmail)) {
-                lastAuthorError.lastAuthor.groupEmail = 'Invalid email address';
+                values.lastAuthor.email)) {
+                lastAuthorError.firstAuthor.email = 'Invalid email address';
                 Object.assign(errors, lastAuthorError);
-                validLastAuthorGroupFields.lastAuthor.groupEmail = false;
+                validLastAuthorNameFields.lastAuthor.email = false;
             }
-        }
 
-        // Clear errors for LastAuthor - firstName, lastName, email _if_ group and groupEmail are valid
-        if (values.lastAuthor.firstName === '' &&
-            values.lastAuthor.lastName === '' &&
-            values.lastAuthor.email === '') {
-            if (validLastAuthorGroupFields.lastAuthor.group &&
-                validLastAuthorGroupFields.lastAuthor.groupEmail) {
+            // Clear errors for LastAuthor _if_ firstName, lastName, email are valid
+            if (validLastAuthorNameFields.lastAuthor.firstName &&
+                validLastAuthorNameFields.lastAuthor.lastName &&
+                validLastAuthorNameFields.lastAuthor.email) {
                 delete errors.lastAuthor;
+            }
+
+            // Object to track valid Last Author Group values to clear "errors" object
+            let validLastAuthorGroupFields = { lastAuthor: { group: true, groupEmail: true } }
+
+            if (!validLastAuthorNameFields.lastAuthor.firstName &&
+                !validLastAuthorNameFields.lastAuthor.lastName &&
+                !validLastAuthorNameFields.lastAuthor.email) {
+                if (!values.lastAuthor.group || /^\s*$/.test(values.lastAuthor.group)) {
+                    lastAuthorError.lastAuthor.group = 'Required';
+                    Object.assign(errors, lastAuthorError);
+                    validLastAuthorGroupFields.lastAuthor.group = false;
+                }
+
+                if (!values.lastAuthor.groupEmail || /^\s*$/.test(values.lastAuthor.groupEmail)) {
+                    lastAuthorError.lastAuthor.groupEmail = 'Required';
+                    Object.assign(errors, lastAuthorError);
+                    validLastAuthorGroupFields.lastAuthor.groupEmail = false;
+                } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                    values.lastAuthor.groupEmail)) {
+                    lastAuthorError.lastAuthor.groupEmail = 'Invalid email address';
+                    Object.assign(errors, lastAuthorError);
+                    validLastAuthorGroupFields.lastAuthor.groupEmail = false;
+                }
+            }
+
+            // Clear errors for LastAuthor - firstName, lastName, email _if_ group and groupEmail are valid
+            if (values.lastAuthor.firstName === '' &&
+                values.lastAuthor.lastName === '' &&
+                values.lastAuthor.email === '') {
+                if (validLastAuthorGroupFields.lastAuthor.group &&
+                    validLastAuthorGroupFields.lastAuthor.groupEmail) {
+                    delete errors.lastAuthor;
+                }
             }
         }
 
         /**
          * Journal name
          */
-        if (!values.journal) {
-            errors.journal = 'Required';
-        }
-        if (values.journal && values.journal.length > 250) {
-            errors.title = 'The title journal is limited to 250 characters.'
+        if ([1, 2].includes(answerPropsObj.answerId)) {
+            if (!values.journal || /^\s*$/.test(values.journal)) {
+                errors.journal = 'Required';
+            }
+            if (values.journal && values.journal.length > 250) {
+                errors.title = 'The title journal is limited to 250 characters.'
+            }
         }
 
         /**
@@ -456,21 +475,16 @@ const MyEnhancedForm = withFormik({
         }
 
         /**
-         * PrePrint server name
-         */
-        if (values.prePrintServer && values.prePrintServer.length > 240) {
-            errors.prePrintServer = 'The PrePrint server field is limited to 240 characters.'
-        }
-
-        /**
          * Embargo date
          */
-        if (answerPropsObj.answerId !== 1) {
-            if (!values.embargoDate) {
-                errors.embargoDate = 'Required'
-            }
-            if (values.embargoDate && isNaN(Date.parse(values.embargoDate))) {
-                errors.embargoDate = "Valid date format MM/DD/YYYY required."
+        if ([2, 3, 4].includes(answerPropsObj.answerId)) {
+            if (answerPropsObj.answerId !== 1) {
+                if (!values.embargoDate) {
+                    errors.embargoDate = 'Required'
+                }
+                if (values.embargoDate && isNaN(Date.parse(values.embargoDate))) {
+                    errors.embargoDate = "Valid date format MM/DD/YYYY required."
+                }
             }
         }
 
@@ -573,7 +587,13 @@ const processValues = (formValues, props) => {
         delete formValues.embargoDate
         delete formValues.embargoUntilPublished
     }
-    console.log("** FV: ", formValues)
+
+    // Remove empty First and Last Author objects for body of work
+    // type of "no manuscript"
+    if (JSON.parse(props.answer).answerId === 4) {
+        delete formValues.firstAuthor
+        delete formValues.lastAuthor
+    }
 
     // Remove any properties with an empty string value
     removeEmpty(formValues)
@@ -619,7 +639,6 @@ const MaterialSyncValidationForm = (props) => {
 
     // Get answerProps from local storage
     answerProps = localStorage.getItem('answer')
-    console.log("** AP: ", answerProps)
 
     return (
         <div className="app">

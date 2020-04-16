@@ -136,12 +136,11 @@ export const Title = (props) => {
         handleChange,
         handleBlur,
     } = props;
-    console.log("** PROP TEST: ", props.required)
     return (
         <Grid item>
             <FormControl className={classes.margin}>
                 <InputLabel
-                    shrink required={props.required} htmlFor="title"
+                    shrink required htmlFor="title"
                     className={classes.label}
                 >
                     Title
@@ -956,7 +955,6 @@ export const PrePrintName = (props) => {
         handleChange,
         handleBlur,
     } = props;
-    console.log("** PROP TEST -- PP: ", props.required)
     return (
         <Fragment>
             <Grid item xs={12}>
@@ -980,6 +978,7 @@ export const PrePrintName = (props) => {
                         value={values.prePrintServer}
                         onChange={handleChange}
                         onBlur={handleBlur}
+                        error={errors.prePrintServer && touched.prePrintServer}
                         style={{ width: 600 }}
                     />
                     {errors.prePrintServer &&
