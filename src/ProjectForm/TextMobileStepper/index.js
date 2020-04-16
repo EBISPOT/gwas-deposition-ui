@@ -145,19 +145,54 @@ export default function TextMobileStepper(props) {
             history.push(`${process.env.PUBLIC_URL}/`)
         }
         if (answer1 === 'No') {
-            history.push(`${process.env.PUBLIC_URL}/form`)
+            // Show form fields for published, not yet indexed in PubMed fields
+            history.push({
+                pathname: `${process.env.PUBLIC_URL}/form`,
+                state: {
+                    id: 1,
+                    answer: 'No'
+                },
+            })
         }
         if (answer2 === 'Yes') {
-            alert("Form for published manuscript not indexed in PubMed")
-            history.push(`${process.env.PUBLIC_URL}/form`)
+            // Show form fields for manuscript accepted or submitted
+            history.push({
+                pathname: `${process.env.PUBLIC_URL}/form`,
+                state: {
+                    id: 2,
+                    answer: 'Yes'
+                }
+            })
         }
         if (answer3 === 'Yes') {
-            alert("Form for submitted/accepted publication")
-            history.push(`${process.env.PUBLIC_URL}/form`)
+            // Show form for preprint manuscript
+            history.push({
+                pathname: `${process.env.PUBLIC_URL}/form`,
+                state: {
+                    id: 3,
+                    answer: 'Yes'
+                }
+            })
         }
         if (answer4 === 'Yes') {
-            alert("Form for Pre-print server")
-            history.push(`${process.env.PUBLIC_URL}/form`)
+            // Show form for draft manuscript
+            history.push({
+                pathname: `${process.env.PUBLIC_URL}/form`,
+                state: {
+                    id: 4,
+                    answer: 'Yes'
+                }
+            })
+        }
+        if (answer4 === 'No') {
+            // Show form for no manuscript
+            history.push({
+                pathname: `${process.env.PUBLIC_URL}/form`,
+                state: {
+                    id: 4,
+                    answer: 'No'
+                }
+            })
         }
     })
 

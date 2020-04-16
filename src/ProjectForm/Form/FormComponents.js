@@ -136,12 +136,12 @@ export const Title = (props) => {
         handleChange,
         handleBlur,
     } = props;
-    // console.log("** PROP TEST: ", props.test)
+    console.log("** PROP TEST: ", props.required)
     return (
         <Grid item>
             <FormControl className={classes.margin}>
                 <InputLabel
-                    shrink required={props.test} htmlFor="title"
+                    shrink required={props.required} htmlFor="title"
                     className={classes.label}
                 >
                     Title
@@ -946,7 +946,7 @@ export const JournalURL = (props) => {
 
 
 // PrePrint Name
-export const PrePrintName = props => {
+export const PrePrintName = (props) => {
     const classes = useStyles();
 
     const {
@@ -956,18 +956,20 @@ export const PrePrintName = props => {
         handleChange,
         handleBlur,
     } = props;
+    console.log("** PROP TEST -- PP: ", props.required)
     return (
         <Fragment>
             <Grid item xs={12}>
                 <hr />
                 <Typography gutterBottom variant="body1" className={classes.header}>
                     PrePrint Information
-            </Typography>
+                </Typography>
             </Grid>
 
             <Grid item>
                 <FormControl className={classes.margin}>
-                    <InputLabel shrink htmlFor="prePrintServer" className={classes.label}>
+                    <InputLabel shrink required={props.required}
+                        htmlFor="prePrintServer" className={classes.label}>
                         PrePrint server name
                 </InputLabel>
 
@@ -994,7 +996,7 @@ export const PrePrintName = props => {
 
 
 // PrePrint DOI
-export const PrePrintDOI = props => {
+export const PrePrintDOI = (props) => {
     const classes = useStyles();
 
     const {
@@ -1007,7 +1009,8 @@ export const PrePrintDOI = props => {
     return (
         <Grid item>
             <FormControl className={classes.margin}>
-                <InputLabel shrink htmlFor="preprintServerDOI" className={classes.label}>
+                <InputLabel shrink required={props.required}
+                    htmlFor="preprintServerDOI" className={classes.label}>
                     PrePrint DOI
                 </InputLabel>
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import './style.css';
 import { withFormik } from 'formik';
 import { Grid, Button, Typography } from '@material-ui/core';
@@ -77,7 +77,11 @@ const useStyles = makeStyles(theme => ({
 const MyForm = props => {
     const classes = useStyles();
 
-    const test = true;
+    const isFieldRequired = true;
+
+    console.log("** PROP ANSWER: ", props.answer,
+        "\n** ID: ", JSON.parse(props.answer).answerId
+    )
 
     const {
         isSubmitting,
@@ -90,27 +94,59 @@ const MyForm = props => {
             <form onSubmit={handleSubmit}>
                 <Header />
 
-                <Title {...props} test={test} />
+                <Title {...props} required={isFieldRequired} />
 
                 <Description {...props} />
 
-                <JournalName {...props} />
+                {[1, 2].includes(JSON.parse(props.answer).answerId) && (
+                    <JournalName {...props} />
+                )}
 
-                <JournalURL {...props} />
+                {[1].includes(JSON.parse(props.answer).answerId) && (
+                    <JournalURL {...props} />
+                )}
 
-                <FirstAuthorName {...props} />
 
-                <LastAuthorName {...props} />
+                {[1, 2, 3].includes(JSON.parse(props.answer).answerId) && (
+                    <Fragment>
+                        <FirstAuthorName {...props} />
+                        <LastAuthorName {...props} />
+                    </Fragment>
+                )}
+
+                {[4].includes(JSON.parse(props.answer).answerId) &&
+                    (JSON.parse(props.answer).answerValue === 'Yes') && (
+                        <Fragment>
+                            <FirstAuthorName {...props} />
+                            <LastAuthorName {...props} />
+                        </Fragment>
+                    )}
+
 
                 <CorrespondingAuthor {...props} />
 
-                <PrePrintName {...props} />
 
-                <PrePrintDOI {...props} />
+                {[1, 2].includes(JSON.parse(props.answer).answerId) && (
+                    <Fragment>
+                        <PrePrintName {...props} />
+                        <PrePrintDOI {...props} />
+                    </Fragment>
+                )}
 
-                <EmbargoDate {...props} name="embargoDate" />
+                {[3].includes(JSON.parse(props.answer).answerId) && (
+                    <Fragment>
+                        <PrePrintName {...props} required={isFieldRequired} />
+                        <PrePrintDOI {...props} required={isFieldRequired} />
+                    </Fragment>
+                )}
 
-                <EmbargoDateCheckbox />
+
+                {[2, 3, 4].includes(JSON.parse(props.answer).answerId) && (
+                    <Fragment>
+                        <EmbargoDate {...props} name="embargoDate" />
+                        <EmbargoDateCheckbox />
+                    </Fragment>
+                )}
 
                 <Persist name="form_data" />
 
@@ -150,8 +186,12 @@ const MyEnhancedForm = withFormik({
     }),
 
     // Custom sync validation
-    validate: values => {
+    validate: (values, props) => {
         let errors = {};
+
+        console.log("** MEF validate: ", props.answer)
+        let answerPropsObj = JSON.parse(props.answer)
+        console.log("** APO-Validate: ", answerPropsObj)
 
         /**
          * Title
@@ -177,20 +217,22 @@ const MyEnhancedForm = withFormik({
          * Journal URL
          */
         // From:  https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
-        var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
-            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-            '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-        if (values.url) {
-            if (!pattern.test(values.url)) {
-                errors.url = "Add valid URL"
+        if (answerPropsObj.answerId === 1) {
+            var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+                '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+            if (values.url) {
+                if (!pattern.test(values.url)) {
+                    errors.url = "Add valid URL"
+                }
             }
         }
 
         /**
-        * Journal URL
+        * PrePrint URL
         */
         if (values.preprintServerDOI) {
             if (!pattern.test(values.preprintServerDOI)) {
@@ -423,25 +465,27 @@ const MyEnhancedForm = withFormik({
         /**
          * Embargo date
          */
-        if (!values.embargoDate) {
-            errors.embargoDate = 'Required'
-        }
-        if (values.embargoDate && isNaN(Date.parse(values.embargoDate))) {
-            errors.embargoDate = "Valid date format MM/DD/YYYY required."
+        if (answerPropsObj.answerId !== 1) {
+            if (!values.embargoDate) {
+                errors.embargoDate = 'Required'
+            }
+            if (values.embargoDate && isNaN(Date.parse(values.embargoDate))) {
+                errors.embargoDate = "Valid date format MM/DD/YYYY required."
+            }
         }
 
         return errors;
     },
 
-    handleSubmit: (values, { setSubmitting, resetForm }) => {
+    handleSubmit: (values, { props, setSubmitting, resetForm }) => {
 
         setTimeout(() => {
             // Create new object to modify
             let valuesCopy = {};
             valuesCopy = JSON.parse(JSON.stringify(values));
 
-            processValues(valuesCopy)
-            // alert(JSON.stringify(valuesCopy, null, 2));
+            processValues(valuesCopy, props)
+            alert(JSON.stringify(valuesCopy, null, 2));
 
             // Post form data to bodyofwork endpoint
             createBodyOfWork(valuesCopy)
@@ -504,7 +548,7 @@ const createBodyOfWork = async (processedValues, userAuthToken) => {
  * match expected endpoint attributes.
  * @param {*} formValues
  */
-const processValues = (formValues) => {
+const processValues = (formValues, props) => {
     // Add value of "groupEmail" to "email" for First Author
     if (formValues.firstAuthor.groupEmail !== '') {
         formValues.firstAuthor.email = formValues.firstAuthor.groupEmail;
@@ -515,12 +559,21 @@ const processValues = (formValues) => {
         formValues.lastAuthor.email = formValues.lastAuthor.groupEmail;
         delete formValues.lastAuthor.groupEmail
     }
+
     // Format Embargo date to YYYY-MM-DD
     let date = new Date(formValues.embargoDate)
     let year = date.getFullYear();
     let month = date.getMonth() + 1
     let day = date.getDate();
     formValues.embargoDate = `${year}-${month}-${day}`;
+
+    // Remove "embargoDate" and "embargoUntilPublished" for body of work
+    // types of "published, not yet indexed"
+    if (JSON.parse(props.answer).answerId === 1) {
+        delete formValues.embargoDate
+        delete formValues.embargoUntilPublished
+    }
+    console.log("** FV: ", formValues)
 
     // Remove any properties with an empty string value
     removeEmpty(formValues)
@@ -556,21 +609,34 @@ const getToken = () => {
 }
 
 
-const MaterialSyncValidationForm = () => (
-    <div className="app">
-        <Grid container
-            direction="column"
-            justify="space-evenly"
-            alignItems="center"
-            spacing={4}
-        >
-            <Typography variant="h5" style={{ fontWeight: 'bold', margin: 12 }}>
-                Submission Form
-            </Typography>
-        </Grid>
-        <MyEnhancedForm />
-    </div>
-);
+const MaterialSyncValidationForm = (props) => {
+    let answerProps;
+
+    if (props.location.state && props.location.state.id && props.location.state.answer) {
+        let answerObj = { answerId: props.location.state.id, answerValue: props.location.state.answer }
+        localStorage.setItem('answer', JSON.stringify(answerObj))
+    }
+
+    // Get answerProps from local storage
+    answerProps = localStorage.getItem('answer')
+    console.log("** AP: ", answerProps)
+
+    return (
+        <div className="app">
+            <Grid container
+                direction="column"
+                justify="space-evenly"
+                alignItems="center"
+                spacing={4}
+            >
+                <Typography variant="h5" style={{ fontWeight: 'bold', margin: 12 }}>
+                    Submission Form -- {answerProps}
+                </Typography>
+            </Grid>
+            <MyEnhancedForm answer={answerProps} />
+        </div>
+    )
+}
 
 MaterialSyncValidationForm.propTypes = {
     classes: PropTypes.object.isRequired
