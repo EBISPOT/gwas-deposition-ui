@@ -499,7 +499,7 @@ const MyEnhancedForm = withFormik({
             valuesCopy = JSON.parse(JSON.stringify(values));
 
             processValues(valuesCopy, props)
-            alert(JSON.stringify(valuesCopy, null, 2));
+            // alert(JSON.stringify(valuesCopy, null, 2));
 
             // Post form data to bodyofwork endpoint
             createBodyOfWork(valuesCopy)
@@ -548,9 +548,13 @@ const createBodyOfWork = async (processedValues, userAuthToken) => {
     if (!debug) {
         await axios.post(BASE_URI + 'bodyofwork', processedValues, header
         ).then(response => {
-            // Redirect to Body of Work details page
+            // Clear answerProps from localstorage
+            localStorage.removeItem('answer')
+
+            // Redirect to Body of Work details page with "replace"
+            // to prevent being able to access this state with back button
             let bodyOfWorkId = response.data.bodyOfWorkId;
-            return history.push(`${process.env.PUBLIC_URL}/bodyofwork/${bodyOfWorkId}`);
+            return history.replace(`${process.env.PUBLIC_URL}/bodyofwork/${bodyOfWorkId}`);
         }).catch(error => {
             console.log(error);
         })
