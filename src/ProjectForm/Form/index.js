@@ -598,6 +598,8 @@ const processValues = (formValues, props) => {
     // Remove any properties with an empty string value
     removeEmpty(formValues)
 
+    trimValues(formValues)
+
     return formValues
 }
 
@@ -612,6 +614,24 @@ const removeEmpty = (obj) => {
     );
     return obj;
 };
+
+
+/**
+ * Trim leading/trailing whitespace in values.
+ */
+const trimValues = (obj) => {
+    for (var prop in obj) {
+        var value = obj[prop], type = typeof value;
+        if (value != null && (type === "string" || type === "object") && obj.hasOwnProperty(prop)) {
+            if (type === "object") {
+                trimValues(obj[prop]);
+            } else {
+                obj[prop] = obj[prop].trim();
+            }
+        }
+    }
+    return obj;
+}
 
 
 /**
