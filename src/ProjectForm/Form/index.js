@@ -544,7 +544,7 @@ const createBodyOfWork = async (processedValues, userAuthToken) => {
     const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
     const header = { headers: { 'Authorization': 'Bearer ' + userAuthToken } }
 
-    let debug = true;
+    let debug = false;
     if (!debug) {
         await axios.post(BASE_URI + 'bodyofwork', processedValues, header
         ).then(response => {
@@ -660,20 +660,30 @@ const MaterialSyncValidationForm = (props) => {
     // Get answerProps from local storage
     answerProps = localStorage.getItem('answer')
 
+    // Redirect user to questionnaire page if there isn't a stored answer
+    if (!answerProps) {
+        history.push(`${process.env.PUBLIC_URL}/submission_questions`)
+    }
+
     return (
         <div className="app">
-            <Grid container
-                direction="column"
-                justify="space-evenly"
-                alignItems="center"
-                spacing={4}
-            >
-                <Typography variant="h5" style={{ fontWeight: 'bold', margin: 12 }}>
-                    Submission Form -- {answerProps}
-                </Typography>
-            </Grid>
-            <MyEnhancedForm answer={answerProps} />
+            {answerProps && (
+                <Fragment>
+                    <Grid container
+                        direction="column"
+                        justify="space-evenly"
+                        alignItems="center"
+                        spacing={4}
+                    >
+                        <Typography variant="h5" style={{ fontWeight: 'bold', margin: 12 }}>
+                            Submission Form -- {answerProps}
+                        </Typography>
+                    </Grid>
+                    <MyEnhancedForm answer={answerProps} />
+                </Fragment>
+            )}
         </div>
+
     )
 }
 
