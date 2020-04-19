@@ -452,14 +452,14 @@ class ProjectDetails extends Component {
         if (this.state.bodyofwork.firstAuthor && this.state.bodyofwork.firstAuthor.firstName
             && this.state.bodyofwork.firstAuthor.lastName) {
             firstAuthorDisplay =
-                <Typography>
+                <Typography className={classes.publicationTextStyle}>
                     {this.state.bodyofwork.firstAuthor.firstName} &nbsp;
                     {this.state.bodyofwork.firstAuthor.lastName}
                 </Typography>
         }
         if (this.state.bodyofwork.firstAuthor && this.state.bodyofwork.firstAuthor.group) {
             firstAuthorDisplay =
-                <Typography>
+                <Typography className={classes.publicationTextStyle}>
                     {this.state.bodyofwork.firstAuthor.group}
                 </Typography>
         }
@@ -469,14 +469,14 @@ class ProjectDetails extends Component {
         if (this.state.bodyofwork.lastAuthor && this.state.bodyofwork.lastAuthor.firstName
             && this.state.bodyofwork.lastAuthor.lastName) {
             lastAuthorDisplay =
-                <Typography>
+                <Typography className={classes.publicationTextStyle}>
                     {this.state.bodyofwork.lastAuthor.firstName} &nbsp;
                             {this.state.bodyofwork.lastAuthor.lastName}
                 </Typography>
         }
         if (this.state.bodyofwork.lastAuthor && this.state.bodyofwork.lastAuthor.group) {
             lastAuthorDisplay =
-                <Typography>
+                <Typography className={classes.publicationTextStyle}>
                     {this.state.bodyofwork.lastAuthor.group}
                 </Typography>
         }
@@ -486,9 +486,10 @@ class ProjectDetails extends Component {
         if (this.state.bodyofwork.correspondingAuthors) {
             correspondingAuthorDisplay =
                 this.state.bodyofwork.correspondingAuthors.map((corrAuthor, index) => (
-                    <Typography key={index}>
+                    <Typography key={index} className={classes.publicationTextStyle}>
                         {corrAuthor.firstName}  &nbsp;
-                            {corrAuthor.lastName}
+                            {corrAuthor.lastName} &nbsp;
+                            <a href={"mailto:" + corrAuthor.email}>{corrAuthor.email}</a>
                     </Typography>
                 ))
         }
@@ -533,83 +534,122 @@ class ProjectDetails extends Component {
                                 </Typography>
                             </Grid>
 
-                            <Grid item xs={12}>
-                                <Typography variant="h6" className={classes.publicationTitleTextStyle}>
-                                    {this.state.bodyofwork.description}
-                                </Typography>
-                            </Grid>
 
-                            <Grid item xs={12}>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="flex-start"
+                                alignItems="flex-start"
+                            >
+                                <Grid item xs={3}>
+                                    <Typography variant="h6" className={classes.publicationTextStyle}>
+                                        Description:
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={9}>
+                                    <Typography variant="h6" className={classes.publicationTextStyle}>
+                                        {this.state.bodyofwork.description}
+                                    </Typography>
+                                </Grid>
+
+
+                                <Grid item xs={3}>
+                                    <Typography variant="h6" className={classes.publicationTextStyle}>
+                                        First Author:
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={9} >
+                                    {firstAuthorDisplay}
+                                </Grid>
+
+                                <Grid item xs={3}>
+                                    <Typography variant="h6" className={classes.publicationTextStyle}>
+                                        Last Author:
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={9} >
+                                    {lastAuthorDisplay}
+                                </Grid>
+
+                                <Grid item xs={3}>
+                                    <Typography variant="h6" className={classes.publicationTextStyle}>
+                                        Corresponding Author(s):
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={9} >
+                                    {correspondingAuthorDisplay}
+                                </Grid>
+
+
                                 {(this.state.bodyofwork.journal) && (
-                                    <Typography className={classes.publicationTextStyle} >
-                                        {this.state.bodyofwork.journal}
-                                    </Typography>
+                                    <Fragment>
+                                        <Grid item xs={3}>
+                                            <Typography variant="h6" className={classes.publicationTextStyle}>
+                                                Published in:
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={9}>
+                                            <Typography className={classes.publicationTextStyle} >
+                                                {this.state.bodyofwork.journal}
+                                            </Typography>
+
+                                            {(this.state.bodyofwork.url) && (
+                                                <Typography>
+                                                    {journalURLDisplay}
+                                                </Typography>
+                                            )}
+                                        </Grid>
+                                    </Fragment>
                                 )}
 
-                                {(this.state.bodyofwork.url) && (
-                                    <Typography>
-                                        {journalURLDisplay}
-                                    </Typography>
+
+                                {(this.state.bodyofwork.prePrintServer) && (
+                                    <Fragment>
+                                        <Grid item xs={3}>
+                                            <Typography variant="h6" className={classes.publicationTextStyle}>
+                                                PrePrint available in:
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={9}>
+                                            <Typography className={classes.publicationTextStyle}>
+                                                {this.state.bodyofwork.prePrintServer} &nbsp;
+
+                                                {preprintServerDOIDisplay}
+                                            </Typography>
+                                        </Grid>
+                                    </Fragment>
                                 )}
-                            </Grid>
 
+                                {(this.state.bodyofwork.embargoDate || this.state.bodyofwork.embargoUntilPublished) && (
+                                    <Fragment>
+                                        <Grid item xs={3}>
+                                            <Typography className={classes.publicationTextStyle}>
+                                                Embargo until:
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={9}>
+                                            <Typography className={classes.publicationTextStyle}>
+                                                {this.state.bodyofwork.embargoUntilPublished
+                                                    ? 'date of publication' : `${this.state.bodyofwork.embargoDate}`}
+                                            </Typography>
+                                        </Grid>
+                                    </Fragment>
+                                )}
 
-                            <Grid item xs={12} className={classes.publicationTextStyle} >
-                                {firstAuthorDisplay}
-                            </Grid>
-
-                            <Grid item xs={12} className={classes.publicationTextStyle} >
-                                {lastAuthorDisplay}
-                            </Grid>
-
-                            <Grid item xs={12} className={classes.publicationTextStyle} >
-                                {correspondingAuthorDisplay}
-                            </Grid>
-
-                            {(this.state.bodyofwork.prePrintServer) && (
-                                <Grid item xs={12} >
-                                    <Typography className={classes.publicationTextStyle}>
-                                        {this.state.bodyofwork.prePrintServer}
-                                    </Typography>
-                                    <Typography className={classes.publicationTextStyle}>
-                                        {preprintServerDOIDisplay}
-                                    </Typography>
-                                </Grid>
-                            )}
-
-                            {(this.state.bodyofwork.embargoDate) && (
                                 <Grid item xs={12}>
-                                    <Typography className={classes.publicationTextStyle}>
-                                        Embargo date: {this.state.bodyofwork.embargoDate}
-                                    </Typography>
-
-                                    {(this.state.bodyofwork.embargoUntilPublished) && (
-                                        <Typography className={classes.publicationTextStyle}>
-                                            Embargo until published: &nbsp;
-                                            {this.state.bodyofwork.embargoUntilPublished ? 'Yes' : null}
-                                        </Typography>
-                                    )}
+                                    {submission_checklist}
                                 </Grid>
-                            )}
 
-                            {/* <Grid item xs={12}>
-                                <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                    Status: {status}
-                                </Typography>
-                            </Grid> */}
+                                <Grid item xs={12}>
+                                    {create_submission_button}
+                                </Grid>
 
-                            <Grid item xs={12}>
-                                {submission_checklist}
-                            </Grid>
+                                <Grid container alignItems="flex-start" justify="flex-start">
+                                    <Typography variant="body2" gutterBottom className={classes.errorText}>
+                                        {createSubmissionError ? createSubmissionErrorMessage : null}
+                                    </Typography>
+                                </Grid>
 
-                            <Grid item xs={12}>
-                                {create_submission_button}
-                            </Grid>
-
-                            <Grid container alignItems="flex-start" justify="flex-start">
-                                <Typography variant="body2" gutterBottom className={classes.errorText}>
-                                    {createSubmissionError ? createSubmissionErrorMessage : null}
-                                </Typography>
                             </Grid>
 
                         </Grid>

@@ -578,17 +578,27 @@ const processValues = (formValues, props) => {
         delete formValues.lastAuthor.groupEmail
     }
 
-    // Format Embargo date to YYYY-MM-DD
-    let date = new Date(formValues.embargoDate)
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1
-    let day = date.getDate();
-    formValues.embargoDate = `${year}-${month}-${day}`;
+    // Delete "embargoDate" if "embargoUntilPublished" is true
+    if (formValues.embargoUntilPublished === true) {
+        delete formValues.embargoDate
+    }
+
+    // Format "embargoDate" if "embargoUntilPublished" is not selected
+    if (formValues.embargoUntilPublished === false) {
+        // Format Embargo date to YYYY-MM-DD
+        let date = new Date(formValues.embargoDate)
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1
+        let day = date.getDate();
+        formValues.embargoDate = `${year}-${month}-${day}`;
+    }
 
     // Remove "embargoDate" and "embargoUntilPublished" for body of work
     // types of "published, not yet indexed"
     if (JSON.parse(props.answer).answerId === 1) {
-        delete formValues.embargoDate
+        if (formValues.embargoDate) {
+            delete formValues.embargoDate
+        }
         delete formValues.embargoUntilPublished
     }
 
