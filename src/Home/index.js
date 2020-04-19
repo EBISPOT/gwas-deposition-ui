@@ -39,15 +39,13 @@ class Home extends React.Component {
                     >
                         <Grid item xs={9}>
                             <Typography gutterBottom variant="body1">
-                                You can search all GWAS Catalog publications,
-                                including those in the curation queue. If you are an author of the publication
-                                and have available summary statistics, please click on the PMID to a
-                                create submission. Before submission, please <a href={process.env.REACT_APP_GWAS_DOC_BASE + '/summary-statistics-format'} target="_blank" rel="noopener noreferrer">ensure
-                                your files conform to our standard format</a>.
+                                We accept summary statistics for both published and unpublished human genome-wide association studies.
+                                If you are the author or owner of a summary statistics dataset, please first <a href={process.env.REACT_APP_GWAS_DOC_BASE + '/summary-statistics-format'} target="_blank" rel="noopener noreferrer">
+                                    ensure that your files conform to our standard format</a>. Then complete the following questionnaire to begin your submission.
                                 <br /><br />
-                                For additional information <a href={process.env.REACT_APP_GWAS_DOC_BASE + '/submission'} target="_blank" rel="noopener noreferrer">please read the documentation</a>.
-                                If you cannot find your publication, or need further help,
-                                please e-mail <a href="mailto:gwas-info@ebi.ac.uk?subject=Deposition submission help request">gwas-info@ebi.ac.uk</a>.
+                                For additional information <a href={process.env.REACT_APP_GWAS_DOC_BASE + '/submission'} target="_blank" rel="noopener noreferrer">
+                                    please read the documentation</a>.
+                                If you need further help, please e-mail <a href="mailto:gwas-info@ebi.ac.uk?subject=Deposition submission help request">gwas-info@ebi.ac.uk</a>.
                             </Typography>
                         </Grid>
                         {/* <Grid item xs={9}>
