@@ -63,7 +63,7 @@ deploy-sandbox:
   script:
     - echo "Deploy to sandbox server"
     - mkdir -p /root/.kube
-    - echo ${SANDBOX_KUBECONF} | base64 -d > /root/.kube/config
+    - echo ${SANBOX_KUBECONF} | base64 -d > /root/.kube/config
     - helm init
     - helm delete --purge gwas-deposition-ui || true
     - helm install --name gwas-deposition-ui --set ingress.enabled=true,k8Namespace=gwas,image.repository=$CI_REGISTRY_IMAGE,image.tag=$CI_COMMIT_SHA ./k8chart/ --wait
