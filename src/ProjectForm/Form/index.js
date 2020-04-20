@@ -15,7 +15,7 @@ import {
 } from "./FormComponents";
 
 // Helper for the demo
-import { DisplayFormikState } from './helper.js';
+// import { DisplayFormikState } from './helper.js';
 import { isBlock } from 'typescript';
 
 import axios from 'axios';
@@ -153,7 +153,7 @@ const MyForm = props => {
                     disabled={!dirty || isSubmitting}
                 >
                     Reset
-                    </Button>
+                </Button>
 
                 <Button
                     type="submit"
@@ -162,9 +162,9 @@ const MyForm = props => {
                     onClick={checkUserAuthStatus}
                 >
                     Submit
-                    </Button>
+                </Button>
 
-                <DisplayFormikState {...props} />
+                {/* <DisplayFormikState {...props} /> */}
             </form>
         </div>
     );
@@ -676,7 +676,7 @@ const MaterialSyncValidationForm = (props) => {
 
     // Redirect user to questionnaire page if there isn't a stored answer
     if (!answerProps) {
-        history.push(`${process.env.PUBLIC_URL}/submission_questions`)
+        history.push(`${process.env.PUBLIC_URL}/`)
     }
 
     return (

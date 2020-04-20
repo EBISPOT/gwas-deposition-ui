@@ -27,6 +27,7 @@ import PublicationDetails from './PublicationDetails';
 import ReactGA from 'react-ga';
 import history from "./history";
 import BodyOfWorkDetails from './BodyOfWorkDetails';
+import PublicationsMatTable from './PublicationsMatTable';
 
 ReactGA.initialize('UA-60195133-1');
 //Initialize google analytics page view tracking
@@ -60,10 +61,11 @@ const App = ({ classes }) => (
             <Route path={`${process.env.PUBLIC_URL}/`} exact component={Home} />
             <Route path={`${process.env.PUBLIC_URL}/login`} component={Login}></Route>
             <Route path={`${process.env.PUBLIC_URL}/gdpr`} component={GDPR}></Route>
+            <Route path={`${process.env.PUBLIC_URL}/curation_queue`} component={PublicationsMatTable}></Route>
             <Route path={`${process.env.PUBLIC_URL}/publication/:pmid`} exact render={props => <PublicationDetails {...props} />} />
             <Route path={`${process.env.PUBLIC_URL}/submissions`} component={Submissions} />
             <Route path={`${process.env.PUBLIC_URL}/submission/:submission_id`} exact render={props => <SubmissionDetails {...props} />} />
-            <Route path={`${process.env.PUBLIC_URL}/submission_questions`} component={TextMobileStepper}></Route>
+            {/* <Route path={`${process.env.PUBLIC_URL}/submission_questions`} component={TextMobileStepper}></Route> */}
             <Route path={`${process.env.PUBLIC_URL}/form`} component={Form}></Route>
             <Route path={`${process.env.PUBLIC_URL}/bodyofwork/:gcp_id`} exact render={props => <BodyOfWorkDetails {...props} />} />
             <Route path={`${process.env.PUBLIC_URL}/error`} component={ErrorPage} />

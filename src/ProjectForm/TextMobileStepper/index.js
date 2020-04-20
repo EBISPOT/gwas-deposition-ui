@@ -1,9 +1,7 @@
 import React, { Fragment, useEffect } from 'react';
 import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
 import MobileStepper from '@material-ui/core/MobileStepper';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { Grid, Paper, Typography, Button } from '@material-ui/core';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 
@@ -19,10 +17,10 @@ import history from "../../history";
 
 
 const allQuestions = question_data.questions;
-console.log(allQuestions)
 
 const useStyles = makeStyles(theme => ({
     root: {
+        minWidth: 400,
         maxWidth: 400,
         flexGrow: 1,
     },
@@ -142,7 +140,7 @@ export default function TextMobileStepper(props) {
     // Manage which form to display depending on the answers
     useEffect(() => {
         if (answer1 === 'Yes') {
-            history.push(`${process.env.PUBLIC_URL}/`)
+            history.push(`${process.env.PUBLIC_URL}/curation_queue`)
         }
         if (answer1 === 'No') {
             // Show form fields for published, not yet indexed in PubMed fields
@@ -218,39 +216,50 @@ export default function TextMobileStepper(props) {
 
 
     return (
-        <div className={classes.root}>
-            <Fragment>
-                <Paper square elevation={0} className={classes.header}>
-                    <Typography>{allQuestions[activeStep].question}</Typography>
-                </Paper>
+        <Fragment>
+            <Grid container
+                direction="column"
+                justify="center"
+                alignItems="center"
+                spacing={2}>
+                <Grid item xs={12}>
+                    <Paper square elevation={0} className={classes.header}>
+                        <Typography>{allQuestions[activeStep].question}</Typography>
+                    </Paper>
+                </Grid>
 
-                <FormControl component="fieldset">
-                    {/* <FormLabel component="legend">{allQuestions[activeStep].question}</FormLabel> */}
-                    <RadioGroup aria-label="position" name="position" row
-                        value={value}
-                        onChange={handleChange}
-                    // onChange={props.changedAnswers && handleChange}
-                    // onChange={(e) => handleChange(props.changedAnswers, e)}
-                    // onChange={props.changedAnswers}
-                    >
-                        <FormControlLabel
-                            value={allQuestions[activeStep].answer[0]}
-                            label={allQuestions[activeStep].answer[0]}
-                            control={<GreenRadio />}
-                            labelPlacement="start"
-                        />
+                <Grid item xs={12}>
+                    <FormControl component="fieldset">
+                        {/* <FormLabel component="legend">{allQuestions[activeStep].question}</FormLabel> */}
+                        <RadioGroup aria-label="position" name="position" row
+                            value={value}
+                            onChange={handleChange}
+                        // onChange={props.changedAnswers && handleChange}
+                        // onChange={(e) => handleChange(props.changedAnswers, e)}
+                        // onChange={props.changedAnswers}
+                        >
+                            <FormControlLabel
+                                value={allQuestions[activeStep].answer[0]}
+                                label={allQuestions[activeStep].answer[0]}
+                                control={<GreenRadio />}
+                                labelPlacement="start"
+                            />
 
-                        <FormControlLabel
-                            value={allQuestions[activeStep].answer[1]}
-                            label={allQuestions[activeStep].answer[1]}
-                            labelPlacement="start"
-                            control={<GreenRadio />}
-                        />
-                    </RadioGroup>
-                </FormControl>
+                            <FormControlLabel
+                                value={allQuestions[activeStep].answer[1]}
+                                label={allQuestions[activeStep].answer[1]}
+                                labelPlacement="start"
+                                control={<GreenRadio />}
+                            />
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
 
-                {mobile_stepper_navigation}
-            </Fragment>
-        </div>
+                <Grid item xs={12} className={classes.root}>
+                    {mobile_stepper_navigation}
+                </Grid>
+
+            </Grid>
+        </Fragment>
     );
 }

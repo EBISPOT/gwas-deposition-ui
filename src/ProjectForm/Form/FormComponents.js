@@ -137,34 +137,41 @@ export const Title = (props) => {
         handleBlur,
     } = props;
     return (
-        <Grid item>
-            <FormControl className={classes.margin}>
-                <InputLabel
-                    shrink required htmlFor="title"
-                    className={classes.label}
-                >
-                    Title
+        <Fragment>
+            <Grid item xs={12}>
+                <Typography gutterBottom variant="body1" className={classes.header}>
+                    Description of work
+                </Typography>
+            </Grid>
+            <Grid item>
+                <FormControl className={classes.margin}>
+                    <InputLabel
+                        shrink required htmlFor="title"
+                        className={classes.label}
+                    >
+                        Title
                 </InputLabel>
 
-                <CssTextField
-                    id="title"
-                    type="input"
-                    variant="outlined"
-                    placeholder="Enter title"
-                    value={values.title}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={errors.title && touched.title}
-                    style={{ width: 600 }}
-                />
-                {errors.title &&
-                    touched.title && (
-                        <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                            {errors.title}
-                        </div>
-                    )}
-            </FormControl>
-        </Grid>
+                    <CssTextField
+                        id="title"
+                        type="input"
+                        variant="outlined"
+                        placeholder="Enter title"
+                        value={values.title}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={errors.title && touched.title}
+                        style={{ width: 600 }}
+                    />
+                    {errors.title &&
+                        touched.title && (
+                            <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                {errors.title}
+                            </div>
+                        )}
+                </FormControl>
+            </Grid>
+        </Fragment>
     )
 }
 
@@ -182,7 +189,6 @@ export const FirstAuthorName = (props) => {
     return (
         <Fragment>
             <Grid item xs={12}>
-                <hr />
                 <Typography gutterBottom variant="body1" className={classes.header}>
                     First Author
             </Typography>
@@ -413,7 +419,6 @@ export const LastAuthorName = (props) => {
     return (
         <Fragment>
             <Grid item xs={12}>
-                <hr />
                 <Typography gutterBottom variant="body1" className={classes.header}>
                     Last Author
                 </Typography>
@@ -691,7 +696,6 @@ export const CorrespondingAuthor = (props) => {
     return (
         <Fragment>
             <Grid item xs={12}>
-                <hr />
                 <Typography gutterBottom variant="body1" className={classes.header}>
                     Corresponding Author(s)
             </Typography>
@@ -867,10 +871,9 @@ export const JournalName = (props) => {
     return (
         <Fragment>
             <Grid item xs={12}>
-                <hr />
                 <Typography gutterBottom variant="body1" className={classes.header}>
-                    Journal Information
-            </Typography>
+                    Journal details
+                </Typography>
             </Grid>
 
             <Grid item>
@@ -958,9 +961,8 @@ export const PrePrintName = (props) => {
     return (
         <Fragment>
             <Grid item xs={12}>
-                <hr />
                 <Typography gutterBottom variant="body1" className={classes.header}>
-                    PrePrint Information
+                    PrePrint details
                 </Typography>
             </Grid>
 
@@ -1056,7 +1058,6 @@ export const EmbargoDate = (props) => {
     return (
         <Fragment>
             <Grid item xs={12}>
-                <hr />
                 <Typography gutterBottom variant="body1" className={classes.header}>
                     Embargo Date
                 </Typography>

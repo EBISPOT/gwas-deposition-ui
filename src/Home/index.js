@@ -18,6 +18,14 @@ const styles = theme => ({
 });
 
 class Home extends React.Component {
+    clearAnswer = () => {
+        localStorage.removeItem('answer')
+    }
+
+    componentDidMount() {
+        this.clearAnswer();
+    }
+
     render() {
         const { classes } = this.props;
         return (
