@@ -23,17 +23,6 @@ import history from "../history";
 import ElixirAuthService from '../ElixirAuthService';
 
 
-// THIS WORKS
-// const PublicationDetails = ({ location }) => {
-//     (console.log(location));
-//     return (
-//         // <div>{location.state.pmid}</div> // undefined if page opened in new tab
-//         <div>{location.pathname}</div>
-//     )
-// }
-// export default PublicationDetails;
-
-
 const styles = theme => ({
     root: {
         padding: theme.spacing(3, 2),
@@ -116,27 +105,26 @@ const BlueCheckbox = withStyles({
 })(props => <Checkbox color="default" {...props} />);
 
 
-class PublicationDetails extends Component {
+class ProjectDetails extends Component {
     constructor(props) {
         super(props)
         this.API_CLIENT = new API_CLIENT();
         this.ElixirAuthService = new ElixirAuthService();
 
-        // NOTE: PUBMED_ID is passed from location prop in Route pathname
+        // NOTE: bodyOfWorkId is passed from location prop in Route pathname
         if (process.env.PUBLIC_URL) {
             let URL = this.props.location.pathname.split(process.env.PUBLIC_URL)[1];
-            this.PUBMED_ID = URL.split('/')[2];
+            this.bodyOfWorkId = URL.split('/')[2];
         }
         else {
-            this.PUBMED_ID = this.props.location.pathname.split('/')[2];
+            this.bodyOfWorkId = this.props.location.pathname.split('/')[2];
         }
 
         this.state = ({
             auth: null,
             authEmail: null,
-            publication: [],
-            publicationStatus: null,
-            transformedPublicationStatus: null,
+            bodyofwork: [],
+            status: null,
             createSubmissionError: false,
             createSubmissionErrorMessage: null,
             isCreateSubmissionDisabled: false,
@@ -154,21 +142,19 @@ class PublicationDetails extends Component {
         this.validateGlobusIdentity = this.validateGlobusIdentity.bind(this);
         this.createSubmission = this.createSubmission.bind(this);
         this.redirectToSubmissionDetails = this.redirectToSubmissionDetails.bind(this);
-        this.getUserFriendlyStatusLabels = this.getUserFriendlyStatusLabels.bind(this);
         this.getToken = this.getToken.bind(this);
         this.ElixirAuthService.isTokenExpired = this.ElixirAuthService.isTokenExpired.bind(this);
     }
 
     /**
-     * Get Publication details
+     * Get BodyofWork details
      */
     async componentDidMount() {
 
-        this.API_CLIENT.getPublication(this.PUBMED_ID).then((data) => {
-            console.log("** PD: ", data)
-            this.setState({ ...this.state, publication: data })
-            this.setState({ ...this.state, publicationStatus: data.status })
-            this.setState({ ...this.state, transformedPublicationStatus: this.getUserFriendlyStatusLabels(data.status) })
+        this.API_CLIENT.getBodyOfWork(this.bodyOfWorkId).then((data) => {
+            console.log("** BOW Response: ", data)
+            this.setState({ ...this.state, bodyofwork: data })
+            this.setState({ ...this.state, status: data.status })
             this.setState({ ...this.state, authEmail: this.getToken().authEmail, auth: this.getToken().auth, globusIdentity: this.getToken().authEmail })
         });
     }
@@ -185,22 +171,6 @@ class PublicationDetails extends Component {
             userEmail = jwt_decode(token).email;
         }
         return { authEmail: userEmail, auth: token };
-    }
-
-    /**
-     * Set user friendly status label
-     */
-    getUserFriendlyStatusLabels(status) {
-        if (status === 'UNDER_SUBMISSION' || status === 'UNDER_SUMMARY_STATS_SUBMISSION'
-            || status === 'PUBLISHED_WITH_SS') {
-            return 'CLOSED'
-        }
-        if (status === 'ELIGIBLE') {
-            return 'OPEN FOR SUBMISSION'
-        }
-        if (status === 'PUBLISHED') {
-            return 'OPEN FOR SUMMARY STATISTICS SUBMISSION'
-        }
     }
 
 
@@ -263,7 +233,7 @@ class PublicationDetails extends Component {
      * Create submission for this publication
      */
     createSubmission() {
-        let pmid = this.PUBMED_ID;
+        let bodyOfWorkId = this.bodyOfWorkId;
         let token = this.state.auth;
         let globusIdentityEmail = this.state.globusIdentity;
         let gdprAccepted = JSON.parse(localStorage.getItem('gdpr-accepted'));
@@ -274,7 +244,7 @@ class PublicationDetails extends Component {
 
         // Check if user is logged in and if token is still valid and if GDPR accepted
         if (token && !this.ElixirAuthService.isTokenExpired(token) && gdprAccepted) {
-            this.API_CLIENT.createSubmission(pmid, globusIdentityEmail).then(response => {
+            this.API_CLIENT.createSubmission(bodyOfWorkId, globusIdentityEmail).then(response => {
                 this.setState(() => ({ createSubmissionError: false }));
 
                 this.redirectToSubmissionDetails();
@@ -309,14 +279,14 @@ class PublicationDetails extends Component {
 
 
     async redirectToSubmissionDetails() {
-        let pmid = this.PUBMED_ID;
+        let bodyOfWorkId = this.bodyOfWorkId;
         let token = this.state.auth;
         let gdprAccepted = JSON.parse(localStorage.getItem('gdpr-accepted'));
 
         // Check if user is logged in and if token is still valid and if GDPR accepted
         if (token && !this.ElixirAuthService.isTokenExpired(token) && gdprAccepted) {
-            // Get SubmissionId
-            await this.API_CLIENT.getSubmissionId(pmid, token).then(response => {
+            // Get SubmissionId by BowId
+            await this.API_CLIENT.getSubmissionIdByBowId(bodyOfWorkId, token).then(response => {
                 let newSubmissionId = response.data._embedded.submissions[0].submissionId
                 return history.push(`${process.env.PUBLIC_URL}/submission/${newSubmissionId}`);
             }).catch(error => {
@@ -331,6 +301,10 @@ class PublicationDetails extends Component {
                     }
                     if (error.response.status === 403) {
                         let errorMessage = "Error: You do not have permission to view the submission details."
+                        this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
+                    }
+                    if (error.response.status === 404) {
+                        let errorMessage = "Error: No submission exists."
                         this.setState(() => ({ redirectError: true, redirectErrorMessage: errorMessage }));
                     }
                 } else {
@@ -363,10 +337,9 @@ class PublicationDetails extends Component {
         const { createSubmissionErrorMessage } = this.state;
         const { redirectError } = this.state;
         const { redirectErrorMessage } = this.state;
-        const { publicationStatus } = this.state;
+        const { status } = this.state;
         const { isCreateSubmissionDisabled } = this.state;
         const { globusIdentityFormatError } = this.state;
-        const { transformedPublicationStatus } = this.state;
 
         const { authEmail } = this.state;
         const { globusIdentityHelperText } = this.state;
@@ -390,7 +363,7 @@ class PublicationDetails extends Component {
 
 
         // Submission checklist checklist form
-        if (publicationStatus === 'ELIGIBLE' || publicationStatus === 'PUBLISHED') {
+        if (status === 'NEW') {
             submission_checklist =
                 <div>
                     <Grid item xs={12}>
@@ -406,10 +379,6 @@ class PublicationDetails extends Component {
                     </Grid>
 
                     <FormControl required error={checklistCompleteError} component="fieldset" className={classes.formControl}>
-                        {/* <FormLabel component="legend">Please complete these items before
-                    creating the submission. Once all items are checked, the "Create Submission"
-                    button will be active.
-                    </FormLabel> */}
                         <FormGroup>
                             <FormControlLabel
                                 control={<BlueCheckbox checked={elixirRegistration} onChange={this.handleChange('elixirRegistration')} color="secondary" value="elixirRegistration" />}
@@ -441,14 +410,12 @@ class PublicationDetails extends Component {
                                 label={<Typography>{summaryStatsFormattingLink} your summary statistics data (required to submit summary statistics)</Typography>}
                             />
                         </FormGroup>
-                        {/* <FormHelperText>Check all steps to activate the "Create Submission" button</FormHelperText> */}
                     </FormControl>
                 </div>
         }
 
-
         // Show Create Submission button
-        if (publicationStatus === 'ELIGIBLE' || publicationStatus === 'PUBLISHED') {
+        if (status === 'NEW') {
             create_submission_button =
                 <div className={classes.wrapper}>
                     <Fragment>
@@ -467,54 +434,68 @@ class PublicationDetails extends Component {
         }
 
         // Show View Submission details button
-        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION' || publicationStatus === 'UNDER_SUBMISSION') {
+        if (status === 'SUBMISSION_EXISTS') {
             showSubmissionDetailsButton =
                 <Button onClick={this.redirectToSubmissionDetails} className={classes.button}>
                     View Submission Details
                 </Button>
         }
 
-        // Show message to explain status
-        if (publicationStatus === 'UNDER_SUBMISSION' || publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-            statusExplanationMessageText =
-                <span>
-                    This publication is currently under submission. Please check back
-                    for updates or email {gwasInfoEmail} for additional information.
-                </span>
+        // Journal URL
+        let journalURLDisplay = <a href={this.state.bodyofwork.url} target="_blank" rel="noopener noreferrer">{this.state.bodyofwork.url}</a>
+
+        // PrePrint URL
+        let preprintServerDOIDisplay = <a href={this.state.bodyofwork.preprintServerDOI} target="_blank" rel="noopener noreferrer">{this.state.bodyofwork.preprintServerDOI}</a>
+
+        // First Author
+        let firstAuthorDisplay;
+        if (this.state.bodyofwork.firstAuthor && this.state.bodyofwork.firstAuthor.firstName
+            && this.state.bodyofwork.firstAuthor.lastName) {
+            firstAuthorDisplay =
+                <Typography className={classes.publicationTextStyle}>
+                    {this.state.bodyofwork.firstAuthor.firstName} &nbsp;
+                    {this.state.bodyofwork.firstAuthor.lastName}
+                </Typography>
         }
-        if (publicationStatus === 'PUBLISHED_WITH_SS') {
-            statusExplanationMessageText =
-                <span>
-                    This publication and associated summary statistics are already available in the GWAS Catalog.
-                    If you would like to submit additional data or request a change to the GWAS Catalog entry
-                    please email {gwasSubsEmail}.
-                </span>
-        }
-        if (publicationStatus === 'ELIGIBLE') {
-            statusExplanationMessageText =
-                <span>
-                    Data describing this publication is not yet available in the GWAS Catalog. If you are an
-                    author of this publication please {eligibleBoldText}. See doucmentation
-                    <a href={metadataAndSumStatsDocs} target="_blank" rel="noopener noreferrer"> here</a>.
-                </span>
-        }
-        if (publicationStatus === 'PUBLISHED') {
-            statusExplanationMessageText =
-                <span>
-                    Data describing this publication is available in the GWAS Catalog. You are provided with a
-                    pre-filled template containing the metadata. You can {publishedBoldText}. See documentation
-                    <a href={sumStatsDocs} target="_blank" rel="noopener noreferrer"> here</a> and
-                    let us know which file belongs to each study.
-                    If you think there is a mistake in the pre-filled spreadsheet containing the data currently
-                    in the Catalog (e.g. an incorrect number of studies for your publication), please contact {gwasInfoEmail}.
-                </span>
+        if (this.state.bodyofwork.firstAuthor && this.state.bodyofwork.firstAuthor.group) {
+            firstAuthorDisplay =
+                <Typography className={classes.publicationTextStyle}>
+                    {this.state.bodyofwork.firstAuthor.group}
+                </Typography>
         }
 
+        // Last Author
+        let lastAuthorDisplay;
+        if (this.state.bodyofwork.lastAuthor && this.state.bodyofwork.lastAuthor.firstName
+            && this.state.bodyofwork.lastAuthor.lastName) {
+            lastAuthorDisplay =
+                <Typography className={classes.publicationTextStyle}>
+                    {this.state.bodyofwork.lastAuthor.firstName} &nbsp;
+                            {this.state.bodyofwork.lastAuthor.lastName}
+                </Typography>
+        }
+        if (this.state.bodyofwork.lastAuthor && this.state.bodyofwork.lastAuthor.group) {
+            lastAuthorDisplay =
+                <Typography className={classes.publicationTextStyle}>
+                    {this.state.bodyofwork.lastAuthor.group}
+                </Typography>
+        }
 
-
+        // Corresponding Authors
+        let correspondingAuthorDisplay;
+        if (this.state.bodyofwork.correspondingAuthors) {
+            correspondingAuthorDisplay =
+                this.state.bodyofwork.correspondingAuthors.map((corrAuthor, index) => (
+                    <Typography key={index} className={classes.publicationTextStyle}>
+                        {corrAuthor.firstName}  &nbsp;
+                            {corrAuthor.lastName} &nbsp;
+                            <a href={"mailto:" + corrAuthor.email}>{corrAuthor.email}</a>
+                    </Typography>
+                ))
+        }
 
         return (
-            <div className={classes.root}>
+            <div className={classes.root} >
                 <Paper className={classes.paper}>
                     <Grid
                         container
@@ -531,7 +512,7 @@ class PublicationDetails extends Component {
                             >
                                 <Grid item xs={8} className={classes.pageHeader}>
                                     <Typography variant="h5" className={classes.headerTextStyle}>
-                                        Publication details for PMID: {this.PUBMED_ID}
+                                        Details for GCP ID: {this.bodyOfWorkId}
                                     </Typography>
                                     <Grid><Typography>&nbsp;</Typography></Grid>
                                 </Grid>
@@ -549,40 +530,126 @@ class PublicationDetails extends Component {
 
                             <Grid item xs={12}>
                                 <Typography variant="h6" className={classes.publicationTitleTextStyle}>
-                                    {this.state.publication.title}
+                                    {this.state.bodyofwork.title}
                                 </Typography>
                             </Grid>
 
-                            <Grid item xs={12}>
-                                <Typography className={classes.publicationTextStyle} >
-                                    {this.state.publication.firstAuthor} et al. {this.state.publication.publicationDate} {this.state.publication.journal}
-                                </Typography>
-                            </Grid>
 
-                            <Grid item xs={12}>
-                                <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                    Catalog status: {transformedPublicationStatus}
-                                </Typography>
-                            </Grid>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="flex-start"
+                                alignItems="flex-start"
+                            >
+                                <Grid item xs={3}>
+                                    <Typography variant="h6" className={classes.publicationTextStyle}>
+                                        Description:
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={9}>
+                                    <Typography variant="h6" className={classes.publicationTextStyle}>
+                                        {this.state.bodyofwork.description}
+                                    </Typography>
+                                </Grid>
 
-                            <Grid item xs={12}>
-                                <Typography className={classes.statusExplanationMessageTextStyle}>
-                                    {statusExplanationMessageText}
-                                </Typography>
-                            </Grid>
 
-                            <Grid item xs={12}>
-                                {submission_checklist}
-                            </Grid>
+                                <Grid item xs={3}>
+                                    <Typography variant="h6" className={classes.publicationTextStyle}>
+                                        First Author:
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={9} >
+                                    {firstAuthorDisplay}
+                                </Grid>
 
-                            <Grid item xs={12}>
-                                {create_submission_button}
-                            </Grid>
+                                <Grid item xs={3}>
+                                    <Typography variant="h6" className={classes.publicationTextStyle}>
+                                        Last Author:
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={9} >
+                                    {lastAuthorDisplay}
+                                </Grid>
 
-                            <Grid container alignItems="flex-start" justify="flex-start">
-                                <Typography variant="body2" gutterBottom className={classes.errorText}>
-                                    {createSubmissionError ? createSubmissionErrorMessage : null}
-                                </Typography>
+                                <Grid item xs={3}>
+                                    <Typography variant="h6" className={classes.publicationTextStyle}>
+                                        Corresponding Author(s):
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={9} >
+                                    {correspondingAuthorDisplay}
+                                </Grid>
+
+
+                                {(this.state.bodyofwork.journal) && (
+                                    <Fragment>
+                                        <Grid item xs={3}>
+                                            <Typography variant="h6" className={classes.publicationTextStyle}>
+                                                Published in:
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={9}>
+                                            <Typography className={classes.publicationTextStyle} >
+                                                {this.state.bodyofwork.journal}
+                                            </Typography>
+
+                                            {(this.state.bodyofwork.url) && (
+                                                <Typography>
+                                                    {journalURLDisplay}
+                                                </Typography>
+                                            )}
+                                        </Grid>
+                                    </Fragment>
+                                )}
+
+
+                                {(this.state.bodyofwork.prePrintServer) && (
+                                    <Fragment>
+                                        <Grid item xs={3}>
+                                            <Typography variant="h6" className={classes.publicationTextStyle}>
+                                                PrePrint available in:
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={9}>
+                                            <Typography className={classes.publicationTextStyle}>
+                                                {this.state.bodyofwork.prePrintServer} &nbsp;
+
+                                                {preprintServerDOIDisplay}
+                                            </Typography>
+                                        </Grid>
+                                    </Fragment>
+                                )}
+
+                                {(this.state.bodyofwork.embargoDate || this.state.bodyofwork.embargoUntilPublished) && (
+                                    <Fragment>
+                                        <Grid item xs={3}>
+                                            <Typography className={classes.publicationTextStyle}>
+                                                Embargo until:
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={9}>
+                                            <Typography className={classes.publicationTextStyle}>
+                                                {this.state.bodyofwork.embargoUntilPublished
+                                                    ? 'date of publication' : `${this.state.bodyofwork.embargoDate}`}
+                                            </Typography>
+                                        </Grid>
+                                    </Fragment>
+                                )}
+
+                                <Grid item xs={12}>
+                                    {submission_checklist}
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                    {create_submission_button}
+                                </Grid>
+
+                                <Grid container alignItems="flex-start" justify="flex-start">
+                                    <Typography variant="body2" gutterBottom className={classes.errorText}>
+                                        {createSubmissionError ? createSubmissionErrorMessage : null}
+                                    </Typography>
+                                </Grid>
+
                             </Grid>
 
                         </Grid>
@@ -603,14 +670,14 @@ class PublicationDetails extends Component {
     }
 }
 
-PublicationDetails.propTypes = {
+ProjectDetails.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-PublicationDetails = withStyles(styles)(PublicationDetails)
+ProjectDetails = withStyles(styles)(ProjectDetails)
 
 export default ({ location }) => (
     <AuthConsumer>
-        {({ onAuthenticate, JWTToken }) => <PublicationDetails onAuthenticate={onAuthenticate} token={JWTToken} location={location} />}
+        {({ onAuthenticate, JWTToken }) => <ProjectDetails onAuthenticate={onAuthenticate} token={JWTToken} location={location} />}
     </AuthConsumer>
 )

@@ -111,6 +111,15 @@ class APIClient {
 
 
     /**
+     * Get details for Body of Work by GCP ID
+     * @param {*} gcpId
+     */
+    getBodyOfWork(gcpId) {
+        return this.perform('get', '/bodyofwork/' + gcpId);
+    }
+
+
+    /**
      * Get Submission by Id
      * @param {} submissionId
      */
@@ -177,6 +186,24 @@ class APIClient {
                 headers: {
                     'Authorization': 'Bearer ' + authToken,
                     // 'Authorization': 'Bearer ' + this.accessToken,
+                }
+            })
+    }
+
+    /**
+     *
+     * @param {*} bowId
+     * @param {*} token
+     */
+    getSubmissionIdByBowId(bowId, token) {
+        // Get token to pass to call
+        let authToken;
+        this.accessToken === null ? authToken = token : authToken = this.accessToken;
+
+        return axios.get(BASE_URI + 'submissions?bowId=' + bowId,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + authToken,
                 }
             })
     }
