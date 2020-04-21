@@ -159,7 +159,8 @@ const MyForm = props => {
                     type="submit"
                     disabled={isSubmitting}
                     className={classes.button}
-                    onClick={checkUserAuthStatus}
+                    // onClick={checkUserAuthStatus}
+                    onClick={() => checkUserAuthStatus(props)}
                 >
                     Submit
                 </Button>
@@ -506,7 +507,7 @@ const MyEnhancedForm = withFormik({
 
             // setSubmitting(false) // With async call, Formik will automatically set to false once resolved
 
-            // Clear form_data values in localstorage
+            // Clear form values from Persist component
             resetForm();
         }, 1000);
     },
@@ -517,19 +518,33 @@ const MyEnhancedForm = withFormik({
 /**
  * Check if user is logged in and if token is still valid and if GDPR accepted.
  */
-const checkUserAuthStatus = () => {
+const checkUserAuthStatus = (props) => {
     const token = getToken().auth;
     const gdprAccepted = JSON.parse(localStorage.getItem('gdpr-accepted'));
     const eas = new ElixirAuthService();
 
     if (token && !eas.isTokenExpired(token) && gdprAccepted) {
-        return;
+        return token;
     } else {
         if (!JSON.parse(gdprAccepted)) {
-            history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: `/form` }));
+            history.replace({
+                pathname: `${process.env.PUBLIC_URL}/gdpr`,
+                state: {
+                    id: JSON.parse(props.answer).answerId,
+                    answer: JSON.parse(props.answer).answerValue,
+                    from: `/form`,
+                }
+            })
         }
         else {
-            history.push(`${process.env.PUBLIC_URL}/login`, ({ from: `/form` }));
+            history.replace({
+                pathname: `${process.env.PUBLIC_URL}/login`,
+                state: {
+                    id: JSON.parse(props.answer).answerId,
+                    answer: JSON.parse(props.answer).answerValue,
+                    from: `/form`,
+                }
+            })
         }
     }
     return;
@@ -538,23 +553,20 @@ const checkUserAuthStatus = () => {
 /**
  * Create BodyOfWork
  * @param {*} processedValues 
- * @param {*} userAuthToken 
  */
-const createBodyOfWork = async (processedValues, userAuthToken) => {
+const createBodyOfWork = async (processedValues) => {
+    const token = getToken().auth;
     const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
-    const header = { headers: { 'Authorization': 'Bearer ' + userAuthToken } }
+    const header = { headers: { 'Authorization': 'Bearer ' + token } }
 
     let debug = false;
     if (!debug) {
         await axios.post(BASE_URI + 'bodyofwork', processedValues, header
         ).then(response => {
-            // Clear answerProps from localstorage
-            localStorage.removeItem('answer')
-
             // Redirect to Body of Work details page with "replace"
             // to prevent being able to access this state with back button
             let bodyOfWorkId = response.data.bodyOfWorkId;
-            return history.replace(`${process.env.PUBLIC_URL}/bodyofwork/${bodyOfWorkId}`);
+            history.replace(`${process.env.PUBLIC_URL}/bodyofwork/${bodyOfWorkId}`);
         }).catch(error => {
             console.log(error);
         })
@@ -665,14 +677,12 @@ const getToken = () => {
 
 const MaterialSyncValidationForm = (props) => {
     let answerProps;
+    let answerObj
 
     if (props.location.state && props.location.state.id && props.location.state.answer) {
-        let answerObj = { answerId: props.location.state.id, answerValue: props.location.state.answer }
-        localStorage.setItem('answer', JSON.stringify(answerObj))
+        answerObj = { answerId: props.location.state.id, answerValue: props.location.state.answer }
+        answerProps = JSON.stringify(answerObj)
     }
-
-    // Get answerProps from local storage
-    answerProps = localStorage.getItem('answer')
 
     // Redirect user to questionnaire page if there isn't a stored answer
     if (!answerProps) {

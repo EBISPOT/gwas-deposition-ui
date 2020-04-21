@@ -91,7 +91,15 @@ class Login extends Component {
         }
 
         if (referrer) {
-            history.push(referrer)
+            // history.push(referrer)
+            history.replace({
+                pathname: `${process.env.PUBLIC_URL}` + history.location.state.from,
+                state: {
+                    from: history.location.state.from,
+                    id: history.location.state.id,
+                    answer: history.location.state.answer
+                }
+            });
         } else {
             history.goBack();
         }

@@ -34,7 +34,14 @@ class GDPR extends Component {
         // Check for previous GDPR acceptance
         if (localStorage.getItem('gdpr-accepted')) {
             // Redirect to Login page if GDPR was accepted before
-            history.push(`${process.env.PUBLIC_URL}/login`, ({ from: history.location.state.from }));
+            history.replace({
+                pathname: `${process.env.PUBLIC_URL}/login`,
+                state: {
+                    from: history.location.state.from,
+                    id: history.location.state.id,
+                    answer: history.location.state.answer
+                }
+            });
         }
         this.handleChange = this.handleChange.bind(this);
     }
@@ -53,7 +60,15 @@ class GDPR extends Component {
             localStorage.setItem('gdpr-accepted', true);
 
             // Redirect to Login page
-            history.push(`${process.env.PUBLIC_URL}/login`, ({ from: localPath }));
+            // history.push(`${process.env.PUBLIC_URL}/login`, ({ from: localPath })); // ORIG
+            history.replace({
+                pathname: `${process.env.PUBLIC_URL}/login`,
+                state: {
+                    from: history.location.state.from,
+                    id: history.location.state.id,
+                    answer: history.location.state.answer
+                }
+            });
         }
         // TODO: Check for use case to revoke GDPR acceptance status
         else {
