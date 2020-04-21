@@ -64,12 +64,12 @@ export default function TextMobileStepper(props) {
     const maxSteps = allQuestions.length;
     const LAST_QUESTION_ID = allQuestions.length - 1;
 
-    // const [answer0, setAnswer0State] = React.useState('');
+    const [answer0, setAnswer0State] = React.useState('');
     const [answer1, setAnswer1State] = React.useState('');
     const [answer2, setAnswer2State] = React.useState('');
     const [answer3, setAnswer3State] = React.useState('');
     const [answer4, setAnswer4State] = React.useState('');
-    // const [answer5, setAnswer5State] = React.useState('');
+    const [answer5, setAnswer5State] = React.useState('');
 
 
     const handleNext = () => {
