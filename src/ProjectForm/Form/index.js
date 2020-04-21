@@ -675,6 +675,30 @@ const MaterialSyncValidationForm = (props) => {
         history.push(`${process.env.PUBLIC_URL}/`)
     }
 
+    let formHeaderTitle;
+    switch (answerObj.answerId) {
+        case 1:
+            formHeaderTitle = "New publication";
+            break;
+        case 2:
+            formHeaderTitle = "New accepted/submitted manuscript";
+            break;
+        case 3:
+            formHeaderTitle = "New pre-print manuscript";
+            break;
+        case 4:
+            if (answerObj.answerValue === 'Yes') {
+                formHeaderTitle = "New draft manuscript";
+            }
+            else {
+                formHeaderTitle = "New body of work without a manuscript";
+            }
+            break;
+        default:
+            formHeaderTitle = "Data form";
+            break;
+    }
+
     return (
         <div className="app">
             {answerProps && (
@@ -686,7 +710,8 @@ const MaterialSyncValidationForm = (props) => {
                         spacing={4}
                     >
                         <Typography variant="h5" style={{ fontWeight: 'bold', margin: 12 }}>
-                            Submission Form -- {answerProps}
+                            {/* Submission Form -- {answerProps} */}
+                            {formHeaderTitle}
                         </Typography>
                     </Grid>
                     <MyEnhancedForm answer={answerProps} />

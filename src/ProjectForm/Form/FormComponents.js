@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
-import { Grid, Typography, TextField, Button, FormControl, FormControlLabel, InputLabel, Checkbox } from '@material-ui/core';
+import { Grid, Typography, TextField, Button, IconButton, FormControl, FormControlLabel, InputLabel, Checkbox } from '@material-ui/core';
 import { makeStyles, withStyles, fade } from '@material-ui/core/styles';
+import ClearIcon from '@material-ui/icons/Clear';
 
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -18,21 +19,6 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(1),
     },
     button: {
-        margin: theme.spacing(1),
-        padding: theme.spacing(1),
-        color: '#333',
-        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
-        borderRadius: 4,
-        border: '1px solid #aaa',
-        fontWeight: 'bold',
-        textShadow: '0 1px 0 #fff',
-        textTransform: 'none',
-        boxShadow: 'none',
-        '&:disabled': {
-            textShadow: 'none',
-        },
-    },
-    clearButton: {
         margin: theme.spacing(1),
         padding: theme.spacing(1),
         color: '#333',
@@ -826,16 +812,13 @@ export const CorrespondingAuthor = (props) => {
                                     </Grid>
 
                                     <Grid item>
-                                        <Button
-                                            type="button"
-                                            className={classes.clearButton}
-                                            variant="outlined"
-                                            onClick={() => remove(index)}
-                                            disabled={!dirty || isSubmitting || index === 0}>
-                                            <Typography>
-                                                X
-                                            </Typography>
-                                        </Button>
+                                        {(index !== 0) && (
+                                            <IconButton aria-label="delete"
+                                                onClick={() => remove(index)}
+                                                disabled={!dirty || isSubmitting || index === 0}>
+                                                <ClearIcon />
+                                            </IconButton>
+                                        )}
                                     </Grid>
                                 </Grid>
                             ))
