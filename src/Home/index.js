@@ -10,11 +10,14 @@ import { Grid, Typography, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
+import Banner from '../Banner';
+
 
 const styles = theme => ({
     fontStyle: {
         fontWeight: 600,
     },
+  
     button: {
         marginTop: theme.spacing(1),
         marginRight: theme.spacing(1),
@@ -31,6 +34,13 @@ const styles = theme => ({
             textShadow: 'none',
         }
     },
+    banner: {
+        backgroundColor: '#FFF6EC',
+        fontWeight: 800,
+        border: '1px solid #C0C0C0',
+        borderRadius: '5px',
+        padding: '8px',
+    }
 });
 
 class Home extends Component {
@@ -67,6 +77,9 @@ class Home extends Component {
                     justify="space-evenly"
                     alignItems="center"
                     spacing={4}>
+                    <Grid item xs={8}>
+                        <Banner />
+                    </Grid>
                     <Grid item>
                         <Typography gutterBottom variant="h5" className={classes.fontStyle}>
                             Welcome to the GWAS Catalog submission page
