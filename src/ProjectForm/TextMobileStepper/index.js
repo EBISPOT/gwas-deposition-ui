@@ -140,11 +140,11 @@ export default function TextMobileStepper(props) {
     // Manage which form to display depending on the answers
     useEffect(() => {
         if (answer1 === 'Yes') {
-            history.replace(`${process.env.PUBLIC_URL}/curation_queue`)
+            history.push(`${process.env.PUBLIC_URL}/curation_queue`)
         }
         if (answer1 === 'No') {
             // Show form fields for published, not yet indexed in PubMed fields
-            history.replace({
+            history.push({
                 pathname: `${process.env.PUBLIC_URL}/form`,
                 state: {
                     id: 1,
@@ -154,7 +154,7 @@ export default function TextMobileStepper(props) {
         }
         if (answer2 === 'Yes') {
             // Show form fields for manuscript accepted or submitted
-            history.replace({
+            history.push({
                 pathname: `${process.env.PUBLIC_URL}/form`,
                 state: {
                     id: 2,
@@ -164,7 +164,7 @@ export default function TextMobileStepper(props) {
         }
         if (answer3 === 'Yes') {
             // Show form for preprint manuscript
-            history.replace({
+            history.push({
                 pathname: `${process.env.PUBLIC_URL}/form`,
                 state: {
                     id: 3,
@@ -174,7 +174,7 @@ export default function TextMobileStepper(props) {
         }
         if (answer4 === 'Yes') {
             // Show form for draft manuscript
-            history.replace({
+            history.push({
                 pathname: `${process.env.PUBLIC_URL}/form`,
                 state: {
                     id: 4,
@@ -184,7 +184,7 @@ export default function TextMobileStepper(props) {
         }
         if (answer4 === 'No') {
             // Show form for no manuscript
-            history.replace({
+            history.push({
                 pathname: `${process.env.PUBLIC_URL}/form`,
                 state: {
                     id: 4,
