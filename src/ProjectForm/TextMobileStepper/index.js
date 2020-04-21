@@ -64,12 +64,12 @@ export default function TextMobileStepper(props) {
     const maxSteps = allQuestions.length;
     const LAST_QUESTION_ID = allQuestions.length - 1;
 
-    const [answer0, setAnswer0State] = React.useState('');
+    // const [answer0, setAnswer0State] = React.useState('');
     const [answer1, setAnswer1State] = React.useState('');
     const [answer2, setAnswer2State] = React.useState('');
     const [answer3, setAnswer3State] = React.useState('');
     const [answer4, setAnswer4State] = React.useState('');
-    const [answer5, setAnswer5State] = React.useState('');
+    // const [answer5, setAnswer5State] = React.useState('');
 
 
     const handleNext = () => {
@@ -79,12 +79,12 @@ export default function TextMobileStepper(props) {
         else {
             setActiveStep(prevActiveStep => allQuestions[activeStep].next_question_id[value]);
 
-            console.log("Active Step: ", activeStep);
-            console.log("Next Step: ", allQuestions[activeStep].next_question_id[value]);
-            console.log("Ans: ", value, typeof (value));
+            // console.log("Active Step: ", activeStep);
+            // console.log("Next Step: ", allQuestions[activeStep].next_question_id[value]);
+            // console.log("Ans: ", value, typeof (value));
 
             setValue('-- clear --'); // clear value so no radio button is selected on Next
-            console.log("-------------");
+            // console.log("-------------");
         }
     };
 
@@ -112,10 +112,10 @@ export default function TextMobileStepper(props) {
             getAnswerSetState(activeStep)(event.target.value);
         }
     };
-    console.log("Current Step: ", activeStep);
-    console.log("Selected value: ", value);
-    console.log("Answers: ", answer0, answer1, answer2, answer3, answer4, answer5);
-    console.log("Ans: ", typeof (answer0), answer0);
+    // console.log("Current Step: ", activeStep);
+    // console.log("Selected value: ", value);
+    // console.log("Answers: ", answer0, answer1, answer2, answer3, answer4, answer5);
+    // console.log("Ans: ", typeof (answer0), answer0);
 
     function getAnswerSetState(activeStep) {
         switch (activeStep) {
@@ -140,11 +140,11 @@ export default function TextMobileStepper(props) {
     // Manage which form to display depending on the answers
     useEffect(() => {
         if (answer1 === 'Yes') {
-            history.push(`${process.env.PUBLIC_URL}/curation_queue`)
+            history.replace(`${process.env.PUBLIC_URL}/curation_queue`)
         }
         if (answer1 === 'No') {
             // Show form fields for published, not yet indexed in PubMed fields
-            history.push({
+            history.replace({
                 pathname: `${process.env.PUBLIC_URL}/form`,
                 state: {
                     id: 1,
@@ -154,7 +154,7 @@ export default function TextMobileStepper(props) {
         }
         if (answer2 === 'Yes') {
             // Show form fields for manuscript accepted or submitted
-            history.push({
+            history.replace({
                 pathname: `${process.env.PUBLIC_URL}/form`,
                 state: {
                     id: 2,
@@ -164,7 +164,7 @@ export default function TextMobileStepper(props) {
         }
         if (answer3 === 'Yes') {
             // Show form for preprint manuscript
-            history.push({
+            history.replace({
                 pathname: `${process.env.PUBLIC_URL}/form`,
                 state: {
                     id: 3,
@@ -174,7 +174,7 @@ export default function TextMobileStepper(props) {
         }
         if (answer4 === 'Yes') {
             // Show form for draft manuscript
-            history.push({
+            history.replace({
                 pathname: `${process.env.PUBLIC_URL}/form`,
                 state: {
                     id: 4,
@@ -184,7 +184,7 @@ export default function TextMobileStepper(props) {
         }
         if (answer4 === 'No') {
             // Show form for no manuscript
-            history.push({
+            history.replace({
                 pathname: `${process.env.PUBLIC_URL}/form`,
                 state: {
                     id: 4,
