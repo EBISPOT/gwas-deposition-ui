@@ -156,7 +156,7 @@ export const Title = (props) => {
                         id="title"
                         type="input"
                         variant="outlined"
-                        placeholder="Enter title"
+                        helperText="Enter title"
                         value={values.title}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -213,7 +213,7 @@ export const FirstAuthorName = (props) => {
                             id="firstAuthor.firstName"
                             type="input"
                             variant="outlined"
-                            placeholder="Add first/given name"
+                            helperText="Please enter first given name followed by any middle initials, e.g. Anne B"
                             value={values.firstAuthor.firstName}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -250,7 +250,7 @@ export const FirstAuthorName = (props) => {
                             id="firstAuthor.lastName"
                             type="input"
                             variant="outlined"
-                            placeholder="Add last name/surname"
+                            helperText="Add last name/surname"
                             value={values.firstAuthor.lastName}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -275,7 +275,7 @@ export const FirstAuthorName = (props) => {
                 <Grid item >
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink required htmlFor="firstAuthor.email"
+                            shrink htmlFor="firstAuthor.email"
                             className={classes.label}
                         >
                             Email
@@ -285,7 +285,7 @@ export const FirstAuthorName = (props) => {
                             id="firstAuthor.email"
                             type="input"
                             variant="outlined"
-                            placeholder="Add email"
+                            helperText="Add email"
                             value={values.firstAuthor.email}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -340,7 +340,7 @@ export const FirstAuthorName = (props) => {
                             id="firstAuthor.group"
                             type="input"
                             variant="outlined"
-                            placeholder="Add Consortium name"
+                            helperText="Add Consortium name"
                             value={values.firstAuthor.group}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -366,7 +366,7 @@ export const FirstAuthorName = (props) => {
                 <Grid item >
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink required htmlFor="firstAuthor.groupEmail"
+                            shrink htmlFor="firstAuthor.groupEmail"
                             className={classes.label}
                         >
                             Email
@@ -376,7 +376,7 @@ export const FirstAuthorName = (props) => {
                             id="firstAuthor.groupEmail"
                             type="input"
                             variant="outlined"
-                            placeholder="Add email"
+                            helperText="Add email"
                             value={values.firstAuthor.groupEmail}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -433,7 +433,7 @@ export const LastAuthorName = (props) => {
                 <Grid item>
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink required htmlFor="firstName"
+                            shrink htmlFor="firstName"
                             className={classes.label}
                         >
                             First Name/Given Name
@@ -443,7 +443,7 @@ export const LastAuthorName = (props) => {
                             id="lastAuthor.firstName"
                             type="input"
                             variant="outlined"
-                            placeholder="Add first/given name"
+                            helperText="Please enter first given name followed by any middle initials, e.g. Anne B"
                             value={values.lastAuthor.firstName}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -481,7 +481,7 @@ export const LastAuthorName = (props) => {
                             id="lastAuthor.lastName"
                             type="input"
                             variant="outlined"
-                            placeholder="Add last name/surname"
+                            helperText="Add last name/surname"
                             value={values.lastAuthor.lastName}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -516,7 +516,7 @@ export const LastAuthorName = (props) => {
                             id="lastAuthor.email"
                             type="input"
                             variant="outlined"
-                            placeholder="Add email"
+                            helperText="Add email"
                             value={values.lastAuthor.email}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -571,7 +571,7 @@ export const LastAuthorName = (props) => {
                             id="lastAuthor.group"
                             type="input"
                             variant="outlined"
-                            placeholder="Add Consortium name"
+                            helperText="Add Consortium name"
                             value={values.lastAuthor.group}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -597,7 +597,7 @@ export const LastAuthorName = (props) => {
                 <Grid item >
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink required htmlFor="groupEmail"
+                            shrink htmlFor="groupEmail"
                             className={classes.label}
                         >
                             Email
@@ -607,7 +607,7 @@ export const LastAuthorName = (props) => {
                             id="lastAuthor.groupEmail"
                             type="input"
                             variant="outlined"
-                            placeholder="Add email"
+                            helperText="Add email"
                             value={values.lastAuthor.groupEmail}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -656,7 +656,7 @@ export const Description = props => {
                 <CssTextField
                     id="description"
                     variant="outlined"
-                    placeholder="Enter the project description"
+                    helperText="Enter the project description"
                     multiline
                     rows="4"
                     rowsMax="8"
@@ -727,7 +727,7 @@ export const CorrespondingAuthor = (props) => {
                                                 id={`correspondingAuthors[${index}].firstName`}
                                                 type="input"
                                                 variant="outlined"
-                                                placeholder="Add corresponding author first name"
+                                                helperText="Add corresponding author first name"
                                                 value={values.correspondingAuthors[index].firstName}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
@@ -764,7 +764,7 @@ export const CorrespondingAuthor = (props) => {
                                                 id={`correspondingAuthors[${index}].lastName`}
                                                 type="input"
                                                 variant="outlined"
-                                                placeholder="Add corresponding author last name"
+                                                helperText="Add corresponding author last name"
                                                 value={values.correspondingAuthors[index].lastName}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
@@ -802,7 +802,7 @@ export const CorrespondingAuthor = (props) => {
                                                 id={`correspondingAuthors[${index}].email`}
                                                 type="input"
                                                 variant="outlined"
-                                                placeholder="Add email"
+                                                helperText="Add email"
                                                 value={values.correspondingAuthors[index].email}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
@@ -886,7 +886,7 @@ export const JournalName = (props) => {
                         id="journal"
                         type="input"
                         variant="outlined"
-                        placeholder="Enter the Journal name"
+                        helperText="Enter the Journal name"
                         value={values.journal}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -928,7 +928,7 @@ export const JournalURL = (props) => {
                     id="url"
                     type="input"
                     variant="outlined"
-                    placeholder="Enter the Journal URL"
+                    helperText="Enter the Journal URL"
                     value={values.url}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -976,7 +976,7 @@ export const PrePrintName = (props) => {
                     <CssTextField
                         id="prePrintServer"
                         variant="outlined"
-                        placeholder="Enter the PrePrint server name"
+                        helperText="Enter the PrePrint server name"
                         value={values.prePrintServer}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -1018,7 +1018,7 @@ export const PrePrintDOI = (props) => {
                 <CssTextField
                     id="preprintServerDOI"
                     variant="outlined"
-                    placeholder="Enter the PrePrint DOI"
+                    helperText="Enter the PrePrint DOI"
                     value={values.preprintServerDOI}
                     onChange={handleChange}
                     onBlur={handleBlur}

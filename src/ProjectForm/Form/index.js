@@ -184,8 +184,7 @@ const MyEnhancedForm = withFormik({
     // Custom sync validation
     validate: (values, props) => {
         let errors = {};
-
-        let answerPropsObj = JSON.parse(props.answer)
+        let answerPropsId = JSON.parse(props.answer).answerId
 
         /**
          * Title
@@ -217,7 +216,7 @@ const MyEnhancedForm = withFormik({
             '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
             '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
             '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-        if (answerPropsObj.answerId === 1) {
+        if (answerPropsId === 1) {
             if (values.url) {
                 if (!pattern.test(values.url)) {
                     errors.url = "Add valid URL"
@@ -228,12 +227,12 @@ const MyEnhancedForm = withFormik({
         /**
         * PrePrint URL
         */
-        if ([3].includes(answerPropsObj.answerId)) {
+        if ([3].includes(answerPropsId)) {
             if (!values.preprintServerDOI || /^\s*$/.test(values.preprintServerDOI)) {
                 errors.preprintServerDOI = 'Required'
             }
         }
-        if ([1, 2, 3].includes(answerPropsObj.answerId)) {
+        if ([1, 2, 3].includes(answerPropsId)) {
             if (values.preprintServerDOI) {
                 if (!pattern.test(values.preprintServerDOI)) {
                     errors.preprintServerDOI = "Add valid URL"
@@ -244,12 +243,12 @@ const MyEnhancedForm = withFormik({
         /**
         * PrePrint server name
         */
-        if ([3].includes(answerPropsObj.answerId)) {
+        if ([3].includes(answerPropsId)) {
             if (!values.prePrintServer || /^\s*$/.test(values.prePrintServer)) {
                 errors.prePrintServer = 'Required'
             }
         }
-        if ([1, 2, 3].includes(answerPropsObj.answerId)) {
+        if ([1, 2, 3].includes(answerPropsId)) {
             if (values.prePrintServer && values.prePrintServer.length > 240) {
                 errors.prePrintServer = 'The PrePrint server field is limited to 240 characters.'
             }
@@ -263,7 +262,7 @@ const MyEnhancedForm = withFormik({
          * Group
          * Group email
          */
-        if ([1, 2, 3].includes(answerPropsObj.answerId)) {
+        if ([1, 2, 3].includes(answerPropsId)) {
             let firstAuthorError = {
                 firstAuthor: {
                     firstName: undefined, lastName: undefined, email: undefined,
@@ -274,27 +273,23 @@ const MyEnhancedForm = withFormik({
             // Object to track valid FirstAuthor name values to clear "errors" object
             let validFirstAuthorNameFields = { firstAuthor: { firstName: true, lastName: true, email: true } }
 
-            if (!values.firstAuthor.firstName || /^\s*$/.test(values.firstAuthor.firstName)) {
+            if (/^\s*$/.test(values.firstAuthor.firstName)) {
                 firstAuthorError.firstAuthor.firstName = 'Required';
                 Object.assign(errors, firstAuthorError);
                 validFirstAuthorNameFields.firstAuthor.firstName = false;
             }
 
-            if (!values.firstAuthor.lastName || /^\s*$/.test(values.firstAuthor.lastName)) {
+            if (/^\s*$/.test(values.firstAuthor.lastName)) {
                 firstAuthorError.firstAuthor.lastName = 'Required';
                 Object.assign(errors, firstAuthorError);
                 validFirstAuthorNameFields.firstAuthor.lastName = false;
             }
 
-            if (!values.firstAuthor.email || /^\s*$/.test(values.firstAuthor.email)) {
-                firstAuthorError.firstAuthor.email = 'Required';
-                Object.assign(errors, firstAuthorError);
-                validFirstAuthorNameFields.firstAuthor.email = false;
-            } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+            if (values.firstAuthor.email && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
                 values.firstAuthor.email)) {
                 firstAuthorError.firstAuthor.email = 'Invalid email address';
                 Object.assign(errors, firstAuthorError);
-                validFirstAuthorNameFields.lastAuthor.email = false;
+                validFirstAuthorNameFields.firstAuthor.email = false;
             }
 
             // Clear errors for FirstAuthor _if_ firstName, lastName, email are valid
@@ -308,19 +303,14 @@ const MyEnhancedForm = withFormik({
             let validFirstAuthorGroupFields = { firstAuthor: { group: true, groupEmail: true } }
 
             if (!validFirstAuthorNameFields.firstAuthor.firstName &&
-                !validFirstAuthorNameFields.firstAuthor.lastName &&
-                !validFirstAuthorNameFields.firstAuthor.email) {
+                !validFirstAuthorNameFields.firstAuthor.lastName) {
                 if (!values.firstAuthor.group || /^\s*$/.test(values.firstAuthor.group)) {
                     firstAuthorError.firstAuthor.group = 'Required';
                     Object.assign(errors, firstAuthorError);
                     validFirstAuthorGroupFields.firstAuthor.group = false;
                 }
 
-                if (!values.firstAuthor.groupEmail || /^\s*$/.test(values.firstAuthor.groupEmail)) {
-                    firstAuthorError.firstAuthor.groupEmail = 'Required';
-                    Object.assign(errors, firstAuthorError);
-                    validFirstAuthorGroupFields.firstAuthor.groupEmail = false;
-                } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                if (values.firstAuthor.groupEmail && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
                     values.firstAuthor.groupEmail)) {
                     firstAuthorError.firstAuthor.groupEmail = 'Invalid email address';
                     Object.assign(errors, firstAuthorError);
@@ -347,7 +337,7 @@ const MyEnhancedForm = withFormik({
          * Group
          * Group email
          */
-        if ([1, 2, 3].includes(answerPropsObj.answerId)) {
+        if ([1, 2, 3].includes(answerPropsId)) {
             let lastAuthorError = {
                 lastAuthor: {
                     firstName: undefined, lastName: undefined, email: undefined,
@@ -358,23 +348,19 @@ const MyEnhancedForm = withFormik({
             // Object to track valid LastAuthor name values to clear "errors" object
             let validLastAuthorNameFields = { lastAuthor: { firstName: true, lastName: true, email: true } }
 
-            if (!values.lastAuthor.firstName || /^\s*$/.test(values.lastAuthor.firstName)) {
+            if (/^\s*$/.test(values.lastAuthor.firstName)) {
                 lastAuthorError.lastAuthor.firstName = 'Required';
                 Object.assign(errors, lastAuthorError);
                 validLastAuthorNameFields.lastAuthor.firstName = false;
             }
 
-            if (!values.lastAuthor.lastName || /^\s*$/.test(values.lastAuthor.lastName)) {
+            if (/^\s*$/.test(values.lastAuthor.lastName)) {
                 lastAuthorError.lastAuthor.lastName = 'Required';
                 Object.assign(errors, lastAuthorError);
                 validLastAuthorNameFields.lastAuthor.lastName = false;
             }
 
-            if (!values.lastAuthor.email || /^\s*$/.test(values.lastAuthor.email)) {
-                lastAuthorError.lastAuthor.email = 'Required';
-                Object.assign(errors, lastAuthorError);
-                validLastAuthorNameFields.lastAuthor.email = false;
-            } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+            if (values.lastAuthor.email && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
                 values.lastAuthor.email)) {
                 lastAuthorError.firstAuthor.email = 'Invalid email address';
                 Object.assign(errors, lastAuthorError);
@@ -392,19 +378,14 @@ const MyEnhancedForm = withFormik({
             let validLastAuthorGroupFields = { lastAuthor: { group: true, groupEmail: true } }
 
             if (!validLastAuthorNameFields.lastAuthor.firstName &&
-                !validLastAuthorNameFields.lastAuthor.lastName &&
-                !validLastAuthorNameFields.lastAuthor.email) {
+                !validLastAuthorNameFields.lastAuthor.lastName) {
                 if (!values.lastAuthor.group || /^\s*$/.test(values.lastAuthor.group)) {
                     lastAuthorError.lastAuthor.group = 'Required';
                     Object.assign(errors, lastAuthorError);
                     validLastAuthorGroupFields.lastAuthor.group = false;
                 }
 
-                if (!values.lastAuthor.groupEmail || /^\s*$/.test(values.lastAuthor.groupEmail)) {
-                    lastAuthorError.lastAuthor.groupEmail = 'Required';
-                    Object.assign(errors, lastAuthorError);
-                    validLastAuthorGroupFields.lastAuthor.groupEmail = false;
-                } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                if (values.lastAuthor.groupEmail && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
                     values.lastAuthor.groupEmail)) {
                     lastAuthorError.lastAuthor.groupEmail = 'Invalid email address';
                     Object.assign(errors, lastAuthorError);
@@ -426,7 +407,7 @@ const MyEnhancedForm = withFormik({
         /**
          * Journal name
          */
-        if ([1, 2].includes(answerPropsObj.answerId)) {
+        if ([1, 2].includes(answerPropsId)) {
             if (!values.journal || /^\s*$/.test(values.journal)) {
                 errors.journal = 'Required';
             }
@@ -464,13 +445,18 @@ const MyEnhancedForm = withFormik({
                     Object.assign(errors, caTest)
 
                 }
-                if (corrAuthor.email === '') {
+                if (!corrAuthor.email || /^\s*$/.test(corrAuthor.email)) {
                     corrAuthorError.email = 'Required';
                     caErrors[index] = corrAuthorError
-
                     let caTest = { correspondingAuthors: caErrors }
                     Object.assign(errors, caTest)
-
+                }
+                if (corrAuthor.email && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                    corrAuthor.email)) {
+                    corrAuthorError.email = 'Invalid email address';
+                    caErrors[index] = corrAuthorError
+                    let caTest = { correspondingAuthors: caErrors }
+                    Object.assign(errors, caTest)
                 }
             })
         }
@@ -478,8 +464,8 @@ const MyEnhancedForm = withFormik({
         /**
          * Embargo date
          */
-        if ([2, 3, 4].includes(answerPropsObj.answerId)) {
-            if (answerPropsObj.answerId !== 1) {
+        if ([2, 3, 4].includes(answerPropsId)) {
+            if (answerPropsId !== 1) {
                 if (!values.embargoDate) {
                     errors.embargoDate = 'Required'
                 }
