@@ -52,7 +52,7 @@ docker:
     - docker tag $UI_SERVICE_NAME:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   only:
-    - master
+    - develop
   except:
     - tags
 
@@ -70,7 +70,7 @@ deploy-sandbox:
   environment:
     name: sandbox
   only:
-    - master
+    - develop
 
 deploy-fallback:
   image: dtzar/helm-kubectl:2.13.1
