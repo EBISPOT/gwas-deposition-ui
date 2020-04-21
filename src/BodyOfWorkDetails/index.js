@@ -18,9 +18,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { AuthConsumer } from '../auth-context';
 import jwt_decode from 'jwt-decode';
 import API_CLIENT from '../apiClient';
+import axios from 'axios';
 import history from "../history";
 
 import ElixirAuthService from '../ElixirAuthService';
+const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
 
 
 const styles = theme => ({
@@ -150,13 +152,22 @@ class ProjectDetails extends Component {
      * Get BodyofWork details
      */
     async componentDidMount() {
+        this.getBodyOfWork()
+    }
 
-        this.API_CLIENT.getBodyOfWork(this.bodyOfWorkId).then((data) => {
-            console.log("** BOW Response: ", data)
-            this.setState({ ...this.state, bodyofwork: data })
-            this.setState({ ...this.state, status: data.status })
-            this.setState({ ...this.state, authEmail: this.getToken().authEmail, auth: this.getToken().auth, globusIdentity: this.getToken().authEmail })
-        });
+    /**
+     * Get Body of Work details
+     */
+    async getBodyOfWork() {
+        let token = this.getToken().auth;
+
+        // this.API_CLIENT.getBodyOfWork(this.bodyOfWorkId, token).then((response) => {
+        await axios.get(BASE_URI + 'bodyofwork/' + this.bodyOfWorkId,
+            { headers: { 'Authorization': 'Bearer ' + token, }, }).then((response) => {
+                this.setState({ ...this.state, bodyofwork: response.data })
+                this.setState({ ...this.state, status: response.data.status })
+                this.setState({ ...this.state, authEmail: this.getToken().authEmail, auth: this.getToken().auth, globusIdentity: this.getToken().authEmail })
+            });
     }
 
     /**
@@ -348,18 +359,18 @@ class ProjectDetails extends Component {
         let elixirRegistrationLink = <a href="https://elixir-europe.org/register" target="_blank" rel="noopener noreferrer">Elixir ID</a>
         let globusLink = <a href="https://www.globus.org/globus-connect-personal" target="_blank" rel="noopener noreferrer">Globus Connect Personal</a>
         let summaryStatsFormattingLink = <a href="https://www.ebi.ac.uk/gwas/docs/summary-statistics-format" target="_blank" rel="noopener noreferrer">Format and validate</a>
-        const sumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics`;
-        const metadataAndSumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics-plus-metadata`;
+        // const sumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics`;
+        // const metadataAndSumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics-plus-metadata`;
         const { elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats } = this.state;
         const checklistCompleteError = [elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats].filter(v => v).length !== 4;
 
         let create_submission_button;
         let showSubmissionDetailsButton;
-        const gwasInfoEmail = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
-        const gwasSubsEmail = <a href="mailto:gwas-subs@ebi.ac.uk">gwas-subs@ebi.ac.uk</a>;
-        let statusExplanationMessageText;
-        const eligibleBoldText = <span className={classes.bold}>submit both summary statistics and supporting metadata</span>
-        const publishedBoldText = <span className={classes.bold}>submit summary statistics</span>
+        // const gwasInfoEmail = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
+        // const gwasSubsEmail = <a href="mailto:gwas-subs@ebi.ac.uk">gwas-subs@ebi.ac.uk</a>;
+        // let statusExplanationMessageText;
+        // const eligibleBoldText = <span className={classes.bold}>submit both summary statistics and supporting metadata</span>
+        // const publishedBoldText = <span className={classes.bold}>submit summary statistics</span>
 
 
         // Submission checklist checklist form
