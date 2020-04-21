@@ -162,7 +162,7 @@ class PublicationsMatTable extends React.Component {
                         spacing={4}>
                         <Grid item>
                             <Typography gutterBottom variant="body1">
-                                Search for a publication
+                                Search for a publication, then click on the PMID to a start a submission.
                         </Typography>
                         </Grid>
                     </Grid>
@@ -218,7 +218,7 @@ class PublicationsMatTable extends React.Component {
                                 {
                                     title: <div className="tooltip">Status
                                     <span className="tooltiptext">Submission status of the publication.
-                                                                See documentation for detailed definitions.
+                                                                            See documentation for detailed definitions.
                                     </span></div>,
                                     field: 'status',
                                     render: rowData => (this.getUserFriendlyStatusLabels(rowData.status))
