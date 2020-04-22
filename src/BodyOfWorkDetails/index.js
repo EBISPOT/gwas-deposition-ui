@@ -255,7 +255,7 @@ class ProjectDetails extends Component {
 
         // Check if user is logged in and if token is still valid and if GDPR accepted
         if (token && !this.ElixirAuthService.isTokenExpired(token) && gdprAccepted) {
-            this.API_CLIENT.createSubmission(bodyOfWorkId, globusIdentityEmail).then(response => {
+            this.API_CLIENT.createSubmissionFromBodyOfWork(bodyOfWorkId, globusIdentityEmail).then(response => {
                 this.setState(() => ({ createSubmissionError: false }));
 
                 this.redirectToSubmissionDetails();
