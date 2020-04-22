@@ -112,10 +112,16 @@ class APIClient {
 
     /**
      * Get details for Body of Work by GCP ID
-     * @param {*} gcpId
+     * @param {*} bowId
+     * @param {} token
      */
-    getBodyOfWork(gcpId) {
-        return this.perform('get', '/bodyofwork/' + gcpId);
+    getBodyOfWork(bowId, token) {
+        return this.perform('get', '/bodyofwork/' + bowId,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                }
+            })
     }
 
 
@@ -168,6 +174,24 @@ class APIClient {
         //         console.log(error)
         //         return error
         //     });
+    }
+
+
+    /**
+     * Create a submission for a Body of Work entity.
+     * @param {*} bowId
+     * @param {String} globusIdentityEmail Email to link to Globus
+     */
+    createSubmissionFromBodyOfWork(bowId, globusIdentityEmail) {
+        let bow_data = { bodyOfWork: { bodyOfWorkId: bowId }, globusIdentity: globusIdentityEmail };
+
+        return axios.post(BASE_URI + 'submissions', bow_data,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                }
+            }
+        )
     }
 
 
