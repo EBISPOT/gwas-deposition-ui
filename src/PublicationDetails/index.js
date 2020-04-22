@@ -165,7 +165,6 @@ class PublicationDetails extends Component {
     async componentDidMount() {
 
         this.API_CLIENT.getPublication(this.PUBMED_ID).then((data) => {
-            console.log("** PD: ", data)
             this.setState({ ...this.state, publication: data })
             this.setState({ ...this.state, publicationStatus: data.status })
             this.setState({ ...this.state, transformedPublicationStatus: this.getUserFriendlyStatusLabels(data.status) })
