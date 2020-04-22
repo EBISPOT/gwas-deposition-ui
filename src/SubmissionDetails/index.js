@@ -1183,36 +1183,38 @@ class SubmissionDetails extends Component {
                         alignItems="stretch"
                         spacing={4}
                     >
-                        <Paper className={classes.paper}>
-                            <Grid item xs={12} className={classes.pageHeader}>
-                                <Typography variant="h5" className={classes.headerTextStyle}>
-                                    Publication details for PMID: {this.state.publication_obj.pmid}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Typography variant="h6" className={classes.publicationTitleTextStyle}>
-                                    {this.state.publication_obj.title}
-                                </Typography>
-                            </Grid>
-
-                            <Grid container item>
-                                <Typography className={classes.publicationTextStyle} >
-                                    {this.state.publication_obj.firstAuthor} et al.
+                        {(this.state.publication_obj) && (
+                            <Paper className={classes.paper}>
+                                <Grid item xs={12} className={classes.pageHeader}>
+                                    <Typography variant="h5" className={classes.headerTextStyle}>
+                                        Publication details for PMID: {this.state.publication_obj.pmid}
                                     </Typography>
-                                <Typography className={classes.publicationTextStyle} >
-                                    {this.state.publication_obj.publicationDate}
-                                </Typography>
-                                <Typography className={classes.publicationTextStyle} >
-                                    {this.state.publication_obj.journal}
-                                </Typography>
-                            </Grid>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Typography variant="h6" className={classes.publicationTitleTextStyle}>
+                                        {this.state.publication_obj.title}
+                                    </Typography>
+                                </Grid>
 
-                            <Grid item xs={12}>
-                                <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                    {userActionPublicationStatus}
-                                </Typography>
-                            </Grid>
-                        </Paper>
+                                <Grid container item>
+                                    <Typography className={classes.publicationTextStyle} >
+                                        {this.state.publication_obj.firstAuthor} et al.
+                                    </Typography>
+                                    <Typography className={classes.publicationTextStyle} >
+                                        {this.state.publication_obj.publicationDate}
+                                    </Typography>
+                                    <Typography className={classes.publicationTextStyle} >
+                                        {this.state.publication_obj.journal}
+                                    </Typography>
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                    <Typography className={classes.publicationCatalogStatusTextStyle}>
+                                        {userActionPublicationStatus}
+                                    </Typography>
+                                </Grid>
+                            </Paper>
+                        )}
                     </Grid>
                 </div>
 
