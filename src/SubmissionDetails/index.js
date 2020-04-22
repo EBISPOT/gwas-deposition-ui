@@ -148,7 +148,11 @@ class SubmissionDetails extends Component {
             globusOriginId: null,
             userName: null,
             submissionCreatedDate: null,
+            provenanceType: null,
             publication_obj: [],
+            publicationStatus: null,
+            bow_obj: [],
+            bowStatus: null,
             file_upload_error: null,
             isNotValid: true,
             submitDataError: null,
@@ -158,7 +162,6 @@ class SubmissionDetails extends Component {
             submissionStatus: 'NA',
             metadataStatus: null,
             summaryStatisticsStatus: null,
-            publicationStatus: null,
             showComponent: false,
             showButtonVisibility: 'visible',
             fileUploadId: null,
@@ -254,8 +257,15 @@ class SubmissionDetails extends Component {
                         this.setState({ ...this.state, submissionStatus: data.submission_status });
                         this.setState({ ...this.state, metadataStatus: data.metadata_status });
                         this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
+                        this.setState({ ...this.state, provenanceType: data.provenanceType });
                         this.setState({ ...this.state, publication_obj: data.publication });
-                        this.setState({ ...this.state, publicationStatus: data.publication.status });
+                        if (data.publication && data.publication.status) {
+                            this.setState({ ...this.state, publicationStatus: data.publication.status });
+                        }
+                        this.setState({ ...this.state, bow_obj: data.bodyOfWork });
+                        if (data.bodyOfWork && data.bodyOfWork.status) {
+                            this.setState({ ...this.state, bowStatus: data.bodyOfWork.status });
+                        }
 
                         if (data.created.user.name) {
                             this.setState({ ...this.state, userName: data.created.user.name });
@@ -653,34 +663,30 @@ class SubmissionDetails extends Component {
 
     render() {
         const { classes } = this.props;
-        // const { submitDataError } = this.state;
+        const { provenanceType } = this.state;
+        console.log("** PT: ", provenanceType)
 
         // const OVERALL_STATUS_STARTED = 'STARTED';
         const VALID_SUBMISSION = 'VALID';
         const VALIDATING = 'VALIDATING';
         const SUBMITTED = 'SUBMITTED';
 
-        const { publicationStatus } = this.state;
-        // let transformedPublicationStatus;
+        const publicationProvenanceType = "PUBLICATION";
+        const bowProvenanceType = "BODY_OF_WORK";
 
-        // if (publicationStatus === 'UNDER_SUBMISSION' || publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION'
-        //     || publicationStatus === 'PUBLISHED_WITH_SS') {
-        //     transformedPublicationStatus = 'CLOSED'
-        // }
-        // if (publicationStatus === 'ELIGIBLE') {
-        //     transformedPublicationStatus = 'OPEN FOR SUBMISSION'
-        // }
-        // if (publicationStatus === 'PUBLISHED') {
-        //     transformedPublicationStatus = 'OPEN FOR SUMMARY STATISTICS SUBMISSION'
-        // }
+        const { publicationStatus } = this.state;
+        console.log("** publicationStatus: ", publicationStatus)
+        const { bowStatus } = this.state;
 
 
         let userActionPublicationStatus;
-        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-            userActionPublicationStatus = <i>You are able to submit summary statistics for this publication.</i>
-        }
-        if (publicationStatus === 'UNDER_SUBMISSION') {
-            userActionPublicationStatus = <i>You are able to submit summary statistics and study metadata for this publication.</i>
+        if (provenanceType === publicationProvenanceType) {
+            if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
+                userActionPublicationStatus = <i>You are able to submit summary statistics for this publication.</i>
+            }
+            if (publicationStatus === 'UNDER_SUBMISSION') {
+                userActionPublicationStatus = <i>You are able to submit summary statistics and study metadata for this publication.</i>
+            }
         }
 
         const { globusOriginId } = this.state;
@@ -693,6 +699,8 @@ class SubmissionDetails extends Component {
         let final_thank_you_message;
 
         const { submissionStatus } = this.state;
+        console.log("** SS: ", submissionStatus)
+
         const { metadataStatus } = this.state;
         let metadata_status_section;
         const { summaryStatisticsStatus } = this.state;
@@ -716,52 +724,107 @@ class SubmissionDetails extends Component {
         let upload_files_to_globus_step;
 
         /**
+         * For provenanceType PUBLICATION,
          * Display Submission statistics section if a file has been uploaded
          * and the file Dropzone component is not being displayed
          */
-        if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) {
-            if (displaySummaryStatsSection && publicationStatus !== 'UNDER_SUMMARY_STATS_SUBMISSION') {
-                submission_stats_section =
-                    <Fragment>
-                        <Grid item container xs={12}>
-                            <Grid item xs={2}>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    Submission Stats:
+        if (provenanceType === publicationProvenanceType) {
+            if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) {
+                if (displaySummaryStatsSection && publicationStatus !== 'UNDER_SUMMARY_STATS_SUBMISSION') {
+                    submission_stats_section =
+                        <Fragment>
+                            <Grid item container xs={12}>
+                                <Grid item xs={2}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        Submission Stats:
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={10}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.study_count}
+                                        {this.state.submission_data.study_count === 1 ? " study" : " studies"}
+                                    </Typography>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.association_count} total associations
+                                    </Typography>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.sample_count} sample groups
                                 </Typography>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={10}>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    {this.state.submission_data.study_count}
-                                    {this.state.submission_data.study_count === 1 ? " study" : " studies"}
+                        </Fragment>
+                } else {
+                    submission_stats_section =
+                        <Fragment>
+                            <Grid item container xs={12}>
+                                <Grid item xs={2}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        Submission Stats:
                                 </Typography>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    {this.state.submission_data.association_count} total associations
-                                 </Typography>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    {this.state.submission_data.sample_count} sample groups
-                                </Typography>
+                                </Grid>
+                                <Grid item xs={10}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.study_count}
+                                        {this.state.submission_data.study_count === 1 ? " study" : " studies"}
+                                    </Typography>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Fragment>
-            } else {
-                submission_stats_section =
-                    <Fragment>
-                        <Grid item container xs={12}>
-                            <Grid item xs={2}>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    Submission Stats:
-                            </Typography>
-                            </Grid>
-                            <Grid item xs={10}>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    {this.state.submission_data.study_count}
-                                    {this.state.submission_data.study_count === 1 ? " study" : " studies"}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                    </Fragment>
+                        </Fragment>
+                }
             }
         }
+
+        /**
+         * For provenanceType BODY_OF_WORK,
+         * Display Submission statistics section if a file has been uploaded
+         * and the file Dropzone component is not being displayed
+         */
+        if (provenanceType === bowProvenanceType) {
+            if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) {
+                if (displaySummaryStatsSection) {
+                    submission_stats_section =
+                        <Fragment>
+                            <Grid item container xs={12}>
+                                <Grid item xs={2}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        Submission Stats:
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={10}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.study_count}
+                                        {this.state.submission_data.study_count === 1 ? " study" : " studies"}
+                                    </Typography>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.association_count} total associations
+                                    </Typography>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.sample_count} sample groups
+                                </Typography>
+                                </Grid>
+                            </Grid>
+                        </Fragment>
+                } else {
+                    submission_stats_section =
+                        <Fragment>
+                            <Grid item container xs={12}>
+                                <Grid item xs={2}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        Submission Stats:
+                                </Typography>
+                                </Grid>
+                                <Grid item xs={10}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.study_count}
+                                        {this.state.submission_data.study_count === 1 ? " study" : " studies"}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </Fragment>
+                }
+            }
+        }
+
 
 
         /**
@@ -840,18 +903,31 @@ class SubmissionDetails extends Component {
          * the metadata template. 
          */
         if (submissionStatus === 'STARTED') {
-            if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-                download_template =
-                    <Fragment>
-                        <Button onClick={this.downloadSummaryStatsTemplate} fullWidth className={classes.button}>
-                            Download submission form
+            if (provenanceType === publicationProvenanceType) {
+                if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
+                    download_template =
+                        <Fragment>
+                            <Button onClick={this.downloadSummaryStatsTemplate} fullWidth className={classes.button}>
+                                Download submission form
                         </Button>
-                        <Typography variant="body2" gutterBottom className={classes.errorText}>
-                            {this.state.downloadSummaryStatsFileError}
-                        </Typography>
-                    </Fragment>
+                            <Typography variant="body2" gutterBottom className={classes.errorText}>
+                                {this.state.downloadSummaryStatsFileError}
+                            </Typography>
+                        </Fragment>
+                }
+                if (publicationStatus === 'UNDER_SUBMISSION') {
+                    download_template =
+                        <Fragment>
+                            <Button onClick={this.downloadMetadataTemplate} fullWidth className={classes.button}>
+                                Download submission form
+                        </Button>
+                            <Typography variant="body2" gutterBottom className={classes.inputCenter}>
+                                {this.state.downloadSummaryStatsFileError}
+                            </Typography>
+                        </Fragment>
+                }
             }
-            if (publicationStatus === 'UNDER_SUBMISSION') {
+            if (provenanceType === bowProvenanceType) {
                 download_template =
                     <Fragment>
                         <Button onClick={this.downloadMetadataTemplate} fullWidth className={classes.button}>
@@ -976,7 +1052,7 @@ class SubmissionDetails extends Component {
                 </Typography>
             </Grid>
 
-        if (publicationStatus === "UNDER_SUBMISSION") {
+        if (publicationStatus === "UNDER_SUBMISSION" || bowStatus === "SUBMISSION_EXISTS") {
             if (metadataStatus === 'VALID') {
                 metadata_status_section =
                     <Fragment>
@@ -1070,7 +1146,7 @@ class SubmissionDetails extends Component {
                     </Grid>
                 </Fragment>
         }
-        else if (submissionStatus === VALIDATING && publicationStatus === 'UNDER_SUBMISSION') {
+        else if (submissionStatus === VALIDATING && (publicationStatus === 'UNDER_SUBMISSION' || bowStatus === "SUBMISSION_EXISTS")) {
             summary_statistics_status_icon =
                 <Fragment>
                     <Grid item xs={4}>
@@ -1211,6 +1287,16 @@ class SubmissionDetails extends Component {
                                 <Grid item xs={12}>
                                     <Typography className={classes.publicationCatalogStatusTextStyle}>
                                         {userActionPublicationStatus}
+                                    </Typography>
+                                </Grid>
+                            </Paper>
+                        )}
+
+                        {(this.state.bow_obj) && (
+                            <Paper className={classes.paper}>
+                                <Grid item xs={12} className={classes.pageHeader}>
+                                    <Typography variant="h5" className={classes.headerTextStyle}>
+                                        Details for GCP ID: {this.state.bow_obj.bodyOfWorkId}
                                     </Typography>
                                 </Grid>
                             </Paper>
