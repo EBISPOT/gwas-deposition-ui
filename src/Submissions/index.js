@@ -21,13 +21,10 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import { TextField, Container } from '@material-ui/core';
-
-import Grid from '@material-ui/core/Grid';
+import { Grid, Paper, TextField, Container, InputAdornment } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import SearchIcon from '@material-ui/icons/Search';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import ClearIcon from '@material-ui/icons/Clear';
 
 
@@ -74,6 +71,13 @@ const styles = theme => ({
         color: 'rgba(0, 0, 0, 0.54)',
         backgroundColor: 'inherit',
     },
+    Container: {
+        padding: 0,
+    },
+    table: {
+        zDepthShadows: 'none',
+        fontColor: 'red',
+    }
 });
 
 const CustomMTableToolbar = withStyles({
@@ -168,7 +172,7 @@ class Submissions extends Component {
         let searchTextValue = searchValue.trim();
 
         return (
-            <Container maxWidth="xl">
+            <Container maxWidth="xl" className={classes.Container}>
                 <MaterialTable
                     tableRef={this.tableRef}
                     icons={tableIcons}
@@ -307,6 +311,7 @@ class Submissions extends Component {
                         })
                     }
                     components={{
+                        Container: props => <Paper {...props} elevation={0} square />,
                         Toolbar: props => (
                             <div>
                                 <CustomMTableToolbar {...props} />
