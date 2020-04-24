@@ -463,16 +463,34 @@ class ProjectDetails extends Component {
         if (this.state.bodyofwork.firstAuthor && this.state.bodyofwork.firstAuthor.firstName
             && this.state.bodyofwork.firstAuthor.lastName) {
             firstAuthorDisplay =
-                <Typography className={classes.publicationTextStyle}>
-                    {this.state.bodyofwork.firstAuthor.firstName} &nbsp;
-                    {this.state.bodyofwork.firstAuthor.lastName}
-                </Typography>
+                <Fragment>
+                    <Grid item xs={3}>
+                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                            First Author:
+                        </Typography>
+                    </Grid>
+                    < Grid item xs={9} >
+                        <Typography className={classes.publicationTextStyle}>
+                            {this.state.bodyofwork.firstAuthor.firstName} &nbsp;
+                            {this.state.bodyofwork.firstAuthor.lastName}
+                        </Typography>
+                    </Grid>
+                </Fragment>
         }
         if (this.state.bodyofwork.firstAuthor && this.state.bodyofwork.firstAuthor.group) {
             firstAuthorDisplay =
-                <Typography className={classes.publicationTextStyle}>
-                    {this.state.bodyofwork.firstAuthor.group}
-                </Typography>
+                <Fragment>
+                    <Grid item xs={3}>
+                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                            First Author:
+                        </Typography>
+                    </Grid>
+                    < Grid item xs={9} >
+                        <Typography className={classes.publicationTextStyle}>
+                            {this.state.bodyofwork.firstAuthor.group}
+                        </Typography>
+                    </Grid>
+                </Fragment>
         }
 
         // Last Author
@@ -480,16 +498,34 @@ class ProjectDetails extends Component {
         if (this.state.bodyofwork.lastAuthor && this.state.bodyofwork.lastAuthor.firstName
             && this.state.bodyofwork.lastAuthor.lastName) {
             lastAuthorDisplay =
-                <Typography className={classes.publicationTextStyle}>
-                    {this.state.bodyofwork.lastAuthor.firstName} &nbsp;
+                <Fragment>
+                    <Grid item xs={3}>
+                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                            Last Author:
+                        </Typography>
+                    </Grid>
+                    < Grid item xs={9} >
+                        <Typography className={classes.publicationTextStyle}>
+                            {this.state.bodyofwork.lastAuthor.firstName} &nbsp;
                             {this.state.bodyofwork.lastAuthor.lastName}
-                </Typography>
+                        </Typography>
+                    </Grid>
+                </Fragment>
         }
         if (this.state.bodyofwork.lastAuthor && this.state.bodyofwork.lastAuthor.group) {
             lastAuthorDisplay =
-                <Typography className={classes.publicationTextStyle}>
-                    {this.state.bodyofwork.lastAuthor.group}
-                </Typography>
+                <Fragment>
+                    <Grid item xs={3}>
+                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                            Last Author:
+                        </Typography>
+                    </Grid>
+                    < Grid item xs={9} >
+                        <Typography className={classes.publicationTextStyle}>
+                            {this.state.bodyofwork.lastAuthor.group}
+                        </Typography>
+                    </Grid >
+                </Fragment >
         }
 
         // Corresponding Authors
@@ -563,24 +599,9 @@ class ProjectDetails extends Component {
                                     </Typography>
                                 </Grid>
 
+                                {firstAuthorDisplay}
 
-                                <Grid item xs={3}>
-                                    <Typography variant="h6" className={classes.publicationTextStyle}>
-                                        First Author:
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={9} >
-                                    {firstAuthorDisplay}
-                                </Grid>
-
-                                <Grid item xs={3}>
-                                    <Typography variant="h6" className={classes.publicationTextStyle}>
-                                        Last Author:
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={9} >
-                                    {lastAuthorDisplay}
-                                </Grid>
+                                {lastAuthorDisplay}
 
                                 <Grid item xs={3}>
                                     <Typography variant="h6" className={classes.publicationTextStyle}>

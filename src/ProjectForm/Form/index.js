@@ -138,11 +138,18 @@ const MyForm = props => {
 
 
                 {[2, 3, 4].includes(JSON.parse(props.answer).answerId) && (
-                    <Fragment>
-                        <EmbargoDate {...props} name="embargoDate" />
-                        <EmbargoDateCheckbox />
-                    </Fragment>
+                    <EmbargoDate {...props} name="embargoDate" />
                 )}
+
+                {[2, 3].includes(JSON.parse(props.answer).answerId) && (
+                    <EmbargoDateCheckbox />
+                )}
+
+                {([4].includes(JSON.parse(props.answer).answerId) &&
+                    JSON.parse(props.answer).answerValue === "Yes")
+                    && (
+                        <EmbargoDateCheckbox />
+                    )}
 
                 <Persist name="form_data" />
 
@@ -179,13 +186,14 @@ const MyEnhancedForm = withFormik({
         lastAuthor: { firstName: '', lastName: '', email: '', group: '', groupEmail: '' },
         correspondingAuthors: [{ firstName: '', lastName: '', email: '' }],
         prePrintServer: '', preprintServerDOI: '', embargoDate: new Date(),
-        embargoUntilPublished: true
+        embargoUntilPublished: false
     }),
 
     // Custom sync validation
     validate: (values, props) => {
         let errors = {};
         let answerPropsId = JSON.parse(props.answer).answerId
+        let answerPropsValue = JSON.parse(props.answer).answerValue
 
         /**
          * Title
@@ -263,7 +271,9 @@ const MyEnhancedForm = withFormik({
          * Group
          * Group email
          */
-        if ([1, 2, 3].includes(answerPropsId)) {
+        if ([1, 2, 3].includes(answerPropsId) ||
+            ([4].includes(answerPropsId) && answerPropsValue === "Yes")
+        ) {
             let firstAuthorError = {
                 firstAuthor: {
                     firstName: undefined, lastName: undefined, email: undefined,
@@ -338,7 +348,8 @@ const MyEnhancedForm = withFormik({
          * Group
          * Group email
          */
-        if ([1, 2, 3].includes(answerPropsId)) {
+        if ([1, 2, 3].includes(answerPropsId) ||
+            ([4].includes(answerPropsId) && answerPropsValue === "Yes")) {
             let lastAuthorError = {
                 lastAuthor: {
                     firstName: undefined, lastName: undefined, email: undefined,
@@ -471,7 +482,7 @@ const MyEnhancedForm = withFormik({
                     errors.embargoDate = 'Required'
                 }
                 if (values.embargoDate && isNaN(Date.parse(values.embargoDate))) {
-                    errors.embargoDate = "Valid date format MM/DD/YYYY required."
+                    errors.embargoDate = "Valid date format YYYY/MM/DD required."
                 }
             }
         }
@@ -603,7 +614,8 @@ const processValues = (formValues, props) => {
 
     // Remove empty First and Last Author objects for body of work
     // type of "no manuscript"
-    if (JSON.parse(props.answer).answerId === 4) {
+    if (JSON.parse(props.answer).answerId === 4 &&
+        JSON.parse(props.answer).answerValue === "No") {
         delete formValues.firstAuthor
         delete formValues.lastAuthor
     }
@@ -676,28 +688,31 @@ const MaterialSyncValidationForm = (props) => {
         history.push(`${process.env.PUBLIC_URL}/`)
     }
 
+
     let formHeaderTitle;
-    switch (answerObj.answerId) {
-        case 1:
-            formHeaderTitle = "New publication";
-            break;
-        case 2:
-            formHeaderTitle = "New accepted/submitted manuscript";
-            break;
-        case 3:
-            formHeaderTitle = "New pre-print manuscript";
-            break;
-        case 4:
-            if (answerObj.answerValue === 'Yes') {
-                formHeaderTitle = "New draft manuscript";
-            }
-            else {
-                formHeaderTitle = "New body of work without a manuscript";
-            }
-            break;
-        default:
-            formHeaderTitle = "Data form";
-            break;
+    if (answerObj) {
+        switch (answerObj.answerId) {
+            case 1:
+                formHeaderTitle = "New publication";
+                break;
+            case 2:
+                formHeaderTitle = "New accepted/submitted manuscript";
+                break;
+            case 3:
+                formHeaderTitle = "New pre-print manuscript";
+                break;
+            case 4:
+                if (answerObj.answerValue === 'Yes') {
+                    formHeaderTitle = "New draft manuscript";
+                }
+                else {
+                    formHeaderTitle = "New body of work without a manuscript";
+                }
+                break;
+            default:
+                formHeaderTitle = "Data form";
+                break;
+        }
     }
 
     return (

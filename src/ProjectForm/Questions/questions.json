@@ -15,7 +15,7 @@
         },
         {
             "id": 1,
-            "question": "Is the manuscript indexed in PubMed?",
+            "question": "Is the manuscript indexed in PubMed, i.e. has a PMID?",
             "answer": [
                 "Yes",
                 "No"
@@ -41,7 +41,7 @@
         },
         {
             "id": 3,
-            "question": "Are these GWAS described in a pre-print server?",
+            "question": "Are these GWAS described in a manuscript hosted on a pre-print server",
             "answer": [
                 "Yes",
                 "No"

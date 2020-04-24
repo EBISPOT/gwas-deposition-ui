@@ -87,6 +87,9 @@ const CustomKeyboardDatePicker = withStyles(theme => ({
             '&.Mui-error': {
                 color: 'red'
             },
+            '&.Mui-disabled': {
+                color: 'gray',
+            },
         },
         '& .MuiFormHelperText-root': {
             color: 'red',
@@ -419,7 +422,7 @@ export const LastAuthorName = (props) => {
                 <Grid item>
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink htmlFor="firstName"
+                            shrink required htmlFor="firstName"
                             className={classes.label}
                         >
                             First Name/Given Name
@@ -492,7 +495,7 @@ export const LastAuthorName = (props) => {
                 <Grid item >
                     <FormControl className={classes.margin}>
                         <InputLabel
-                            shrink required htmlFor="email"
+                            shrink htmlFor="email"
                             className={classes.label}
                         >
                             Email
@@ -642,7 +645,7 @@ export const Description = props => {
                 <CssTextField
                     id="description"
                     variant="outlined"
-                    helperText="Enter the project description"
+                    helperText="Enter the project description or manuscript abstract"
                     multiline
                     rows="4"
                     rowsMax="8"
@@ -959,7 +962,7 @@ export const PrePrintName = (props) => {
                     <CssTextField
                         id="prePrintServer"
                         variant="outlined"
-                        helperText="Enter the PrePrint server name"
+                        helperText="Enter the Pre-print server name"
                         value={values.prePrintServer}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -1001,7 +1004,7 @@ export const PrePrintDOI = (props) => {
                 <CssTextField
                     id="preprintServerDOI"
                     variant="outlined"
-                    helperText="Enter the PrePrint DOI"
+                    helperText="Enter the Pre-print DOI"
                     value={values.preprintServerDOI}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -1024,6 +1027,7 @@ export const EmbargoDate = (props) => {
     const classes = useStyles();
 
     const {
+        values,
         touched,
         errors,
     } = props;
@@ -1049,17 +1053,18 @@ export const EmbargoDate = (props) => {
             <Grid item>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <InputLabel shrink required htmlFor="embargoDate" className={classes.embargoDateLabel}>
-                        Embargo Date (Month/Day/Year)
+                        Embargo Date (Year/Month/Day)
                     </InputLabel>
 
                     <CustomKeyboardDatePicker
                         {...field}
                         id="embargoDate"
                         autoOk
+                        disabled={values.embargoUntilPublished}
                         disableToolbar
                         variant="inline"
                         inputVariant="outlined"
-                        format="MM/dd/yyyy"
+                        format="yyyy/MM/dd"
                         invalidDateMessage="" // Use Formik "errors"
                         error={errors.embargoDate && touched.embargoDate}
                         minDate={new Date()}
