@@ -9,7 +9,8 @@ import jwt_decode from 'jwt-decode';
 import { Persist } from 'formik-persist'
 
 import {
-    Header, Title, Description, JournalName, JournalURL,
+    // Header,
+    Title, Description, JournalName, JournalURL,
     PrePrintName, PrePrintDOI, FirstAuthorName, LastAuthorName,
     CorrespondingAuthor, EmbargoDate, EmbargoDateCheckbox
 } from "./FormComponents";

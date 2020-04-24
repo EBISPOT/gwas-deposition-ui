@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { forwardRef } from 'react';
 import ElixirAuthService from '../ElixirAuthService';
 import history from "../history";
-import './submissions.css';
+import './bodyofworks.css';
 
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
@@ -48,7 +48,7 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-const GET_SUBMISSIONS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'submissions';
+const GET_BODYOFWORKS_URL = process.env.REACT_APP_LOCAL_BASE_URI + 'bodyofwork';
 
 const styles = theme => ({
     textField: {
@@ -87,7 +87,7 @@ const CustomMTableToolbar = withStyles({
 })(MTableToolbar);
 
 
-class Submissions extends Component {
+class BodyOfWorks extends Component {
     _isMounted = false;
 
     constructor(props) {
@@ -146,19 +146,17 @@ class Submissions extends Component {
         }
     }
 
-    transformDateFormat(timestamp) {
-        let createdTimestamp = new Date(timestamp);
-        createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
-        return createdTimestamp
-    }
+    transformCorrespondingAuthors(correspondingAuthors) {
+        let authors = [];
 
-    transformStatusLabel(status) {
-        if (status === 'CURATION_COMPLETE') {
-            return 'SUBMITTED'
+        for (var i = 0; i < correspondingAuthors.length; i++) {
+            if (i === correspondingAuthors.length - 1) {
+                authors.push(correspondingAuthors[i].lastName)
+            } else {
+                authors.push([correspondingAuthors[i].lastName, ", "])
+            }
         }
-        else {
-            return status
-        }
+        return authors
     }
 
     componentWillUnmount() {
@@ -176,42 +174,30 @@ class Submissions extends Component {
                 <MaterialTable
                     tableRef={this.tableRef}
                     icons={tableIcons}
-                    title="My Submissions"
+                    title="Incomplete Submissions"
                     columns={[
                         {
-                            title: 'PMID', field: 'publication.pmid', sorting: true,
-                        },
-                        {
-                            title: <div className="tooltip">Submission ID
-                                <span className="tooltiptext">Unique identifier for submission.</span></div>,
-                            field: 'submissionId',
+                            title: <div className="tooltip">GCP ID
+                                <span className="tooltiptext">Unique identifier for the Body of Work.</span></div>,
+                            field: 'bodyOfWorkId',
                             render: rowData => (<Link to={{
-                                pathname: `${process.env.PUBLIC_URL}/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
-                            }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
-                        },
-                        { title: 'First author', field: 'publication.firstAuthor', sorting: true },
-                        {
-                            title: <div className="tooltip">Submission Status
-                                <span className="tooltiptext">Overall status of the submission.</span></div>,
-                            field: 'submission_status', sorting: true,
-                            render: rowData => (this.transformStatusLabel(rowData.submission_status))
+                                pathname: `${process.env.PUBLIC_URL}/bodyofwork/${rowData.bodyOfWorkId}`,
+                                state: { bodyOfWorkId: rowData.bodyOfWorkId }
+                            }} style={{ textDecoration: 'none' }}>{rowData.bodyOfWorkId}</Link>)
                         },
                         {
-                            title: <div className="tooltip">Metadata Status
-                                <span className="tooltiptext">Validation status of the template metadata.</span></div>,
-                            field: 'metadata_status', sorting: true
+                            title: 'Title', field: 'title', sorting: true,
                         },
                         {
-                            title: <div className="tooltip">Summary statistics Status
-                                <span className="tooltiptext">Validation status of the summary statistics files.</span></div>,
-                            field: 'summary_statistics_status', sorting: true
+                            title: 'First Author', field: 'firstAuthor.lastName', sorting: true,
                         },
-                        { title: 'Submitter', field: 'created.user.name', sorting: true },
                         {
-                            title: <div className="tooltip">Date submission started
-                                <span className="tooltiptext">YYYY-MM-DD</span></div>,
-                            field: 'created.timestamp', sorting: true, defaultSort: 'desc',
-                            render: rowData => (this.transformDateFormat(rowData.created.timestamp))
+                            title: 'Corresponding author', field: 'correspondingAuthors[0].lastName', sorting: true,
+                        },
+                        {
+                            title: 'Corresponding author(s)',
+                            field: 'correspondingAuthors',
+                            render: rowData => (this.transformCorrespondingAuthors(rowData.correspondingAuthors))
                         },
                     ]}
                     data={query =>
@@ -227,50 +213,28 @@ class Submissions extends Component {
                             // Replace search text value in Query object with input from TextField
                             query.search = searchTextValue;
 
-                            let url = GET_SUBMISSIONS_URL
+                            let url = GET_BODYOFWORKS_URL
 
                             let myHeaders = new Headers();
                             myHeaders.append('Authorization', 'Bearer ' + this.auth());
 
-                            // Handle search by PMID
-                            let onlyNumbers = /^\d+$/;
-
+                            // Handle search by BOWID
                             if (query.search) {
-                                if (onlyNumbers.test(query.search)) {
-                                    url += '?pmid=' + query.search
-                                    fetch(url, {
-                                        headers: myHeaders
+                                url += '/' + query.search
+                                fetch(url, {
+                                    headers: myHeaders
+                                })
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        if (this._isMounted) {
+                                            resolve({
+                                                data: [result],
+                                                page: 0,
+                                                totalCount: 1,
+                                            })
+                                        }
+                                    }).catch(error => {
                                     })
-                                        .then(response => response.json())
-                                        .then(result => {
-                                            if (this._isMounted) {
-                                                resolve({
-                                                    data: result._embedded.submissions,
-                                                    page: result.page.number,
-                                                    totalCount: result.page.totalElements,
-                                                })
-                                            }
-                                        }).catch(error => {
-                                        })
-                                }
-                                // Handle search by SubmissionID
-                                else {
-                                    url += '/' + query.search
-                                    fetch(url, {
-                                        headers: myHeaders
-                                    })
-                                        .then(response => response.json())
-                                        .then(result => {
-                                            if (this._isMounted) {
-                                                resolve({
-                                                    data: [result],
-                                                    page: 0,
-                                                    totalCount: 1,
-                                                })
-                                            }
-                                        }).catch(error => {
-                                        })
-                                }
                             }
                             // Display all results
                             else {
@@ -291,7 +255,7 @@ class Submissions extends Component {
                                     .then(result => {
                                         if (this._isMounted) {
                                             resolve({
-                                                data: result._embedded.submissions,
+                                                data: result._embedded.bodyOfWorks,
                                                 page: result.page.number,
                                                 totalCount: result.page.totalElements,
                                             })
@@ -320,7 +284,7 @@ class Submissions extends Component {
                                     justify="space-between"
                                     alignItems="center">
                                     <Grid item className={classes.title}>
-                                        My Submissions
+                                        Incomplete Submissions
                                     </Grid>
                                     <Grid item>
                                         <TextField
@@ -329,7 +293,7 @@ class Submissions extends Component {
                                             name="searchInput"
                                             value={this.state.value}
                                             className={classes.textField}
-                                            placeholder="Search by PMID or Submission ID"
+                                            placeholder="Search by GCP ID"
                                             InputProps={{
                                                 startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
                                                 endAdornment: <InputAdornment position="end">
@@ -368,9 +332,9 @@ class Submissions extends Component {
     }
 }
 
-Submissions.propTypes = {
+BodyOfWorks.propTypes = {
     classes: PropTypes.object.isRequired,
 };
-Submissions = withStyles(styles)(Submissions)
+BodyOfWorks = withStyles(styles)(BodyOfWorks)
 
-export default (Submissions);
+export default (BodyOfWorks);
