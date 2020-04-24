@@ -664,7 +664,6 @@ class SubmissionDetails extends Component {
     render() {
         const { classes } = this.props;
         const { provenanceType } = this.state;
-        console.log("** PT: ", provenanceType)
 
         // const OVERALL_STATUS_STARTED = 'STARTED';
         const VALID_SUBMISSION = 'VALID';
@@ -675,7 +674,6 @@ class SubmissionDetails extends Component {
         const bowProvenanceType = "BODY_OF_WORK";
 
         const { publicationStatus } = this.state;
-        console.log("** publicationStatus: ", publicationStatus)
         const { bowStatus } = this.state;
 
 
@@ -699,7 +697,6 @@ class SubmissionDetails extends Component {
         let final_thank_you_message;
 
         const { submissionStatus } = this.state;
-        console.log("** SS: ", submissionStatus)
 
         const { metadataStatus } = this.state;
         let metadata_status_section;

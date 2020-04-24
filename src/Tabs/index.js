@@ -7,6 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
+import BodyOfWorks from '../BodyOfWorks';
 import Submissions from '../Submissions';
 
 function TabPanel(props) {
@@ -22,7 +23,7 @@ function TabPanel(props) {
             aria-labelledby={`full-width-tab-${index}`}
             {...other}
         >
-            {value === index && <Box p={3} className={classes.Box}>{children}</Box>}
+            {value === index && <Box p={2} className={classes.Box}>{children}</Box>}
         </Typography>
     );
 }
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
         padding: 4,
     },
     AppBar: {
-        backgroundColor: '#ecf7f9',
+        backgroundColor: '#f2f2f2',
     }
 }));
 
@@ -59,7 +60,6 @@ const StyledTabs = withStyles((theme) => ({
         justifyContent: 'center',
         backgroundColor: 'unset',
         "& > div": {
-            minWidth: 100,
             maxWidth: 110,
             width: "100%",
             backgroundColor: "rgb(57, 138, 150)"
@@ -71,6 +71,7 @@ const StyledTab = withStyles(theme => ({
     root: {
         textTransform: "none",
         fontSize: theme.typography.pxToRem(15),
+        fontWeight: 500,
         marginRight: theme.spacing(1),
         "&:hover": {
             color: "#000",
@@ -79,11 +80,10 @@ const StyledTab = withStyles(theme => ({
         },
         "&$selected": {
             color: "#1890ff",
-            fontWeight: theme.typography.fontWeightMedium
+            fontWeight: theme.typography.fontWeightMedium,
         },
         "&:focus": {
             fontWeight: 500,
-            opacity: 1
         },
     }
 }))(props => <Tab disableRipple {...props} />);
@@ -107,11 +107,11 @@ export default function FullWidthTabs() {
                     aria-label="full width tabs example"
                 >
                     <StyledTab label="Incomplete Submissions" {...a11yProps(0)} />
-                    <StyledTab label="Active Submissions" {...a11yProps(2)} />
+                    <StyledTab label="Active Submissions" {...a11yProps(1)} />
                 </StyledTabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-                Item One
+                <BodyOfWorks />
             </TabPanel>
             <TabPanel value={value} index={1}>
                 <Submissions />
