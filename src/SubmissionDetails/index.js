@@ -149,9 +149,9 @@ class SubmissionDetails extends Component {
             userName: null,
             submissionCreatedDate: null,
             provenanceType: null,
-            publication_obj: [],
+            publication_obj: null,
             publicationStatus: null,
-            bow_obj: [],
+            bow_obj: null,
             bowStatus: null,
             file_upload_error: null,
             isNotValid: true,
@@ -258,10 +258,12 @@ class SubmissionDetails extends Component {
                         this.setState({ ...this.state, metadataStatus: data.metadata_status });
                         this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
                         this.setState({ ...this.state, provenanceType: data.provenanceType });
+
                         this.setState({ ...this.state, publication_obj: data.publication });
                         if (data.publication && data.publication.status) {
                             this.setState({ ...this.state, publicationStatus: data.publication.status });
                         }
+
                         this.setState({ ...this.state, bow_obj: data.bodyOfWork });
                         if (data.bodyOfWork && data.bodyOfWork.status) {
                             this.setState({ ...this.state, bowStatus: data.bodyOfWork.status });
@@ -669,12 +671,13 @@ class SubmissionDetails extends Component {
         const VALID_SUBMISSION = 'VALID';
         const VALIDATING = 'VALIDATING';
         const SUBMITTED = 'SUBMITTED';
-
         const publicationProvenanceType = "PUBLICATION";
         const bowProvenanceType = "BODY_OF_WORK";
-
+        const { publication_obj } = this.state;
         const { publicationStatus } = this.state;
+        const { bow_obj } = this.state;
         const { bowStatus } = this.state;
+        let submissionDetailsPanel;
 
 
         let userActionPublicationStatus;
@@ -719,6 +722,228 @@ class SubmissionDetails extends Component {
         let delete_file_button;
         let download_data_file_button;
         let upload_files_to_globus_step;
+
+
+        /**
+         * Manage display of details panel with either
+         * "Publication" or "Body of Work" content based on provenanceType
+         */
+        if (this.SUBMISSION_ID) {
+            submissionDetailsPanel =
+                <Grid item xs={12}>
+                    <Typography>
+                        Loading...!
+                    </Typography>
+                </Grid>
+        }
+        if (provenanceType === bowProvenanceType) {
+            if (bow_obj) {
+                submissionDetailsPanel =
+                    <Fragment>
+                        <Grid item xs={12} className={classes.pageHeader}>
+                            <Typography variant="h5" className={classes.headerTextStyle}>
+                                Details for GCP ID: {this.state.bow_obj.bodyOfWorkId}
+                            </Typography>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Typography variant="h6" className={classes.publicationTitleTextStyle}>
+                                {bow_obj.title}
+                            </Typography>
+                        </Grid>
+
+                        <Grid
+                            container
+                            direction="row"
+                            justify="flex-start"
+                            alignItems="flex-start"
+                        >
+                            <Grid item xs={3}>
+                                <Typography variant="h6" className={classes.publicationTextStyle}>
+                                    Description:
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={9}>
+                                <Typography variant="h6" className={classes.publicationTextStyle}>
+                                    {bow_obj.description}
+                                </Typography>
+                            </Grid>
+
+                            {(bow_obj.firstAuthor && bow_obj.firstAuthor.firstName
+                                && bow_obj.firstAuthor.lastName) && (
+                                    <Fragment>
+                                        <Grid item xs={3}>
+                                            <Typography variant="h6" className={classes.publicationTextStyle}>
+                                                First Author:
+                                            </Typography>
+                                        </Grid>
+
+                                        < Grid item xs={9} >
+                                            <Typography className={classes.publicationTextStyle}>
+                                                {bow_obj.firstAuthor.firstName} &nbsp;
+                                                {bow_obj.firstAuthor.lastName}
+                                            </Typography>
+                                        </Grid>
+                                    </Fragment>
+                                )}
+
+                            {(bow_obj.firstAuthor && bow_obj.firstAuthor.group) && (
+                                <Fragment>
+                                    <Grid item xs={3}>
+                                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                                            First Author:
+                                        </Typography>
+                                    </Grid>
+                                    < Grid item xs={9} >
+                                        <Typography className={classes.publicationTextStyle}>
+                                            {bow_obj.firstAuthor.group}
+                                        </Typography>
+                                    </Grid>
+                                </Fragment>
+                            )}
+
+                            {(bow_obj.lastAuthor && bow_obj.lastAuthor.firstName
+                                && bow_obj.lastAuthor.lastName) && (
+                                    <Fragment>
+                                        <Grid item xs={3}>
+                                            <Typography variant="h6" className={classes.publicationTextStyle}>
+                                                Last Author:
+                                            </Typography>
+                                        </Grid>
+                                        < Grid item xs={9} >
+                                            <Typography className={classes.publicationTextStyle}>
+                                                {bow_obj.lastAuthor.firstName} &nbsp;
+                                                {bow_obj.lastAuthor.lastName}
+                                            </Typography>
+                                        </Grid>
+                                    </Fragment>
+                                )}
+
+                            {(bow_obj.lastAuthor && bow_obj.lastAuthor.group) && (
+                                <Fragment>
+                                    <Grid item xs={3}>
+                                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                                            Last Author:
+                                        </Typography>
+                                    </Grid>
+                                    < Grid item xs={9} >
+                                        <Typography className={classes.publicationTextStyle}>
+                                            {bow_obj.lastAuthor.group}
+                                        </Typography>
+                                    </Grid>
+                                </Fragment>
+                            )}
+
+                            <Grid item xs={3}>
+                                <Typography variant="h6" className={classes.publicationTextStyle}>
+                                    Corresponding Author(s):
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={9} >
+                                {(bow_obj.correspondingAuthors) && (
+                                    bow_obj.correspondingAuthors.map((corrAuthor, index) => (
+                                        <Typography key={index} className={classes.publicationTextStyle}>
+                                            {corrAuthor.firstName}  &nbsp;
+                                            {corrAuthor.lastName} &nbsp;
+                                        <a href={"mailto:" + corrAuthor.email}>{corrAuthor.email}</a>
+                                        </Typography>
+                                    )))}
+                            </Grid>
+
+                            {(bow_obj.journal) && (
+                                <Fragment>
+                                    <Grid item xs={3}>
+                                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                                            Published in:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={9}>
+                                        <Typography className={classes.publicationTextStyle} >
+                                            {bow_obj.journal}
+                                        </Typography>
+
+                                        {(bow_obj.url) && (
+                                            <Typography>
+                                                <a href={bow_obj.url} target="_blank" rel="noopener noreferrer">{bow_obj.url}</a>
+                                            </Typography>
+                                        )}
+                                    </Grid>
+                                </Fragment>
+                            )}
+
+                            {(bow_obj.prePrintServer) && (
+                                <Fragment>
+                                    <Grid item xs={3}>
+                                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                                            PrePrint available in:
+                                            </Typography>
+                                    </Grid>
+                                    <Grid item xs={9}>
+                                        <Typography className={classes.publicationTextStyle}>
+                                            {bow_obj.prePrintServer} &nbsp;
+
+                                            <a href={bow_obj.preprintServerDOI} target="_blank" rel="noopener noreferrer">{bow_obj.preprintServerDOI}</a>
+                                        </Typography>
+                                    </Grid>
+                                </Fragment>
+                            )}
+
+                            {(bow_obj.embargoDate || bow_obj.embargoUntilPublished) && (
+                                <Fragment>
+                                    <Grid item xs={3}>
+                                        <Typography className={classes.publicationTextStyle}>
+                                            Embargo until:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={9}>
+                                        <Typography className={classes.publicationTextStyle}>
+                                            {bow_obj.embargoUntilPublished
+                                                ? 'date of publication' : `${bow_obj.embargoDate}`}
+                                        </Typography>
+                                    </Grid>
+                                </Fragment>
+                            )}
+
+                        </Grid>
+                    </Fragment>
+            }
+        }
+        if (provenanceType === publicationProvenanceType) {
+            if (publication_obj) {
+                submissionDetailsPanel =
+                    <Fragment>
+                        <Grid item xs={12} className={classes.pageHeader}>
+                            <Typography variant="h5" className={classes.headerTextStyle}>
+                                Publication details for PMID: {publication_obj.pmid}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant="h6" className={classes.publicationTitleTextStyle}>
+                                {publication_obj.title}
+                            </Typography>
+                        </Grid>
+
+                        <Grid container item>
+                            <Typography className={classes.publicationTextStyle} >
+                                {publication_obj.firstAuthor} et al.
+                        </Typography>
+                            <Typography className={classes.publicationTextStyle} >
+                                {publication_obj.publicationDate}
+                            </Typography>
+                            <Typography className={classes.publicationTextStyle} >
+                                {publication_obj.journal}
+                            </Typography>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Typography className={classes.publicationCatalogStatusTextStyle}>
+                                {userActionPublicationStatus}
+                            </Typography>
+                        </Grid>
+                    </Fragment>
+            }
+        }
+
 
         /**
          * For provenanceType PUBLICATION,
@@ -1256,48 +1481,11 @@ class SubmissionDetails extends Component {
                         alignItems="stretch"
                         spacing={4}
                     >
-                        {(this.state.publication_obj) && (
-                            <Paper className={classes.paper}>
-                                <Grid item xs={12} className={classes.pageHeader}>
-                                    <Typography variant="h5" className={classes.headerTextStyle}>
-                                        Publication details for PMID: {this.state.publication_obj.pmid}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Typography variant="h6" className={classes.publicationTitleTextStyle}>
-                                        {this.state.publication_obj.title}
-                                    </Typography>
-                                </Grid>
-
-                                <Grid container item>
-                                    <Typography className={classes.publicationTextStyle} >
-                                        {this.state.publication_obj.firstAuthor} et al.
-                                    </Typography>
-                                    <Typography className={classes.publicationTextStyle} >
-                                        {this.state.publication_obj.publicationDate}
-                                    </Typography>
-                                    <Typography className={classes.publicationTextStyle} >
-                                        {this.state.publication_obj.journal}
-                                    </Typography>
-                                </Grid>
-
-                                <Grid item xs={12}>
-                                    <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                        {userActionPublicationStatus}
-                                    </Typography>
-                                </Grid>
-                            </Paper>
-                        )}
-
-                        {(this.state.bow_obj) && (
-                            <Paper className={classes.paper}>
-                                <Grid item xs={12} className={classes.pageHeader}>
-                                    <Typography variant="h5" className={classes.headerTextStyle}>
-                                        Details for GCP ID: {this.state.bow_obj.bodyOfWorkId}
-                                    </Typography>
-                                </Grid>
-                            </Paper>
-                        )}
+                        <Paper className={classes.paper}>
+                            <Grid item xs={12}>
+                                {submissionDetailsPanel}
+                            </Grid>
+                        </Paper>
                     </Grid>
                 </div>
 
