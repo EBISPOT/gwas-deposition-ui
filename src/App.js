@@ -3,7 +3,6 @@ import Login from './Login';
 import GDPR from './GDPR';
 import MenuAppBar from './MenuAppBar';
 import Home from './Home';
-import Submissions from './Submissions';
 import SubmissionDetails from './SubmissionDetails';
 import Footer from './Footer';
 import './App.css';

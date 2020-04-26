@@ -41,7 +41,7 @@
         },
         {
             "id": 3,
-            "question": "Are these GWAS described in a manuscript hosted on a pre-print server",
+            "question": "Are these GWAS described in a manuscript hosted on a pre-print server?",
             "answer": [
                 "Yes",
                 "No"
