@@ -17,12 +17,12 @@ const styles = theme => ({
     fontStyle: {
         fontWeight: 600,
     },
-  
+
     button: {
-        marginTop: theme.spacing(1),
-        marginRight: theme.spacing(1),
-        marginBottom: theme.spacing(1),
-        padding: theme.spacing(1),
+        marginTop: theme.spacing(4),
+        // marginRight: theme.spacing(1),
+        // marginBottom: theme.spacing(1),
+        // padding: theme.spacing(1),
         color: '#333',
         background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
         borderRadius: 4,
@@ -30,9 +30,9 @@ const styles = theme => ({
         fontWeight: 'bold',
         textShadow: '0 1px 0 #fff',
         textTransform: 'none',
-        '&:disabled': {
-            textShadow: 'none',
-        }
+        // '&:disabled': {
+        //     textShadow: 'none',
+        // }
     },
     banner: {
         backgroundColor: '#FFF6EC',
@@ -130,7 +130,9 @@ class Home extends Component {
                     </Button>)}
 
                     {isDisplayed && (
-                        <TextMobileStepper />
+                        <Grid item>
+                            <TextMobileStepper />
+                        </Grid>
                     )}
                 </Grid>
             </Fragment>

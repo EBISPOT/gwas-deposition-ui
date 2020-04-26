@@ -11,8 +11,6 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-// import FormLabel from '@material-ui/core/FormLabel';
-import { green } from '@material-ui/core/colors';
 import history from "../../history";
 
 
@@ -27,22 +25,24 @@ const useStyles = makeStyles(theme => ({
     header: {
         display: 'flex',
         alignItems: 'center',
-        height: 50,
-        paddingLeft: theme.spacing(4),
+        paddingLeft: theme.spacing(5),
+        paddingRight: theme.spacing(6),
+        paddingTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
         backgroundColor: theme.palette.background.default,
     },
-    img: {
-        height: 255,
-        maxWidth: 400,
-        overflow: 'hidden',
-        display: 'block',
-        width: '100%',
+    questionGrid: {
+        marginTop: theme.spacing(2),
+        borderColor: '#ccc',
+        borderStyle: 'solid',
+        borderWidth: 'thin',
+        boxShadow: '1px 1px 4px #d9d9d9',
+        maxWidth: 500,
     },
-    radioButton: {
-        color: green[400],
-        '&$checked': {
-            color: green[600],
-        },
+    questionText: {
+        fontStyle: 'italic',
+        wordBreak: 'break-word',
+        textAlign: 'center',
     },
 }));
 
@@ -78,13 +78,7 @@ export default function TextMobileStepper(props) {
         }
         else {
             setActiveStep(prevActiveStep => allQuestions[activeStep].next_question_id[value]);
-
-            // console.log("Active Step: ", activeStep);
-            // console.log("Next Step: ", allQuestions[activeStep].next_question_id[value]);
-            // console.log("Ans: ", value, typeof (value));
-
             setValue('-- clear --'); // clear value so no radio button is selected on Next
-            // console.log("-------------");
         }
     };
 
@@ -112,10 +106,7 @@ export default function TextMobileStepper(props) {
             getAnswerSetState(activeStep)(event.target.value);
         }
     };
-    // console.log("Current Step: ", activeStep);
-    // console.log("Selected value: ", value);
-    // console.log("Answers: ", answer0, answer1, answer2, answer3, answer4, answer5);
-    // console.log("Ans: ", typeof (answer0), answer0);
+
 
     function getAnswerSetState(activeStep) {
         switch (activeStep) {
@@ -221,34 +212,35 @@ export default function TextMobileStepper(props) {
                 direction="column"
                 justify="center"
                 alignItems="center"
-                spacing={2}>
+                spacing={2}
+                className={classes.questionGrid}
+            >
                 <Grid item xs={12}>
                     <Paper square elevation={0} className={classes.header}>
-                        <Typography>{allQuestions[activeStep].question}</Typography>
+                        <Typography className={classes.questionText}>
+                            {allQuestions[activeStep].question}
+                        </Typography>
                     </Paper>
                 </Grid>
 
                 <Grid item xs={12}>
                     <FormControl component="fieldset">
-                        {/* <FormLabel component="legend">{allQuestions[activeStep].question}</FormLabel> */}
-                        <RadioGroup aria-label="position" name="position" row
+                        <RadioGroup aria-label="position" name="position"
+                            // row
                             value={value}
                             onChange={handleChange}
-                        // onChange={props.changedAnswers && handleChange}
-                        // onChange={(e) => handleChange(props.changedAnswers, e)}
-                        // onChange={props.changedAnswers}
                         >
                             <FormControlLabel
                                 value={allQuestions[activeStep].answer[0]}
                                 label={allQuestions[activeStep].answer[0]}
                                 control={<GreenRadio />}
-                                labelPlacement="start"
+                                labelPlacement="end"
                             />
 
                             <FormControlLabel
                                 value={allQuestions[activeStep].answer[1]}
                                 label={allQuestions[activeStep].answer[1]}
-                                labelPlacement="start"
+                                labelPlacement="end"
                                 control={<GreenRadio />}
                             />
                         </RadioGroup>
@@ -258,7 +250,6 @@ export default function TextMobileStepper(props) {
                 <Grid item xs={12} className={classes.root}>
                     {mobile_stepper_navigation}
                 </Grid>
-
             </Grid>
         </Fragment>
     );
