@@ -160,14 +160,39 @@ class ProjectDetails extends Component {
      */
     async getBodyOfWork() {
         let token = this.getToken().auth;
+        let gdprAccepted = JSON.parse(localStorage.getItem('gdpr-accepted'));
 
-        // this.API_CLIENT.getBodyOfWork(this.bodyOfWorkId, token).then((response) => {
-        await axios.get(BASE_URI + 'bodyofwork/' + this.bodyOfWorkId,
-            { headers: { 'Authorization': 'Bearer ' + token, }, }).then((response) => {
-                this.setState({ ...this.state, bodyofwork: response.data })
-                this.setState({ ...this.state, status: response.data.status })
-                this.setState({ ...this.state, authEmail: this.getToken().authEmail, auth: this.getToken().auth, globusIdentity: this.getToken().authEmail })
-            });
+        // Check if token is expired and GDPR accepted
+        if (token && !this.ElixirAuthService.isTokenExpired(token) && gdprAccepted) {
+            await axios.get(BASE_URI + 'bodyofwork/' + this.bodyOfWorkId,
+                { headers: { 'Authorization': 'Bearer ' + token, }, }).then((response) => {
+                    this.setState({ ...this.state, bodyofwork: response.data })
+                    this.setState({ ...this.state, status: response.data.status })
+                    this.setState({ ...this.state, authEmail: this.getToken().authEmail, auth: this.getToken().auth, globusIdentity: this.getToken().authEmail })
+                }).catch(error => {
+                    console.log("Error: ", error);
+
+                    // Redirect if 4xx response returned, 404 returned from backend if not authorized
+                    if (error.response && (error.response.status >= 404 && error.response.status < 500)) {
+                        return history.push(`${process.env.PUBLIC_URL}/error`);
+                    }
+                    if (error.response && (error.response.status >= 400 && error.response.status < 404)) {
+                        return history.push(`${process.env.PUBLIC_URL}/error`);
+                    }
+                })
+        }
+        else {
+            let localPath = history.location.pathname
+            // Split off environment specific URL if not localhost (empty string)
+            if (localPath.includes(`/gwas/deposition`)) {
+                localPath = history.location.pathname.split(`${process.env.PUBLIC_URL}`)[1]
+            }
+            if (!JSON.parse(gdprAccepted)) {
+                history.push(`${process.env.PUBLIC_URL}/gdpr`, ({ from: localPath }));
+            } else {
+                history.push(`${process.env.PUBLIC_URL}/login`, ({ from: localPath }));
+            }
+        }
     }
 
     /**
