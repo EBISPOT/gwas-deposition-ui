@@ -180,6 +180,7 @@ class Submissions extends Component {
                     columns={[
                         {
                             title: 'PMID', field: 'publication.pmid', sorting: true,
+                            render: rowData => { if (!rowData.publication) { return 'NA' } }
                         },
                         {
                             title: <div className="tooltip">Submission ID
@@ -189,7 +190,10 @@ class Submissions extends Component {
                                 pathname: `${process.env.PUBLIC_URL}/submission/${rowData.submissionId}`, state: { submissionId: rowData.submissionId }
                             }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
                         },
-                        { title: 'First author', field: 'publication.firstAuthor', sorting: true },
+                        {
+                            title: 'First author', field: 'publication.firstAuthor', sorting: true,
+                            render: rowData => { if (!rowData.publication) { return 'NA' } }
+                        },
                         {
                             title: <div className="tooltip">Submission Status
                                 <span className="tooltiptext">Overall status of the submission.</span></div>,
