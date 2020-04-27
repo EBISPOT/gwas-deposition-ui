@@ -55,7 +55,10 @@ const useStyles = makeStyles(theme => ({
         },
     },
     buttonReset: {
-        margin: theme.spacing(1),
+        marginLeft: theme.spacing(2),
+        marginTop: theme.spacing(1),
+        marginRight: theme.spacing(2),
+        marginBottom: theme.spacing(1),
         padding: theme.spacing(1),
         backgroundColor: '#eee',
         borderRadius: 4,
@@ -73,6 +76,9 @@ const useStyles = makeStyles(theme => ({
         fontWeight: "bold",
         fontSize: 18,
     },
+    gridSpacing: {
+        spacing: theme.spacing(4)
+    }
 }));
 
 const MyForm = props => {
@@ -89,9 +95,10 @@ const MyForm = props => {
     return (
         <div>
             <form onSubmit={handleSubmit}>
+
                 {/* <Header /> */}
 
-                <Title {...props} />
+                < Title {...props} />
 
                 <Description {...props} />
 
@@ -161,7 +168,7 @@ const MyForm = props => {
                     disabled={!dirty || isSubmitting}
                 >
                     Reset
-                </Button>
+                    </Button>
 
                 <Button
                     type="submit"
@@ -171,11 +178,11 @@ const MyForm = props => {
                     onClick={() => checkUserAuthStatus(props)}
                 >
                     Submit
-                </Button>
+                    </Button>
 
                 {/* <DisplayFormikState {...props} /> */}
             </form>
-        </div>
+        </div >
     );
 };
 
@@ -720,17 +727,31 @@ const MaterialSyncValidationForm = (props) => {
             {answerProps && (
                 <Fragment>
                     <Grid container
-                        direction="column"
-                        justify="space-evenly"
+                        direction="row"
+                        justify="flex-start"
                         alignItems="center"
-                        spacing={4}
                     >
-                        <Typography variant="h5" style={{ fontWeight: 'bold', margin: 12 }}>
-                            {/* Submission Form -- {answerProps} */}
-                            {formHeaderTitle}
-                        </Typography>
+                        <Grid item xs={1}></Grid>
+                        {/* <Grid container
+                            direction="column"
+                            justify="space-evenly"
+                            alignItems="center"
+                            spacing={4}
+                        > */}
+
+                        <Grid item xs={10}>
+                            <Typography variant="h5"
+                                style={{ textAlign: 'center', fontWeight: 'bold', marginTop: 16, marginBottom: 24 }}>
+                                {formHeaderTitle}
+                            </Typography>
+
+                            <MyEnhancedForm answer={answerProps} />
+                        </Grid>
+
+                        <Grid item xs={1}></Grid>
+                        {/* </Grid> */}
+
                     </Grid>
-                    <MyEnhancedForm answer={answerProps} />
                 </Fragment>
             )}
         </div>
