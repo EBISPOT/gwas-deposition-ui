@@ -191,9 +191,9 @@ class BodyOfWorks extends Component {
                         {
                             title: 'First Author', field: 'firstAuthor.lastName', sorting: true,
                         },
-                        {
-                            title: 'Corresponding author', field: 'correspondingAuthors[0].lastName', sorting: true,
-                        },
+                        // {
+                        //     title: 'Corresponding author', field: 'correspondingAuthors[0].lastName', sorting: true,
+                        // },
                         {
                             title: 'Corresponding author(s)',
                             field: 'correspondingAuthors',
@@ -226,9 +226,11 @@ class BodyOfWorks extends Component {
                                 })
                                     .then(response => response.json())
                                     .then(result => {
+                                        let bodyOfWorks = [result].filter(bow => bow.status !== 'SUBMISSION_EXISTS');
+
                                         if (this._isMounted) {
                                             resolve({
-                                                data: [result],
+                                                data: bodyOfWorks,
                                                 page: 0,
                                                 totalCount: 1,
                                             })
@@ -253,9 +255,12 @@ class BodyOfWorks extends Component {
                                 })
                                     .then(response => response.json())
                                     .then(result => {
+                                        let bodyOfWorks = result._embedded.bodyOfWorks;
+                                        bodyOfWorks = bodyOfWorks.filter(bow => bow.status !== 'SUBMISSION_EXISTS');
+
                                         if (this._isMounted) {
                                             resolve({
-                                                data: result._embedded.bodyOfWorks,
+                                                data: bodyOfWorks,
                                                 page: result.page.number,
                                                 totalCount: result.page.totalElements,
                                             })
