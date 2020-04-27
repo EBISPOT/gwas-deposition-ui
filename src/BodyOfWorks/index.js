@@ -190,6 +190,7 @@ class BodyOfWorks extends Component {
                         },
                         {
                             title: 'First Author', field: 'firstAuthor.lastName', sorting: true,
+                            render: rowData => { if (!rowData.firstAuthor) { return 'NA' } }
                         },
                         // {
                         //     title: 'Corresponding author', field: 'correspondingAuthors[0].lastName', sorting: true,
