@@ -180,7 +180,10 @@ class Submissions extends Component {
                     columns={[
                         {
                             title: 'PMID', field: 'publication.pmid', sorting: true,
-                            render: rowData => { if (!rowData.publication) { return 'NA' } }
+                            render: rowData => {
+                                if (!rowData.publication) { return 'NA' }
+                                else { return rowData.publication.pmid }
+                            }
                         },
                         {
                             title: <div className="tooltip">Submission ID
@@ -192,7 +195,10 @@ class Submissions extends Component {
                         },
                         {
                             title: 'First author', field: 'publication.firstAuthor', sorting: true,
-                            render: rowData => { if (!rowData.publication) { return 'NA' } }
+                            render: rowData => {
+                                if (!rowData.publication) { return 'NA' }
+                                else { return rowData.publication.firstAuthor }
+                            }
                         },
                         {
                             title: <div className="tooltip">Submission Status
