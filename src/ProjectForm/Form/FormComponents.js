@@ -2,6 +2,8 @@ import React, { Fragment } from 'react';
 import { Grid, Typography, TextField, Button, IconButton, FormControl, FormControlLabel, InputLabel, Checkbox } from '@material-ui/core';
 import { makeStyles, withStyles, fade } from '@material-ui/core/styles';
 import ClearIcon from '@material-ui/icons/Clear';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import journal_abbr_data from './gwas_journal_abbr.json'
 
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -870,9 +872,14 @@ export const JournalName = (props) => {
         values,
         touched,
         errors,
-        handleChange,
+        // handleChange,
         handleBlur,
     } = props;
+
+    const onTagsChange = (event, val) => {
+        values.journal = val;
+    }
+
     return (
         <Fragment>
             <Grid container
@@ -885,11 +892,34 @@ export const JournalName = (props) => {
 
                 <Grid item>
                     <FormControl className={classes.margin}>
-                        <InputLabel shrink required htmlFor="journal" className={classes.label}>
+                        <InputLabel shrink required htmlFor="journal"
+                            style={{ marginTop: -8 }}
+                        >
                             Journal Name
                         </InputLabel>
 
-                        <CssTextField
+                        <Autocomplete
+                            id="journal"
+                            freeSolo
+                            options={gwasJournalAbbr.map((option) => option.journalTitle)}
+                            onChange={onTagsChange}
+                            onBlur={handleBlur}
+                            renderInput={(params) => (
+                                <CssTextField
+                                    {...params}
+                                    id="journal-text"
+                                    type="input"
+                                    // label="freeSolo"
+                                    margin="normal"
+                                    variant="outlined"
+                                    helperText="Enter the Journal name"
+                                    error={errors.journal && touched.journal}
+                                    style={{ width: 300 }} />
+                            )}
+                        />
+
+                        {/* ORIGINAL 
+                            <CssTextField
                             id="journal"
                             type="input"
                             variant="outlined"
@@ -899,7 +929,7 @@ export const JournalName = (props) => {
                             onBlur={handleBlur}
                             error={errors.journal && touched.journal}
                             style={{ width: 600 }}
-                        />
+                        /> */}
                         {errors.journal &&
                             touched.journal && (
                                 <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
@@ -1159,4 +1189,23 @@ export const EmbargoDateCheckbox = (props) => {
             </Grid>
         </Grid>
     )
+}
+
+
+// Journal Name Autocomplete
+const gwasJournalAbbr = journal_abbr_data;
+
+export const FreeSolo = () => {
+    return (
+        <div style={{ width: 300 }}>
+            <Autocomplete
+                id="free-solo-demo"
+                freeSolo
+                options={gwasJournalAbbr.map((option) => option.journalTitle)}
+                renderInput={(params) => (
+                    <TextField {...params} label="freeSolo" margin="normal" variant="outlined" />
+                )}
+            />
+        </div>
+    );
 }
