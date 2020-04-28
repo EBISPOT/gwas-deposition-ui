@@ -872,7 +872,7 @@ export const JournalName = (props) => {
         values,
         touched,
         errors,
-        // handleChange,
+        handleChange,
         handleBlur,
     } = props;
 
@@ -913,6 +913,8 @@ export const JournalName = (props) => {
                                     margin="normal"
                                     variant="outlined"
                                     helperText="Enter the Journal name"
+                                    value={values.journal}
+                                    onChange={handleChange}
                                     error={errors.journal && touched.journal}
                                     style={{ width: 300 }} />
                             )}
