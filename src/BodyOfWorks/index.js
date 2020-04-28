@@ -230,7 +230,7 @@ class BodyOfWorks extends Component {
                                 })
                                     .then(response => response.json())
                                     .then(result => {
-                                        let bodyOfWorks = [result].filter(bow => bow.status !== 'SUBMISSION_EXISTS');
+                                        let bodyOfWorks = [result].filter(bow => bow.status === 'NEW');
 
                                         if (this._isMounted) {
                                             resolve({
@@ -246,6 +246,7 @@ class BodyOfWorks extends Component {
                             else {
                                 url += '?size=' + query.pageSize
                                 url += '&page=' + (query.page)
+                                url += '&status=NEW'
 
                                 // Handle sorting all results
                                 if (query.orderBy) {
@@ -259,12 +260,10 @@ class BodyOfWorks extends Component {
                                 })
                                     .then(response => response.json())
                                     .then(result => {
-                                        let bodyOfWorks = result._embedded.bodyOfWorks;
-                                        bodyOfWorks = bodyOfWorks.filter(bow => bow.status !== 'SUBMISSION_EXISTS');
 
                                         if (this._isMounted) {
                                             resolve({
-                                                data: bodyOfWorks,
+                                                data: result._embedded.bodyOfWorks,
                                                 page: result.page.number,
                                                 totalCount: result.page.totalElements,
                                             })

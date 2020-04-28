@@ -845,7 +845,7 @@ class SubmissionDetails extends Component {
                                         <Typography key={index} className={classes.publicationTextStyle}>
                                             {corrAuthor.firstName}  &nbsp;
                                             {corrAuthor.lastName} &nbsp;
-                                        <a href={"mailto:" + corrAuthor.email}>{corrAuthor.email}</a>
+                                            <a href={"mailto:" + corrAuthor.email}>{corrAuthor.email}</a>
                                         </Typography>
                                     )))}
                             </Grid>
@@ -1274,7 +1274,7 @@ class SubmissionDetails extends Component {
                 </Typography>
             </Grid>
 
-        if (publicationStatus === "UNDER_SUBMISSION" || bowStatus === "SUBMISSION_EXISTS") {
+        if (publicationStatus === "UNDER_SUBMISSION" || bowStatus === "UNDER_SUBMISSION") {
             if (metadataStatus === 'VALID') {
                 metadata_status_section =
                     <Fragment>
@@ -1368,7 +1368,7 @@ class SubmissionDetails extends Component {
                     </Grid>
                 </Fragment>
         }
-        else if (submissionStatus === VALIDATING && (publicationStatus === 'UNDER_SUBMISSION' || bowStatus === "SUBMISSION_EXISTS")) {
+        else if (submissionStatus === VALIDATING && (publicationStatus === 'UNDER_SUBMISSION' || bowStatus === "UNDER_SUBMISSION")) {
             summary_statistics_status_icon =
                 <Fragment>
                     <Grid item xs={4}>
