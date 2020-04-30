@@ -4,12 +4,8 @@ import Upload from "../Upload";
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { Grid, Link, Paper, Typography, Button, CircularProgress } from '@material-ui/core/';
 import classNames from 'classnames'
-import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSVG from 'react-svg'
 
 import { AuthConsumer } from '../auth-context';
@@ -86,6 +82,12 @@ const styles = theme => ({
     },
     errorText: {
         color: 'red',
+    },
+    link: {
+        textDecorationStyle: "dashed",
+        fontSize: 18,
+        marginRight: 12,
+        marginTop: 8,
     },
     button: {
         marginTop: theme.spacing(1),
@@ -663,6 +665,16 @@ class SubmissionDetails extends Component {
     }
 
 
+    navigateToUpdateBOW = () => {
+        console.log("** Nav content: ", this.state.bow_obj);
+        history.push({
+            pathname: `${process.env.PUBLIC_URL}/update-bodyofwork`,
+            state: {
+                bodyOfWorkObj: this.state.bow_obj,
+            }
+        })
+    }
+
     render() {
         const { classes } = this.props;
         const { provenanceType } = this.state;
@@ -905,6 +917,14 @@ class SubmissionDetails extends Component {
                             )}
 
                         </Grid>
+                        <Link
+                            component="button"
+                            onClick={this.navigateToUpdateBOW}
+                            underline="always"
+                            className={classes.link}
+                        >
+                            Add PMID(s)
+                        </Link>
                     </Fragment>
             }
         }
