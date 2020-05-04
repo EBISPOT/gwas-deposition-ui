@@ -28,6 +28,7 @@ import PublicationDetails from './PublicationDetails';
 import ReactGA from 'react-ga';
 import history from "./history";
 import BodyOfWorkDetails from './BodyOfWorkDetails';
+import UpdateBodyOfWork from './UpdateBodyOfWork';
 import PublicationsMatTable from './PublicationsMatTable';
 
 ReactGA.initialize('UA-60195133-1');
@@ -69,6 +70,7 @@ const App = ({ classes }) => (
             {/* <Route path={`${process.env.PUBLIC_URL}/submission_questions`} component={TextMobileStepper}></Route> */}
             <Route path={`${process.env.PUBLIC_URL}/form`} component={Form}></Route>
             <Route path={`${process.env.PUBLIC_URL}/bodyofwork/:gcp_id`} exact render={props => <BodyOfWorkDetails {...props} />} />
+            <Route path={`${process.env.PUBLIC_URL}/update-bodyofwork`} exact render={props => <UpdateBodyOfWork {...props} />} />
             <Route path={`${process.env.PUBLIC_URL}/error`} component={ErrorPage} />
           </main>
         </div>

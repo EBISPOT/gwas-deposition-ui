@@ -15,8 +15,8 @@ export const DisplayFormikState = props =>
             {JSON.stringify(props, null, 2)}
         </pre>
 
-        <pre>
+        {/* <pre>
             <strong>Test</strong> ={' '}
             {JSON.stringify(props.values.email, null, 2)}
-        </pre>
+        </pre> */}
     </div>;
