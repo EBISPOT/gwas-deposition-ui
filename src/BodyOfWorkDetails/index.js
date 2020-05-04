@@ -39,6 +39,9 @@ const styles = theme => ({
     pageHeader: {
         height: 52,
     },
+    pmidListStyle: {
+        fontSize: 18,
+    },
     publicationTitleTextStyle: {
         fontSize: 20,
         fontStyle: 'italic',
@@ -480,6 +483,18 @@ class ProjectDetails extends Component {
         // Journal URL
         let journalURLDisplay = <a href={this.state.bodyofwork.url} target="_blank" rel="noopener noreferrer">{this.state.bodyofwork.url}</a>
 
+        // PMIDs
+        let pmidDisplay;
+        if (this.state.bodyofwork.pmids) {
+            pmidDisplay =
+                this.state.bodyofwork.pmids.map((pmid, index) => [
+                    index > 0 && ", ",
+                    <span key={index} className={classes.pmidListStyle} >
+                        <a href={`https://www.ncbi.nlm.nih.gov/pubmed/` + pmid} target="_blank" rel="noopener noreferrer">{pmid}</a>
+                    </span>
+                ])
+        }
+
         // PrePrint URL
         let preprintServerDOIDisplay = <a href={this.state.bodyofwork.preprintServerDOI} target="_blank" rel="noopener noreferrer">{this.state.bodyofwork.preprintServerDOI}</a>
 
@@ -560,8 +575,8 @@ class ProjectDetails extends Component {
                 this.state.bodyofwork.correspondingAuthors.map((corrAuthor, index) => (
                     <Typography key={index} className={classes.publicationTextStyle}>
                         {corrAuthor.firstName}  &nbsp;
-                            {corrAuthor.lastName} &nbsp;
-                            <a href={"mailto:" + corrAuthor.email}>{corrAuthor.email}</a>
+                        {corrAuthor.lastName} &nbsp;
+                        <a href={"mailto:" + corrAuthor.email}>{corrAuthor.email}</a>
                     </Typography>
                 ))
         }
@@ -655,6 +670,8 @@ class ProjectDetails extends Component {
                                                     {journalURLDisplay}
                                                 </Typography>
                                             )}
+
+                                            {pmidDisplay}
                                         </Grid>
                                     </Fragment>
                                 )}

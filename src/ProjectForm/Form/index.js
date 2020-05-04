@@ -6,7 +6,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
 import ElixirAuthService from '../../ElixirAuthService';
 import jwt_decode from 'jwt-decode';
-import { Persist } from 'formik-persist'
+import { Persist } from 'formik-persist';
 
 import {
     // Header,

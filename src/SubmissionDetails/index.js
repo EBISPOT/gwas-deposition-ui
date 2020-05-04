@@ -50,6 +50,9 @@ const styles = theme => ({
         fontSize: 18,
         marginTop: 32,
     },
+    pmidListStyle: {
+        fontSize: 18,
+    },
     submissionTextStyle: {
         fontSize: 18,
         marginLeft: 12,
@@ -666,7 +669,6 @@ class SubmissionDetails extends Component {
 
 
     navigateToUpdateBOW = () => {
-        console.log("** Nav content: ", this.state.bow_obj);
         history.push({
             pathname: `${process.env.PUBLIC_URL}/update-bodyofwork`,
             state: {
@@ -734,6 +736,19 @@ class SubmissionDetails extends Component {
         let delete_file_button;
         let download_data_file_button;
         let upload_files_to_globus_step;
+
+
+        // PMIDs
+        let pmidDisplay;
+        if (this.state.bow_obj && this.state.bow_obj.pmids) {
+            pmidDisplay =
+                this.state.bow_obj.pmids.map((pmid, index) => [
+                    index > 0 && ", ",
+                    <span key={index} className={classes.pmidListStyle} >
+                        <a href={`https://www.ncbi.nlm.nih.gov/pubmed/` + pmid} target="_blank" rel="noopener noreferrer">{pmid}</a>
+                    </span>
+                ])
+        }
 
 
         /**
@@ -879,6 +894,8 @@ class SubmissionDetails extends Component {
                                                 <a href={bow_obj.url} target="_blank" rel="noopener noreferrer">{bow_obj.url}</a>
                                             </Typography>
                                         )}
+
+                                        {pmidDisplay}
                                     </Grid>
                                 </Fragment>
                             )}
@@ -915,8 +932,9 @@ class SubmissionDetails extends Component {
                                     </Grid>
                                 </Fragment>
                             )}
-
                         </Grid>
+
+
                         <Link
                             component="button"
                             onClick={this.navigateToUpdateBOW}
