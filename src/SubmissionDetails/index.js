@@ -881,7 +881,7 @@ class SubmissionDetails extends Component {
                                 <Fragment>
                                     <Grid item xs={3}>
                                         <Typography variant="h6" className={classes.publicationTextStyle}>
-                                            Published in:
+                                            Submitted to:
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={9}>
