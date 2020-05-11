@@ -3,17 +3,10 @@ import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-// import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import {
+    Grid, Link, Paper, Typography, Button, TextField, FormControl,
+    FormGroup, FormControlLabel, Checkbox, CircularProgress
+} from '@material-ui/core/';
 
 import { AuthConsumer } from '../auth-context';
 import jwt_decode from 'jwt-decode';
@@ -57,6 +50,12 @@ const styles = theme => ({
     statusExplanationMessageTextStyle: {
         fontSize: 18,
         fontStyle: 'italic'
+    },
+    link: {
+        fontSize: 18,
+        marginRight: 12,
+        marginTop: 8,
+        borderBottom: "1px dashed",
     },
     button: {
         marginTop: theme.spacing(1),
@@ -265,6 +264,19 @@ class ProjectDetails extends Component {
                 linkElixir2Globus: false
             })
         }
+    }
+
+
+    /**
+     * Redirect to page to Add PMID for a Body of Work
+     */
+    navigateToUpdateBOW = () => {
+        history.push({
+            pathname: `${process.env.PUBLIC_URL}/update-bodyofwork`,
+            state: {
+                bodyOfWorkObj: this.state.bow_obj,
+            }
+        })
     }
 
 
@@ -709,6 +721,15 @@ class ProjectDetails extends Component {
                                         </Grid>
                                     </Fragment>
                                 )}
+
+                                <Link
+                                    component="button"
+                                    onClick={this.navigateToUpdateBOW}
+                                    underline="none"
+                                    className={classes.link}
+                                >
+                                    Add PMID
+                                </Link>
 
                                 <Grid item xs={12}>
                                     {submission_checklist}

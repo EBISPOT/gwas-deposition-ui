@@ -86,12 +86,6 @@ const styles = theme => ({
     errorText: {
         color: 'red',
     },
-    link: {
-        textDecorationStyle: "dashed",
-        fontSize: 18,
-        marginRight: 12,
-        marginTop: 8,
-    },
     button: {
         marginTop: theme.spacing(1),
         marginRight: theme.spacing(1),
@@ -933,16 +927,6 @@ class SubmissionDetails extends Component {
                                 </Fragment>
                             )}
                         </Grid>
-
-
-                        <Link
-                            component="button"
-                            onClick={this.navigateToUpdateBOW}
-                            underline="always"
-                            className={classes.link}
-                        >
-                            Add PMID(s)
-                        </Link>
                     </Fragment>
             }
         }
