@@ -24,6 +24,11 @@ const useStyles = makeStyles(theme => ({
     componentSpacing: {
         margin: theme.spacing(2)
     },
+    embargoDateText: {
+        marginTop: theme.spacing(4),
+        marginLeft: theme.spacing(1),
+        paddingRight: theme.spacing(2),
+    },
     button: {
         margin: theme.spacing(1),
         padding: theme.spacing(1),
@@ -1115,41 +1120,52 @@ export const EmbargoDate = (props) => {
                     </Typography>
                 </Grid>
 
-                <Grid item>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <InputLabel shrink required htmlFor="embargoDate" className={classes.margin}>
-                            Embargo Date (Year/Month/Day)
+                <Grid container
+                    direction='row'
+                >
+                    <Grid item xs={3}>
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <InputLabel shrink required htmlFor="embargoDate" className={classes.margin}>
+                                Embargo Date (Year/Month/Day)
                         </InputLabel>
 
-                        <CustomKeyboardDatePicker
-                            {...field}
-                            id="embargoDate"
-                            autoOk
-                            disabled={values.embargoUntilPublished}
-                            disableToolbar
-                            variant="inline"
-                            inputVariant="outlined"
-                            format="yyyy/MM/dd"
-                            invalidDateMessage="" // Use Formik "errors"
-                            error={errors.embargoDate && touched.embargoDate}
-                            minDate={new Date()}
-                            // maxDate={maxDate}
-                            selected={(field.value && new Date(field.value)) || null}
-                            // InputAdornmentProps={{ position: "start" }}
-                            onChange={val => {
-                                setFieldValue(field.name, val);
-                            }}
-                            KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                            }}
-                        />
-                    </MuiPickersUtilsProvider>
-                    {errors.embargoDate &&
-                        touched.embargoDate && (
-                            <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
-                                {errors.embargoDate}
-                            </div>
-                        )}
+                            <CustomKeyboardDatePicker
+                                {...field}
+                                id="embargoDate"
+                                autoOk
+                                disabled={values.embargoUntilPublished}
+                                disableToolbar
+                                variant="inline"
+                                inputVariant="outlined"
+                                format="yyyy/MM/dd"
+                                invalidDateMessage="" // Use Formik "errors"
+                                error={errors.embargoDate && touched.embargoDate}
+                                minDate={new Date()}
+                                // maxDate={maxDate}
+                                selected={(field.value && new Date(field.value)) || null}
+                                // InputAdornmentProps={{ position: "start" }}
+                                onChange={val => {
+                                    setFieldValue(field.name, val);
+                                }}
+                                KeyboardButtonProps={{
+                                    'aria-label': 'change date',
+                                }}
+                            />
+                        </MuiPickersUtilsProvider>
+                        {errors.embargoDate &&
+                            touched.embargoDate && (
+                                <div className="input-feedback" style={{ display: 'block', margin: 8 }}>
+                                    {errors.embargoDate}
+                                </div>
+                            )}
+                    </Grid>
+                    <Grid item xs={8}>
+                        <Typography gutterBottom variant='body1' className={classes.embargoDateText}>
+                            Please note data cannot be embargoed past the date which the associated
+                            manuscript is indexed in PubMed. Indexing in PubMed will override any
+                            supplied date and the summary statistics will be made public.
+                        </Typography>
+                    </Grid>
                 </Grid>
             </Grid>
         </Fragment>
