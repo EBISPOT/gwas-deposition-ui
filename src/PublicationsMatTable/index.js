@@ -146,11 +146,12 @@ class PublicationsMatTable extends React.Component {
 
     render() {
         const { classes } = this.props;
-        const emailContact = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
+        const emailContact = <a href="mailto:gwas-subs@ebi.ac.uk?subject=Eligibility Review">gwas-subs@ebi.ac.uk</a>;
         const noResultsMessage = <span className={classes.noResultsTextStyle}>No results were found. Please email {emailContact} to request an eligibility review of your publication.</span>;
 
         let { searchValue } = this.state;
         let searchTextValue = searchValue.trim();
+        const tableHeaderStyle = '1px dashed gray';
 
         return (
             <Container maxWidth="xl" className={classes.publicationContainer}>
@@ -216,9 +217,9 @@ class PublicationsMatTable extends React.Component {
                                 { title: 'Publication', field: 'title' },
                                 { title: 'Journal', field: 'journal' },
                                 {
-                                    title: <div className="tooltip">Status
+                                    title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>Status
                                     <span className="tooltiptext">Submission status of the publication.
-                                                                            See documentation for detailed definitions.
+                                        See documentation for detailed definitions.
                                     </span></div>,
                                     field: 'status',
                                     render: rowData => (this.getUserFriendlyStatusLabels(rowData.status))
