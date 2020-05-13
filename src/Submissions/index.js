@@ -287,6 +287,25 @@ class Submissions extends Component {
                                         }).catch(error => {
                                         })
                                 }
+                                // Handle search by GCP ID
+                                const GCP_PREFIX = 'GCP';
+                                if (query.search.includes(GCP_PREFIX)) {
+                                    url += '?bowId=' + query.search
+                                    fetch(url, {
+                                        headers: myHeaders
+                                    })
+                                        .then(response => response.json())
+                                        .then(result => {
+                                            if (this._isMounted) {
+                                                resolve({
+                                                    data: result._embedded.submissions,
+                                                    page: result.page.number,
+                                                    totalCount: result.page.totalElements,
+                                                })
+                                            }
+                                        }).catch(error => {
+                                        })
+                                }
                                 // Handle search by SubmissionID
                                 else {
                                     url += '/' + query.search
@@ -363,7 +382,7 @@ class Submissions extends Component {
                                             name="searchInput"
                                             value={this.state.value}
                                             className={classes.textField}
-                                            placeholder="Search by PMID or Submission ID"
+                                            placeholder="Search by PMID, GCP ID, or Submission ID"
                                             InputProps={{
                                                 startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
                                                 endAdornment: <InputAdornment position="end">
