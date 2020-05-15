@@ -274,7 +274,7 @@ class ProjectDetails extends Component {
         history.push({
             pathname: `${process.env.PUBLIC_URL}/update-bodyofwork`,
             state: {
-                bodyOfWorkObj: this.state.bow_obj,
+                bodyOfWorkObj: this.state.bodyofwork,
             }
         })
     }
@@ -399,18 +399,12 @@ class ProjectDetails extends Component {
         let elixirRegistrationLink = <a href="https://elixir-europe.org/register" target="_blank" rel="noopener noreferrer">Elixir ID</a>
         let globusLink = <a href="https://www.globus.org/globus-connect-personal" target="_blank" rel="noopener noreferrer">Globus Connect Personal</a>
         let summaryStatsFormattingLink = <a href="https://www.ebi.ac.uk/gwas/docs/summary-statistics-format" target="_blank" rel="noopener noreferrer">Format and validate</a>
-        // const sumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics`;
-        // const metadataAndSumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics-plus-metadata`;
+
         const { elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats } = this.state;
         const checklistCompleteError = [elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats].filter(v => v).length !== 4;
 
         let create_submission_button;
         let showSubmissionDetailsButton;
-        // const gwasInfoEmail = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
-        // const gwasSubsEmail = <a href="mailto:gwas-subs@ebi.ac.uk">gwas-subs@ebi.ac.uk</a>;
-        // let statusExplanationMessageText;
-        // const eligibleBoldText = <span className={classes.bold}>submit both summary statistics and supporting metadata</span>
-        // const publishedBoldText = <span className={classes.bold}>submit summary statistics</span>
 
 
         // Submission checklist checklist form
@@ -502,7 +496,8 @@ class ProjectDetails extends Component {
                 this.state.bodyofwork.pmids.map((pmid, index) => [
                     index > 0 && ", ",
                     <span key={index} className={classes.pmidListStyle} >
-                        <a href={`https://www.ncbi.nlm.nih.gov/pubmed/` + pmid} target="_blank" rel="noopener noreferrer">{pmid}</a>
+                        <a href={`https://www.ncbi.nlm.nih.gov/pubmed/` + pmid}
+                            target="_blank" rel="noopener noreferrer">PMID:{pmid}</a>
                     </span>
                 ])
         }
@@ -665,7 +660,7 @@ class ProjectDetails extends Component {
                                 </Grid>
 
 
-                                {(this.state.bodyofwork.journal) && (
+                                {(this.state.bodyofwork.journal || this.state.bodyofwork.pmids) && (
                                     <Fragment>
                                         <Grid item xs={3}>
                                             <Typography variant="h6" className={classes.publicationTextStyle}>

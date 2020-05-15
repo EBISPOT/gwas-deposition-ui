@@ -381,7 +381,6 @@ class PublicationDetails extends Component {
 
         let create_submission_button;
         let showSubmissionDetailsButton;
-        const gwasInfoEmail = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
         const gwasSubsEmail = <a href="mailto:gwas-subs@ebi.ac.uk">gwas-subs@ebi.ac.uk</a>;
         let statusExplanationMessageText;
         const eligibleBoldText = <span className={classes.bold}>submit both summary statistics and supporting metadata</span>
@@ -478,7 +477,7 @@ class PublicationDetails extends Component {
             statusExplanationMessageText =
                 <span>
                     This publication is currently under submission. Please check back
-                    for updates or email {gwasInfoEmail} for additional information.
+                    for updates or email {gwasSubsEmail} for additional information.
                 </span>
         }
         if (publicationStatus === 'PUBLISHED_WITH_SS') {
@@ -493,7 +492,7 @@ class PublicationDetails extends Component {
             statusExplanationMessageText =
                 <span>
                     Data describing this publication is not yet available in the GWAS Catalog. If you are an
-                    author of this publication please {eligibleBoldText}. See doucmentation
+                    author of this publication please {eligibleBoldText}. See documentation
                     <a href={metadataAndSumStatsDocs} target="_blank" rel="noopener noreferrer"> here</a>.
                 </span>
         }
@@ -505,7 +504,7 @@ class PublicationDetails extends Component {
                     <a href={sumStatsDocs} target="_blank" rel="noopener noreferrer"> here</a> and
                     let us know which file belongs to each study.
                     If you think there is a mistake in the pre-filled spreadsheet containing the data currently
-                    in the Catalog (e.g. an incorrect number of studies for your publication), please contact {gwasInfoEmail}.
+                    in the Catalog (e.g. an incorrect number of studies for your publication), please contact {gwasSubsEmail}.
                 </span>
         }
 

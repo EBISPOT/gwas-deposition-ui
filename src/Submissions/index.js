@@ -78,9 +78,6 @@ const styles = theme => ({
         zDepthShadows: 'none',
         fontColor: 'red',
     },
-    tableHeader: {
-        borderBottom: '1px dashed gray'
-    },
 });
 
 const CustomMTableToolbar = withStyles({
