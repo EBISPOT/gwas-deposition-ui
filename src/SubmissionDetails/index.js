@@ -4,13 +4,14 @@ import Upload from "../Upload";
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import { Grid, Link, Paper, Typography, Button, CircularProgress } from '@material-ui/core/';
+import { Grid, Paper, Typography, Button, CircularProgress } from '@material-ui/core/';
 import classNames from 'classnames'
 import ReactSVG from 'react-svg'
 
 import { AuthConsumer } from '../auth-context';
 
 import API_CLIENT from '../apiClient';
+import { DownloadGcstButton } from './submission_details_components';
 import history from "../history";
 
 import axios from 'axios';
@@ -545,7 +546,7 @@ class SubmissionDetails extends Component {
             })
                 .catch((error) => {
                     console.log("Error: ", error)
-                    let downloadSSTemplateErrorLabel = "Error: There is a fault on our end. Please contact gwas-info@ebi.ac.uk for help."
+                    let downloadSSTemplateErrorLabel = "Error: There is a fault on our end. Please contact gwas-subs@ebi.ac.uk for help."
                     this.setState({ downloadSummaryStatsFileError: downloadSSTemplateErrorLabel });
                 })
         }
@@ -662,15 +663,6 @@ class SubmissionDetails extends Component {
     }
 
 
-    navigateToUpdateBOW = () => {
-        history.push({
-            pathname: `${process.env.PUBLIC_URL}/update-bodyofwork`,
-            state: {
-                bodyOfWorkObj: this.state.bow_obj,
-            }
-        })
-    }
-
     render() {
         const { classes } = this.props;
         const { provenanceType } = this.state;
@@ -761,10 +753,20 @@ class SubmissionDetails extends Component {
             if (bow_obj) {
                 submissionDetailsPanel =
                     <Fragment>
-                        <Grid item xs={12} className={classes.pageHeader}>
-                            <Typography variant="h5" className={classes.headerTextStyle}>
-                                Details for GCP ID: {this.state.bow_obj.bodyOfWorkId}
-                            </Typography>
+                        <Grid container direction='row'>
+                            <Grid item xs={10} className={classes.pageHeader}>
+                                <Typography variant="h5" className={classes.headerTextStyle}>
+                                    Details for GCP ID: {this.state.bow_obj.bodyOfWorkId}
+                                </Typography>
+                            </Grid>
+
+                            <Grid container item xs={2} justify="flex-end">
+                                {(submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) && (
+                                    <DownloadGcstButton
+                                        submissionId={this.SUBMISSION_ID}
+                                        token={localStorage.getItem('id_token')} />
+                                )}
+                            </Grid>
                         </Grid>
 
                         <Grid item xs={12}>
@@ -779,12 +781,12 @@ class SubmissionDetails extends Component {
                             justify="flex-start"
                             alignItems="flex-start"
                         >
-                            <Grid item xs={3}>
+                            <Grid item xs={2}>
                                 <Typography variant="h6" className={classes.publicationTextStyle}>
                                     Description:
                                 </Typography>
                             </Grid>
-                            <Grid item xs={9}>
+                            <Grid item xs={10}>
                                 <Typography variant="h6" className={classes.publicationTextStyle}>
                                     {bow_obj.description}
                                 </Typography>
@@ -793,13 +795,13 @@ class SubmissionDetails extends Component {
                             {(bow_obj.firstAuthor && bow_obj.firstAuthor.firstName
                                 && bow_obj.firstAuthor.lastName) && (
                                     <Fragment>
-                                        <Grid item xs={3}>
+                                        <Grid item xs={2}>
                                             <Typography variant="h6" className={classes.publicationTextStyle}>
                                                 First Author:
                                             </Typography>
                                         </Grid>
 
-                                        < Grid item xs={9} >
+                                        < Grid item xs={10} >
                                             <Typography className={classes.publicationTextStyle}>
                                                 {bow_obj.firstAuthor.firstName} &nbsp;
                                                 {bow_obj.firstAuthor.lastName}
@@ -810,12 +812,12 @@ class SubmissionDetails extends Component {
 
                             {(bow_obj.firstAuthor && bow_obj.firstAuthor.group) && (
                                 <Fragment>
-                                    <Grid item xs={3}>
+                                    <Grid item xs={2}>
                                         <Typography variant="h6" className={classes.publicationTextStyle}>
                                             First Author:
                                         </Typography>
                                     </Grid>
-                                    < Grid item xs={9} >
+                                    < Grid item xs={10} >
                                         <Typography className={classes.publicationTextStyle}>
                                             {bow_obj.firstAuthor.group}
                                         </Typography>
@@ -826,12 +828,12 @@ class SubmissionDetails extends Component {
                             {(bow_obj.lastAuthor && bow_obj.lastAuthor.firstName
                                 && bow_obj.lastAuthor.lastName) && (
                                     <Fragment>
-                                        <Grid item xs={3}>
+                                        <Grid item xs={2}>
                                             <Typography variant="h6" className={classes.publicationTextStyle}>
                                                 Last Author:
                                             </Typography>
                                         </Grid>
-                                        < Grid item xs={9} >
+                                        < Grid item xs={10} >
                                             <Typography className={classes.publicationTextStyle}>
                                                 {bow_obj.lastAuthor.firstName} &nbsp;
                                                 {bow_obj.lastAuthor.lastName}
@@ -842,12 +844,12 @@ class SubmissionDetails extends Component {
 
                             {(bow_obj.lastAuthor && bow_obj.lastAuthor.group) && (
                                 <Fragment>
-                                    <Grid item xs={3}>
+                                    <Grid item xs={2}>
                                         <Typography variant="h6" className={classes.publicationTextStyle}>
                                             Last Author:
                                         </Typography>
                                     </Grid>
-                                    < Grid item xs={9} >
+                                    < Grid item xs={10} >
                                         <Typography className={classes.publicationTextStyle}>
                                             {bow_obj.lastAuthor.group}
                                         </Typography>
@@ -855,12 +857,12 @@ class SubmissionDetails extends Component {
                                 </Fragment>
                             )}
 
-                            <Grid item xs={3}>
+                            <Grid item xs={2}>
                                 <Typography variant="h6" className={classes.publicationTextStyle}>
                                     Corresponding Author(s):
                                 </Typography>
                             </Grid>
-                            <Grid item xs={9} >
+                            <Grid item xs={10} >
                                 {(bow_obj.correspondingAuthors) && (
                                     bow_obj.correspondingAuthors.map((corrAuthor, index) => (
                                         <Typography key={index} className={classes.publicationTextStyle}>
@@ -873,12 +875,12 @@ class SubmissionDetails extends Component {
 
                             {(bow_obj.journal) && (
                                 <Fragment>
-                                    <Grid item xs={3}>
+                                    <Grid item xs={2}>
                                         <Typography variant="h6" className={classes.publicationTextStyle}>
                                             Submitted to:
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={9}>
+                                    <Grid item xs={10}>
                                         <Typography className={classes.publicationTextStyle} >
                                             {bow_obj.journal}
                                         </Typography>
@@ -896,12 +898,12 @@ class SubmissionDetails extends Component {
 
                             {(bow_obj.prePrintServer) && (
                                 <Fragment>
-                                    <Grid item xs={3}>
+                                    <Grid item xs={2}>
                                         <Typography variant="h6" className={classes.publicationTextStyle}>
                                             PrePrint available in:
                                             </Typography>
                                     </Grid>
-                                    <Grid item xs={9}>
+                                    <Grid item xs={10}>
                                         <Typography className={classes.publicationTextStyle}>
                                             {bow_obj.prePrintServer} &nbsp;
 
@@ -913,12 +915,12 @@ class SubmissionDetails extends Component {
 
                             {(bow_obj.embargoDate || bow_obj.embargoUntilPublished) && (
                                 <Fragment>
-                                    <Grid item xs={3}>
+                                    <Grid item xs={2}>
                                         <Typography className={classes.publicationTextStyle}>
                                             Embargo until:
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={9}>
+                                    <Grid item xs={10}>
                                         <Typography className={classes.publicationTextStyle}>
                                             {bow_obj.embargoUntilPublished
                                                 ? 'date of publication' : `${bow_obj.embargoDate}`}
@@ -934,11 +936,22 @@ class SubmissionDetails extends Component {
             if (publication_obj) {
                 submissionDetailsPanel =
                     <Fragment>
-                        <Grid item xs={12} className={classes.pageHeader}>
-                            <Typography variant="h5" className={classes.headerTextStyle}>
-                                Publication details for PMID: {publication_obj.pmid}
-                            </Typography>
+                        <Grid container direction='row'>
+                            <Grid item xs={10} className={classes.pageHeader}>
+                                <Typography variant="h5" className={classes.headerTextStyle}>
+                                    Publication details for PMID: {publication_obj.pmid}
+                                </Typography>
+                            </Grid>
+
+                            <Grid container item xs={2} justify="flex-end">
+                                {(submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) && (
+                                    <DownloadGcstButton
+                                        submissionId={this.SUBMISSION_ID}
+                                        token={localStorage.getItem('id_token')} />
+                                )}
+                            </Grid>
                         </Grid>
+
                         <Grid item xs={12}>
                             <Typography variant="h6" className={classes.publicationTitleTextStyle}>
                                 {publication_obj.title}
