@@ -100,7 +100,7 @@ class Home extends Component {
                             <Typography gutterBottom variant="body1">
                                 For additional information <a href={process.env.REACT_APP_GWAS_DOC_BASE + '/submission'} target="_blank" rel="noopener noreferrer">
                                     please read the documentation</a>.
-                                If you need further help, please e-mail <a href="mailto:gwas-info@ebi.ac.uk?subject=Deposition submission help request">gwas-info@ebi.ac.uk</a>.
+                                If you need further help, please e-mail <a href="mailto:gwas-subs@ebi.ac.uk?subject=Deposition submission help request">gwas-subs@ebi.ac.uk</a>.
                             </Typography>
                         </Grid>
                         {/* <Grid item xs={9}>
@@ -127,7 +127,7 @@ class Home extends Component {
                             className={classes.button}
                             onClick={this.showQuestionnaire}>
                             Get started
-                    </Button>)}
+                        </Button>)}
 
                     {isDisplayed && (
                         <Grid item>

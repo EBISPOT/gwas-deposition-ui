@@ -77,7 +77,7 @@ const styles = theme => ({
     table: {
         zDepthShadows: 'none',
         fontColor: 'red',
-    }
+    },
 });
 
 const CustomMTableToolbar = withStyles({
@@ -170,6 +170,7 @@ class Submissions extends Component {
 
         let { searchValue } = this.state;
         let searchTextValue = searchValue.trim();
+        const tableHeaderStyle = '1px dashed gray';
 
         return (
             <Container maxWidth="xl" className={classes.Container}>
@@ -186,7 +187,23 @@ class Submissions extends Component {
                             }
                         },
                         {
-                            title: <div className="tooltip">Submission ID
+                            title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>GCP ID
+                                <span className="tooltiptext">Unique identifier for the Body of Work.</span></div>,
+                            field: 'bodyOfWork.bodyOfWorkId', sorting: true,
+                            render: rowData => {
+                                if (!rowData.bodyOfWork) { return 'NA' }
+                                else {
+                                    return <Link to={{
+                                        pathname: `${process.env.PUBLIC_URL}/bodyofwork/${rowData.bodyOfWork.bodyOfWorkId}`,
+                                        state: { submissionId: rowData.submissionId }
+                                    }}
+                                        style={{ textDecoration: 'none' }}>{rowData.bodyOfWork.bodyOfWorkId}
+                                    </Link>
+                                }
+                            }
+                        },
+                        {
+                            title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>Submission ID
                                 <span className="tooltiptext">Unique identifier for submission.</span></div>,
                             field: 'submissionId',
                             render: rowData => (<Link to={{
@@ -201,24 +218,28 @@ class Submissions extends Component {
                             }
                         },
                         {
-                            title: <div className="tooltip">Submission Status
+                            title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>
+                                Submission Status
                                 <span className="tooltiptext">Overall status of the submission.</span></div>,
                             field: 'submission_status', sorting: true,
                             render: rowData => (this.transformStatusLabel(rowData.submission_status))
                         },
                         {
-                            title: <div className="tooltip">Metadata Status
+                            title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>
+                                Metadata Status
                                 <span className="tooltiptext">Validation status of the template metadata.</span></div>,
                             field: 'metadata_status', sorting: true
                         },
                         {
-                            title: <div className="tooltip">Summary statistics Status
+                            title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>
+                                Summary statistics Status
                                 <span className="tooltiptext">Validation status of the summary statistics files.</span></div>,
                             field: 'summary_statistics_status', sorting: true
                         },
                         { title: 'Submitter', field: 'created.user.name', sorting: true },
                         {
-                            title: <div className="tooltip">Date submission started
+                            title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>
+                                Date submission started
                                 <span className="tooltiptext">YYYY-MM-DD</span></div>,
                             field: 'created.timestamp', sorting: true, defaultSort: 'desc',
                             render: rowData => (this.transformDateFormat(rowData.created.timestamp))
@@ -248,6 +269,25 @@ class Submissions extends Component {
                             if (query.search) {
                                 if (onlyNumbers.test(query.search)) {
                                     url += '?pmid=' + query.search
+                                    fetch(url, {
+                                        headers: myHeaders
+                                    })
+                                        .then(response => response.json())
+                                        .then(result => {
+                                            if (this._isMounted) {
+                                                resolve({
+                                                    data: result._embedded.submissions,
+                                                    page: result.page.number,
+                                                    totalCount: result.page.totalElements,
+                                                })
+                                            }
+                                        }).catch(error => {
+                                        })
+                                }
+                                // Handle search by GCP ID
+                                const GCP_PREFIX = 'GCP';
+                                if (query.search.includes(GCP_PREFIX)) {
+                                    url += '?bowId=' + query.search
                                     fetch(url, {
                                         headers: myHeaders
                                     })
@@ -339,7 +379,7 @@ class Submissions extends Component {
                                             name="searchInput"
                                             value={this.state.value}
                                             className={classes.textField}
-                                            placeholder="Search by PMID or Submission ID"
+                                            placeholder="Search by PMID, GCP ID, or Submission ID"
                                             InputProps={{
                                                 startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
                                                 endAdornment: <InputAdornment position="end">

@@ -168,6 +168,7 @@ class BodyOfWorks extends Component {
 
         let { searchValue } = this.state;
         let searchTextValue = searchValue.trim();
+        const tableHeaderStyle = '1px dashed gray';
 
         return (
             <Container maxWidth="xl" className={classes.Container}>
@@ -177,7 +178,7 @@ class BodyOfWorks extends Component {
                     title="Incomplete Submissions"
                     columns={[
                         {
-                            title: <div className="tooltip">GCP ID
+                            title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>GCP ID
                                 <span className="tooltiptext">Unique identifier for the Body of Work.</span></div>,
                             field: 'bodyOfWorkId',
                             render: rowData => (<Link to={{

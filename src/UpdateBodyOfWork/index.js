@@ -17,15 +17,32 @@ const useStyles = makeStyles(theme => ({
     header: {
         fontSize: 18,
         fontWeight: 500,
+        marginTop: theme.spacing(2)
     },
-    margin: {
+    formMargin: {
         margin: theme.spacing(1),
     },
     componentSpacing: {
         margin: theme.spacing(2)
     },
     button: {
-        margin: theme.spacing(1),
+        marginTop: theme.spacing(4),
+        padding: theme.spacing(1),
+        color: '#333',
+        background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
+        borderRadius: 4,
+        border: '1px solid #aaa',
+        fontWeight: 'bold',
+        textShadow: '0 1px 0 #fff',
+        textTransform: 'none',
+        boxShadow: 'none',
+        '&:disabled': {
+            textShadow: 'none',
+        },
+    },
+    buttonReset: {
+        marginTop: theme.spacing(4),
+        marginRight: theme.spacing(4),
         padding: theme.spacing(1),
         color: '#333',
         background: 'linear-gradient(to bottom, #E7F7F9 50%, #D3EFF3 100%)',
@@ -54,11 +71,17 @@ const MyPubMedInputForm = props => {
         isSubmitting,
     } = props;
 
-    // Save Form data to local storage on page load
-    const initialPmids = JSON.parse(localStorage.getItem('initial_pmids'))
+
+    let initialPmids;
+    // Handle case when BOW does not have an existing PMID
+    if (localStorage.getItem('initial_pmids') !== 'undefined') {
+        initialPmids = JSON.parse(localStorage.getItem('initial_pmids'))
+    } else {
+        initialPmids = ['None']
+    }
 
     // Manage PMID input data
-    const [chipData, setChipData] = useState([...values.pmids]);
+    const [chipData, setChipData] = useState([values.pmids]);
 
     /**
     * Manage storage of Body of Work data in local storage
@@ -81,6 +104,7 @@ const MyPubMedInputForm = props => {
         }
     }
 
+    // Save Form data to local storage on page load
     useEffect(() => {
         values.pmids = chipData;
 
@@ -89,12 +113,23 @@ const MyPubMedInputForm = props => {
 
         // Redirect to BOW details page if submit response is successful
         if (props.formState.isDone) {
+            clearLocalStorage();
             history.replace(`${process.env.PUBLIC_URL}/bodyofwork/${props.values.bodyOfWorkId}`);
         }
     });
 
     const handleChange = (val) => {
         setChipData(val);
+    }
+
+    /**
+     * Redirect back to Body of Work page
+     */
+    const cancelUpdate = () => {
+        clearLocalStorage()
+        history.push({
+            pathname: `${process.env.PUBLIC_URL}/bodyofwork/${props.values.bodyOfWorkId}`,
+        })
     }
 
     return (
@@ -106,28 +141,30 @@ const MyPubMedInputForm = props => {
                             <div>
                                 <Typography gutterBottom variant="body1" className={classes.header}>
                                     Body of Work Details for: &nbsp;
-                                {props.values.bodyOfWorkId}
+                                    {props.values.bodyOfWorkId}
                                 </Typography>
 
-                                <Typography gutterBottom>
-                                    Initial PMID(s): &nbsp;
-                                    {initialPmids.map((pmid, index) => [
-                                    index > 0 && ", ",
-                                    <span key={index} className={classes.pmidListStyle} >{pmid}</span>
-                                ])}
-                                </Typography>
+                                {initialPmids && (
+                                    <Typography gutterBottom>
+                                        Initial PMID: &nbsp;
+                                        {initialPmids.map((pmid, index) => [
+                                            index > 0 && ", ",
+                                            <span key={index} className={classes.pmidListStyle} >{pmid}</span>
+                                        ])}
+                                    </Typography>
+                                )}
                             </div>
                         )}
                     </Grid>
 
                     <Grid item xs={12}>
                         <Typography gutterBottom variant="body1" className={classes.header}>
-                            Add PMID(s)
+                            Add PMID
                         </Typography>
                     </Grid>
 
                     <Grid item xs={12}>
-                        <FormControl className={classes.margin}>
+                        <FormControl className={classes.formMargin}>
                             <InputLabel shrink required htmlFor="pmids" className={classes.label}>
                                 PMID
                             </InputLabel>
@@ -150,25 +187,27 @@ const MyPubMedInputForm = props => {
                                 )}
                         </FormControl>
                     </Grid>
+                    {/* </Grid> */}
+
+                    <Button
+                        type="button"
+                        className={classes.buttonReset}
+                        onClick={cancelUpdate}
+                        disabled={isSubmitting}
+                    >
+                        Cancel
+                    </Button>
+
+                    <Button
+                        type="submit"
+                        className={classes.button}
+                        disabled={isSubmitting}
+                        onClick={() => checkUserAuthStatus(props)}
+                    >
+                        Submit
+                    </Button>
+
                 </Grid>
-
-                {/* <Button
-                    type="button"
-                    className={classes.buttonReset}
-                    onClick={handleReset}
-                    disabled={!dirty || isSubmitting}
-                >
-                    Reset
-                </Button> */}
-
-                <Button
-                    type="submit"
-                    className={classes.button}
-                    disabled={isSubmitting}
-                    onClick={() => checkUserAuthStatus(props)}
-                >
-                    Submit
-                </Button>
             </form>
         </div>
     );
@@ -222,11 +261,13 @@ const getToken = () => {
 
 const MyEnhancedPubMedInputForm = withFormik({
 
-    mapPropsToValues: (props) => ({
-        pmids: [...props.values.pmids],
-        bodyOfWorkId: props.values.bodyOfWorkId,
-        bodyOfWorkObj: props.values,
-    }),
+    mapPropsToValues: (props) => {
+        return {
+            // pmidProps = [...props.values.pmids];
+            bodyOfWorkId: props.values.bodyOfWorkId,
+            bodyOfWorkObj: props.values,
+        }
+    },
 
     // Custom sync validation
     validate: (values) => {
@@ -234,6 +275,7 @@ const MyEnhancedPubMedInputForm = withFormik({
         let longPmids = [];
         let nonNumericPmids = [];
 
+        // NOTE: Originally, multiple PMIDs were allowed for 1 BOW
         // Check for empty value
         if (values.pmids === undefined || values.pmids.length === 0) {
             errors.pmids = 'Required';
@@ -243,13 +285,18 @@ const MyEnhancedPubMedInputForm = withFormik({
         for (const pmid of values.pmids) {
             if (!/^\d+$/.test(pmid)) {
                 nonNumericPmids.push(pmid)
-                errors.pmids = `PMID(s) "${nonNumericPmids}" must be numbers`;
+                errors.pmids = `PMID "${nonNumericPmids}" must contain all numbers`;
             }
 
             if (/^\d+$/.test(pmid) && pmid.length > 8) {
                 longPmids.push(pmid)
-                errors.pmids = `Error: PMID(s) "${longPmids}" must be 8 digits or less`;
+                errors.pmids = `PMID "${longPmids}" must be 8 digits or less`;
             }
+        }
+
+        // Constrain to 1 PMID entry
+        if (values.pmids.length > 1) {
+            errors.pmids = 'Only 1 PMID can be added'
         }
 
         return errors;
@@ -291,11 +338,23 @@ const MyEnhancedPubMedInputForm = withFormik({
 const updatePMIDs = (allBowValues, updatedPmids) => {
     // Prevent object update after redirects for GDPR/Login
     // TODO Update to use !_.isEqual from Lodash
-    if (JSON.stringify(allBowValues.pmids.sort()) !== JSON.stringify(updatedPmids.pmids.sort())) {
+    if (allBowValues.pmids) {
+        if (JSON.stringify(allBowValues.pmids.sort()) !== JSON.stringify(updatedPmids.pmids.sort())) {
+            Object.assign(allBowValues, updatedPmids)
+        }
+    } else {
         Object.assign(allBowValues, updatedPmids)
     }
 
     return allBowValues
+}
+
+/**
+ * Clear localStorage data for bow_data and initial_pmids
+  */
+const clearLocalStorage = () => {
+    localStorage.removeItem('bow_data')
+    localStorage.removeItem('initial_pmids')
 }
 
 
@@ -312,7 +371,7 @@ const updateBodyOfWork = async (updatedBowValues, props) => {
     if (!debug) {
         await axios.put(BASE_URI + `bodyofwork/${updatedBowValues.bodyOfWorkId}`, updatedBowValues, header
         ).then(response => {
-            props.formState.setIsDone(true)
+            props.formState.setIsDone(true);
         }).catch(error => {
             console.log(error);
         })

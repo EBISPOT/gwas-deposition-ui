@@ -3,17 +3,10 @@ import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-// import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import {
+    Grid, Link, Paper, Typography, Button, TextField, FormControl,
+    FormGroup, FormControlLabel, Checkbox, CircularProgress
+} from '@material-ui/core/';
 
 import { AuthConsumer } from '../auth-context';
 import jwt_decode from 'jwt-decode';
@@ -57,6 +50,12 @@ const styles = theme => ({
     statusExplanationMessageTextStyle: {
         fontSize: 18,
         fontStyle: 'italic'
+    },
+    link: {
+        fontSize: 18,
+        marginRight: 12,
+        marginTop: 8,
+        borderBottom: "1px dashed",
     },
     button: {
         marginTop: theme.spacing(1),
@@ -269,6 +268,19 @@ class ProjectDetails extends Component {
 
 
     /**
+     * Redirect to page to Add PMID for a Body of Work
+     */
+    navigateToUpdateBOW = () => {
+        history.push({
+            pathname: `${process.env.PUBLIC_URL}/update-bodyofwork`,
+            state: {
+                bodyOfWorkObj: this.state.bodyofwork,
+            }
+        })
+    }
+
+
+    /**
      * Create submission for this publication
      */
     createSubmission() {
@@ -387,18 +399,12 @@ class ProjectDetails extends Component {
         let elixirRegistrationLink = <a href="https://elixir-europe.org/register" target="_blank" rel="noopener noreferrer">Elixir ID</a>
         let globusLink = <a href="https://www.globus.org/globus-connect-personal" target="_blank" rel="noopener noreferrer">Globus Connect Personal</a>
         let summaryStatsFormattingLink = <a href="https://www.ebi.ac.uk/gwas/docs/summary-statistics-format" target="_blank" rel="noopener noreferrer">Format and validate</a>
-        // const sumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics`;
-        // const metadataAndSumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics-plus-metadata`;
+
         const { elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats } = this.state;
         const checklistCompleteError = [elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats].filter(v => v).length !== 4;
 
         let create_submission_button;
         let showSubmissionDetailsButton;
-        // const gwasInfoEmail = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
-        // const gwasSubsEmail = <a href="mailto:gwas-subs@ebi.ac.uk">gwas-subs@ebi.ac.uk</a>;
-        // let statusExplanationMessageText;
-        // const eligibleBoldText = <span className={classes.bold}>submit both summary statistics and supporting metadata</span>
-        // const publishedBoldText = <span className={classes.bold}>submit summary statistics</span>
 
 
         // Submission checklist checklist form
@@ -490,7 +496,8 @@ class ProjectDetails extends Component {
                 this.state.bodyofwork.pmids.map((pmid, index) => [
                     index > 0 && ", ",
                     <span key={index} className={classes.pmidListStyle} >
-                        <a href={`https://www.ncbi.nlm.nih.gov/pubmed/` + pmid} target="_blank" rel="noopener noreferrer">{pmid}</a>
+                        <a href={`https://www.ncbi.nlm.nih.gov/pubmed/` + pmid}
+                            target="_blank" rel="noopener noreferrer">PMID:{pmid}</a>
                     </span>
                 ])
         }
@@ -653,7 +660,7 @@ class ProjectDetails extends Component {
                                 </Grid>
 
 
-                                {(this.state.bodyofwork.journal) && (
+                                {(this.state.bodyofwork.journal || this.state.bodyofwork.pmids) && (
                                     <Fragment>
                                         <Grid item xs={3}>
                                             <Typography variant="h6" className={classes.publicationTextStyle}>
@@ -709,6 +716,15 @@ class ProjectDetails extends Component {
                                         </Grid>
                                     </Fragment>
                                 )}
+
+                                <Link
+                                    component="button"
+                                    onClick={this.navigateToUpdateBOW}
+                                    underline="none"
+                                    className={classes.link}
+                                >
+                                    Add PMID
+                                </Link>
 
                                 <Grid item xs={12}>
                                     {submission_checklist}
