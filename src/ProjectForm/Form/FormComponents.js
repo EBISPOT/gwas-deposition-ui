@@ -1106,7 +1106,10 @@ export const EmbargoDate = (props) => {
         touched.embargoDate = submittedTouch
     }
 
-    // const maxDate = new Date('2025-01-01')
+    const currentDate = new Date();
+    const maxEmbargoLimit = 2; // Science team requested a 2 year limit from date of submission
+    const maxDate = new Date(currentDate.getFullYear() + maxEmbargoLimit, currentDate.getMonth(), currentDate.getDate())
+
     const { setFieldValue } = useFormikContext();
     const [field] = useField(props); // ToDo: Resolve error: "Warning: Invalid field name. Either pass `useField` a string or an object containing a `name` key."
 
@@ -1141,7 +1144,7 @@ export const EmbargoDate = (props) => {
                                 invalidDateMessage="" // Use Formik "errors"
                                 error={errors.embargoDate && touched.embargoDate}
                                 minDate={new Date()}
-                                // maxDate={maxDate}
+                                maxDate={maxDate}
                                 selected={(field.value && new Date(field.value)) || null}
                                 // InputAdornmentProps={{ position: "start" }}
                                 onChange={val => {
