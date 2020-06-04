@@ -5,6 +5,7 @@ services:
 stages:
   - build
   - docker
+  - docker-release
   - deploy
 
 variables:
@@ -28,10 +29,21 @@ npm-build:
   except:
     - tags
 
+docker:
+  stage: docker
+  script:
+  - echo "$DOCKER_HUB_PASSWORD" > dhpw.txt
+  - docker login -u "${DOCKER_HUB_USER}" --password-stdin < dhpw.txt
+  - docker build --force-rm=true -t $UI_SERVICE_NAME:latest .
+  - docker tag $UI_SERVICE_NAME:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  except:
+  - tags
+
 build_release:
   variables:
     GIT_STRATEGY: none
-  stage: build
+  stage: docker-release
   script:
     - echo "$DOCKER_HUB_PASSWORD" > dhpw.txt
     - docker login -u "${DOCKER_HUB_USER}" --password-stdin < dhpw.txt
@@ -42,20 +54,6 @@ build_release:
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
   only:
     - tags
-
-docker:
-  stage: docker
-  script:
-    - echo "$DOCKER_HUB_PASSWORD" > dhpw.txt
-    - docker login -u "${DOCKER_HUB_USER}" --password-stdin < dhpw.txt
-    - docker build --force-rm=true -t $UI_SERVICE_NAME:latest .
-    - docker tag $UI_SERVICE_NAME:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-  only:
-    - develop
-  except:
-    - tags
-
 
 deploy-sandbox:
   image: dtzar/helm-kubectl:2.13.1
