@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import MaterialTable from 'material-table';
 import { Link } from 'react-router-dom';
 import './publications.css';
@@ -21,7 +21,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import Grid from '@material-ui/core/Grid';
-import { TextField, Container } from '@material-ui/core';
+import { TextField, Container, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { fade } from '@material-ui/core/styles';
@@ -146,108 +146,159 @@ class PublicationsMatTable extends React.Component {
 
     render() {
         const { classes } = this.props;
-        const emailContact = <a href="mailto:gwas-info@ebi.ac.uk?subject=Eligibility Review">gwas-info@ebi.ac.uk</a>;
+        const emailContact = <a href="mailto:gwas-subs@ebi.ac.uk?subject=Eligibility Review">gwas-subs@ebi.ac.uk</a>;
         const noResultsMessage = <span className={classes.noResultsTextStyle}>No results were found. Please email {emailContact} to request an eligibility review of your publication.</span>;
 
         let { searchValue } = this.state;
         let searchTextValue = searchValue.trim();
+        const tableHeaderStyle = '1px dashed gray';
 
         return (
             <Container maxWidth="xl" className={classes.publicationContainer}>
-
-                <Grid container
-                    direction="row"
-                    justify="center"
-                    alignItems="center">
-                    <Grid item>
-                        <CssTextField
-                            id="outlined-bare"
-                            name="searchInput"
-                            value={this.state.value}
-                            className={classes.textField}
-                            variant="outlined"
-                            placeholder="Search by PMID or Author"
-                            helperText="Enter an Author name, e.g. Yao, or PMID, e.g. 25533513"
-                            InputProps={{
-                                classes: { input: classes.input },
-                                startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>
-                            }}
-
-                            onChange={this.handleChange}
-
-                            onKeyPress={(event) => {
-                                if (event.key === 'Enter') {
-                                    event.preventDefault();
-                                    this.setState({ value: event.target.value, searchValue: event.target.value, isEnterKeyPress: true });
-                                    this.tableRef.current && this.tableRef.current.onQueryChange();
-                                }
-                            }}
-                        />
-                        {/* <button label="Clear" onClick={this.clearSearchInput}> Clear </button> */}
+                <Fragment>
+                    <Grid container
+                        direction="column"
+                        justify="space-evenly"
+                        alignItems="center"
+                        spacing={4}>
+                        <Grid item>
+                            <Typography gutterBottom variant="body1">
+                                Search for a publication, then click on the PMID to a start a submission.
+                        </Typography>
+                        </Grid>
                     </Grid>
-                </Grid>
 
-                {searchTextValue && this.state.isEnterKeyPress && (
-                    <MaterialTable
-                        tableRef={this.tableRef}
-                        icons={tableIcons}
-                        columns={[
-                            {
-                                title: 'PMID', field: 'pmid',
-                                render: rowData => (<Link to={{
-                                    pathname: `${process.env.PUBLIC_URL}/publication/${rowData.pmid}`,
-                                    state: { pmid: rowData.pmid }
+                    <Grid container
+                        direction="row"
+                        justify="center"
+                        alignItems="center">
+                        <Grid item>
+                            <CssTextField
+                                id="outlined-bare"
+                                name="searchInput"
+                                value={this.state.value}
+                                className={classes.textField}
+                                variant="outlined"
+                                placeholder="Search by PMID or Author"
+                                helperText="Enter an Author name, e.g. Yao, or PMID, e.g. 25533513"
+                                InputProps={{
+                                    classes: { input: classes.input },
+                                    startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>
                                 }}
-                                    style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
-                            },
-                            { title: 'First author', field: 'firstAuthor', },
-                            { title: 'Publication', field: 'title' },
-                            { title: 'Journal', field: 'journal' },
-                            {
-                                title: <div className="tooltip">Status
+
+                                onChange={this.handleChange}
+
+                                onKeyPress={(event) => {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault();
+                                        this.setState({ value: event.target.value, searchValue: event.target.value, isEnterKeyPress: true });
+                                        this.tableRef.current && this.tableRef.current.onQueryChange();
+                                    }
+                                }}
+                            />
+                            {/* <button label="Clear" onClick={this.clearSearchInput}> Clear </button> */}
+                        </Grid>
+                    </Grid>
+
+                    {searchTextValue && this.state.isEnterKeyPress && (
+                        <MaterialTable
+                            tableRef={this.tableRef}
+                            icons={tableIcons}
+                            columns={[
+                                {
+                                    title: 'PMID', field: 'pmid',
+                                    render: rowData => (<Link to={{
+                                        pathname: `${process.env.PUBLIC_URL}/publication/${rowData.pmid}`,
+                                        state: { pmid: rowData.pmid }
+                                    }}
+                                        style={{ textDecoration: 'none' }}>{rowData.pmid}</Link>)
+                                },
+                                { title: 'First author', field: 'firstAuthor', },
+                                { title: 'Publication', field: 'title' },
+                                { title: 'Journal', field: 'journal' },
+                                {
+                                    title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>Status
                                     <span className="tooltiptext">Submission status of the publication.
                                         See documentation for detailed definitions.
                                     </span></div>,
-                                field: 'status',
-                                render: rowData => (this.getUserFriendlyStatusLabels(rowData.status))
-                            },
-                        ]}
-                        data={query =>
-                            new Promise((resolve, reject) => {
-                                // Re-set search page for new query
-                                if (query.search !== searchTextValue) {
-                                    query.page = 0
-                                }
-
-                                // Replace search text value in Query object with input from TextField
-                                query.search = searchTextValue;
-
-                                let url = GET_PUBLICATIONS_URL
-
-                                // Handle search by PMID
-                                let onlyNumbers = /^\d+$/;
-
-                                if (query.search) {
-                                    if (onlyNumbers.test(query.search)) {
-                                        url += '/' + query.search + '?pmid=true'
-                                        fetch(url)
-                                            .then(response => response.json())
-                                            .then(result => {
-                                                resolve({
-                                                    data: [result],
-                                                    page: 0,
-                                                    totalCount: 1,
-                                                })
-                                            }).catch(error => {
-                                            })
+                                    field: 'status',
+                                    render: rowData => (this.getUserFriendlyStatusLabels(rowData.status))
+                                },
+                            ]}
+                            data={query =>
+                                new Promise((resolve, reject) => {
+                                    // Re-set search page for new query
+                                    if (query.search !== searchTextValue) {
+                                        query.page = 0
                                     }
-                                    // Handle search by Author
+
+                                    // Replace search text value in Query object with input from TextField
+                                    query.search = searchTextValue;
+
+                                    let url = GET_PUBLICATIONS_URL
+
+                                    // Handle search by PMID
+                                    let onlyNumbers = /^\d+$/;
+
+                                    if (query.search) {
+                                        if (onlyNumbers.test(query.search)) {
+                                            url += '/' + query.search + '?pmid=true'
+                                            fetch(url)
+                                                .then(response => response.json())
+                                                .then(result => {
+                                                    resolve({
+                                                        data: [result],
+                                                        page: 0,
+                                                        totalCount: 1,
+                                                    })
+                                                }).catch(error => {
+                                                })
+                                        }
+                                        // Handle search by Author
+                                        else {
+                                            url += '?author=' + query.search
+                                            url += '&size=' + query.pageSize
+                                            url += '&page=' + (query.page)
+
+                                            // Handle sorting search by Author results
+                                            if (query.orderBy) {
+                                                let modifiedSortField;
+                                                let fields_to_modify = ['title', 'journal', 'status', 'firstAuthor'];
+
+                                                // Update to use Solr requires these fields be appended with "_str"
+                                                if (fields_to_modify.includes(query.orderBy.field)) {
+                                                    modifiedSortField = query.orderBy.field + '_str'
+                                                    url += '&sort=' + modifiedSortField + ',' + query.orderDirection
+                                                }
+                                                else {
+                                                    url += '&sort=' + query.orderBy.field + ',' + query.orderDirection
+                                                }
+                                            }
+                                            else {
+                                                // Sort search by Author results asc by default
+                                                // Note: Sorting is supported for only 1 column at a time
+                                                url += '&sort=firstAuthor_str,asc'
+                                            }
+
+                                            fetch(url)
+                                                .then(response => response.json())
+                                                .then(result => {
+                                                    resolve({
+                                                        data: result._embedded.publications,
+                                                        page: result.page.number,
+                                                        totalCount: result.page.totalElements,
+                                                    })
+                                                }).catch(error => {
+                                                })
+                                        }
+                                    }
+                                    // Display all results if table not hidden and
+                                    // there is no search term (initial version)
                                     else {
-                                        url += '?author=' + query.search
-                                        url += '&size=' + query.pageSize
+                                        url += '?size=' + query.pageSize
                                         url += '&page=' + (query.page)
 
-                                        // Handle sorting search by Author results
+                                        // Handle sorting all results
                                         if (query.orderBy) {
                                             let modifiedSortField;
                                             let fields_to_modify = ['title', 'journal', 'status', 'firstAuthor'];
@@ -261,11 +312,6 @@ class PublicationsMatTable extends React.Component {
                                                 url += '&sort=' + query.orderBy.field + ',' + query.orderDirection
                                             }
                                         }
-                                        else {
-                                            // Sort search by Author results asc by default
-                                            // Note: Sorting is supported for only 1 column at a time
-                                            url += '&sort=firstAuthor_str,asc'
-                                        }
 
                                         fetch(url)
                                             .then(response => response.json())
@@ -278,61 +324,29 @@ class PublicationsMatTable extends React.Component {
                                             }).catch(error => {
                                             })
                                     }
-                                }
-                                // Display all results if table not hidden and
-                                // there is no search term (initial version)
-                                else {
-                                    url += '?size=' + query.pageSize
-                                    url += '&page=' + (query.page)
-
-                                    // Handle sorting all results
-                                    if (query.orderBy) {
-                                        let modifiedSortField;
-                                        let fields_to_modify = ['title', 'journal', 'status', 'firstAuthor'];
-
-                                        // Update to use Solr requires these fields be appended with "_str"
-                                        if (fields_to_modify.includes(query.orderBy.field)) {
-                                            modifiedSortField = query.orderBy.field + '_str'
-                                            url += '&sort=' + modifiedSortField + ',' + query.orderDirection
-                                        }
-                                        else {
-                                            url += '&sort=' + query.orderBy.field + ',' + query.orderDirection
-                                        }
-                                    }
-
-                                    fetch(url)
-                                        .then(response => response.json())
-                                        .then(result => {
-                                            resolve({
-                                                data: result._embedded.publications,
-                                                page: result.page.number,
-                                                totalCount: result.page.totalElements,
-                                            })
-                                        }).catch(error => {
-                                        })
-                                }
-                                setTimeout(() => {
-                                    resolve({
-                                        data: [],
-                                        page: 0,
-                                        totalCount: 0,
-                                    });
-                                }, 3000);
-                            })
-                        }
-                        options={{
-                            pageSize: 10,
-                            pageSizeOptions: [10, 20, 50],
-                            debounceInterval: 250,
-                            toolbar: false,
-                        }}
-                        localization={{
-                            body: {
-                                emptyDataSourceMessage: noResultsMessage
+                                    setTimeout(() => {
+                                        resolve({
+                                            data: [],
+                                            page: 0,
+                                            totalCount: 0,
+                                        });
+                                    }, 3000);
+                                })
                             }
-                        }}
-                    />
-                )}
+                            options={{
+                                pageSize: 10,
+                                pageSizeOptions: [10, 20, 50],
+                                debounceInterval: 250,
+                                toolbar: false,
+                            }}
+                            localization={{
+                                body: {
+                                    emptyDataSourceMessage: noResultsMessage
+                                }
+                            }}
+                        />
+                    )}
+                </Fragment>
             </Container>
         )
     }

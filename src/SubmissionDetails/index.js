@@ -4,17 +4,14 @@ import Upload from "../Upload";
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { Grid, Paper, Typography, Button, CircularProgress } from '@material-ui/core/';
 import classNames from 'classnames'
-import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSVG from 'react-svg'
 
 import { AuthConsumer } from '../auth-context';
 
 import API_CLIENT from '../apiClient';
+import { DownloadGcstButton } from './submission_details_components';
 import history from "../history";
 
 import axios from 'axios';
@@ -53,6 +50,9 @@ const styles = theme => ({
     publicationCatalogStatusTextStyle: {
         fontSize: 18,
         marginTop: 32,
+    },
+    pmidListStyle: {
+        fontSize: 18,
     },
     submissionTextStyle: {
         fontSize: 18,
@@ -148,7 +148,11 @@ class SubmissionDetails extends Component {
             globusOriginId: null,
             userName: null,
             submissionCreatedDate: null,
-            publication_obj: [],
+            provenanceType: null,
+            publication_obj: null,
+            publicationStatus: null,
+            bow_obj: null,
+            bowStatus: null,
             file_upload_error: null,
             isNotValid: true,
             submitDataError: null,
@@ -158,7 +162,6 @@ class SubmissionDetails extends Component {
             submissionStatus: 'NA',
             metadataStatus: null,
             summaryStatisticsStatus: null,
-            publicationStatus: null,
             showComponent: false,
             showButtonVisibility: 'visible',
             fileUploadId: null,
@@ -254,8 +257,17 @@ class SubmissionDetails extends Component {
                         this.setState({ ...this.state, submissionStatus: data.submission_status });
                         this.setState({ ...this.state, metadataStatus: data.metadata_status });
                         this.setState({ ...this.state, summaryStatisticsStatus: data.summary_statistics_status });
+                        this.setState({ ...this.state, provenanceType: data.provenanceType });
+
                         this.setState({ ...this.state, publication_obj: data.publication });
-                        this.setState({ ...this.state, publicationStatus: data.publication.status });
+                        if (data.publication && data.publication.status) {
+                            this.setState({ ...this.state, publicationStatus: data.publication.status });
+                        }
+
+                        this.setState({ ...this.state, bow_obj: data.bodyOfWork });
+                        if (data.bodyOfWork && data.bodyOfWork.status) {
+                            this.setState({ ...this.state, bowStatus: data.bodyOfWork.status });
+                        }
 
                         if (data.created.user.name) {
                             this.setState({ ...this.state, userName: data.created.user.name });
@@ -534,7 +546,7 @@ class SubmissionDetails extends Component {
             })
                 .catch((error) => {
                     console.log("Error: ", error)
-                    let downloadSSTemplateErrorLabel = "Error: There is a fault on our end. Please contact gwas-info@ebi.ac.uk for help."
+                    let downloadSSTemplateErrorLabel = "Error: There is a fault on our end. Please contact gwas-subs@ebi.ac.uk for help."
                     this.setState({ downloadSummaryStatsFileError: downloadSSTemplateErrorLabel });
                 })
         }
@@ -653,34 +665,29 @@ class SubmissionDetails extends Component {
 
     render() {
         const { classes } = this.props;
-        // const { submitDataError } = this.state;
+        const { provenanceType } = this.state;
 
         // const OVERALL_STATUS_STARTED = 'STARTED';
         const VALID_SUBMISSION = 'VALID';
         const VALIDATING = 'VALIDATING';
         const SUBMITTED = 'SUBMITTED';
-
+        const publicationProvenanceType = "PUBLICATION";
+        const bowProvenanceType = "BODY_OF_WORK";
+        const { publication_obj } = this.state;
         const { publicationStatus } = this.state;
-        // let transformedPublicationStatus;
-
-        // if (publicationStatus === 'UNDER_SUBMISSION' || publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION'
-        //     || publicationStatus === 'PUBLISHED_WITH_SS') {
-        //     transformedPublicationStatus = 'CLOSED'
-        // }
-        // if (publicationStatus === 'ELIGIBLE') {
-        //     transformedPublicationStatus = 'OPEN FOR SUBMISSION'
-        // }
-        // if (publicationStatus === 'PUBLISHED') {
-        //     transformedPublicationStatus = 'OPEN FOR SUMMARY STATISTICS SUBMISSION'
-        // }
+        const { bow_obj } = this.state;
+        const { bowStatus } = this.state;
+        let submissionDetailsPanel;
 
 
         let userActionPublicationStatus;
-        if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-            userActionPublicationStatus = <i>You are able to submit summary statistics for this publication.</i>
-        }
-        if (publicationStatus === 'UNDER_SUBMISSION') {
-            userActionPublicationStatus = <i>You are able to submit summary statistics and study metadata for this publication.</i>
+        if (provenanceType === publicationProvenanceType) {
+            if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
+                userActionPublicationStatus = <i>You are able to submit summary statistics for this publication.</i>
+            }
+            if (publicationStatus === 'UNDER_SUBMISSION') {
+                userActionPublicationStatus = <i>You are able to submit summary statistics and study metadata for this publication.</i>
+            }
         }
 
         const { globusOriginId } = this.state;
@@ -693,6 +700,7 @@ class SubmissionDetails extends Component {
         let final_thank_you_message;
 
         const { submissionStatus } = this.state;
+
         const { metadataStatus } = this.state;
         let metadata_status_section;
         const { summaryStatisticsStatus } = this.state;
@@ -715,53 +723,365 @@ class SubmissionDetails extends Component {
         let download_data_file_button;
         let upload_files_to_globus_step;
 
+
+        // PMIDs
+        let pmidDisplay;
+        if (this.state.bow_obj && this.state.bow_obj.pmids) {
+            pmidDisplay =
+                this.state.bow_obj.pmids.map((pmid, index) => [
+                    index > 0 && ", ",
+                    <span key={index} className={classes.pmidListStyle} >
+                        <a href={`https://www.ncbi.nlm.nih.gov/pubmed/` + pmid} target="_blank" rel="noopener noreferrer">{pmid}</a>
+                    </span>
+                ])
+        }
+
+
         /**
-         * Display Submission statistics section if a file has been uploaded
-         * and the file Dropzone component is not being displayed
+         * Manage display of details panel with either
+         * "Publication" or "Body of Work" content based on provenanceType
          */
-        if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) {
-            if (displaySummaryStatsSection && publicationStatus !== 'UNDER_SUMMARY_STATS_SUBMISSION') {
-                submission_stats_section =
+        if (this.SUBMISSION_ID) {
+            submissionDetailsPanel =
+                <Grid item xs={12}>
+                    <Typography>
+                        Loading...!
+                    </Typography>
+                </Grid>
+        }
+        if (provenanceType === bowProvenanceType) {
+            if (bow_obj) {
+                submissionDetailsPanel =
                     <Fragment>
-                        <Grid item container xs={12}>
-                            <Grid item xs={2}>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    Submission Stats:
+                        <Grid container direction='row'>
+                            <Grid item xs={10} className={classes.pageHeader}>
+                                <Typography variant="h5" className={classes.headerTextStyle}>
+                                    Details for GCP ID: {this.state.bow_obj.bodyOfWorkId}
                                 </Typography>
                             </Grid>
-                            <Grid item xs={10}>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    {this.state.submission_data.study_count}
-                                    {this.state.submission_data.study_count === 1 ? " study" : " studies"}
-                                </Typography>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    {this.state.submission_data.association_count} total associations
-                                 </Typography>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    {this.state.submission_data.sample_count} sample groups
-                                </Typography>
+
+                            <Grid container item xs={2} justify="flex-end">
+                                {(submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) && (
+                                    <DownloadGcstButton
+                                        submissionId={this.SUBMISSION_ID}
+                                        token={localStorage.getItem('id_token')} />
+                                )}
                             </Grid>
                         </Grid>
-                    </Fragment>
-            } else {
-                submission_stats_section =
-                    <Fragment>
-                        <Grid item container xs={12}>
-                            <Grid item xs={2}>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    Submission Stats:
+
+                        <Grid item xs={12}>
+                            <Typography variant="h6" className={classes.publicationTitleTextStyle}>
+                                {bow_obj.title}
                             </Typography>
-                            </Grid>
-                            <Grid item xs={10}>
-                                <Typography variant="h6" className={classes.submissionTextStyle}>
-                                    {this.state.submission_data.study_count}
-                                    {this.state.submission_data.study_count === 1 ? " study" : " studies"}
+                        </Grid>
+
+                        <Grid
+                            container
+                            direction="row"
+                            justify="flex-start"
+                            alignItems="flex-start"
+                        >
+                            <Grid item xs={2}>
+                                <Typography variant="h6" className={classes.publicationTextStyle}>
+                                    Description:
                                 </Typography>
                             </Grid>
+                            <Grid item xs={10}>
+                                <Typography variant="h6" className={classes.publicationTextStyle}>
+                                    {bow_obj.description}
+                                </Typography>
+                            </Grid>
+
+                            {(bow_obj.firstAuthor && bow_obj.firstAuthor.firstName
+                                && bow_obj.firstAuthor.lastName) && (
+                                    <Fragment>
+                                        <Grid item xs={2}>
+                                            <Typography variant="h6" className={classes.publicationTextStyle}>
+                                                First Author:
+                                            </Typography>
+                                        </Grid>
+
+                                        < Grid item xs={10} >
+                                            <Typography className={classes.publicationTextStyle}>
+                                                {bow_obj.firstAuthor.firstName} &nbsp;
+                                                {bow_obj.firstAuthor.lastName}
+                                            </Typography>
+                                        </Grid>
+                                    </Fragment>
+                                )}
+
+                            {(bow_obj.firstAuthor && bow_obj.firstAuthor.group) && (
+                                <Fragment>
+                                    <Grid item xs={2}>
+                                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                                            First Author:
+                                        </Typography>
+                                    </Grid>
+                                    < Grid item xs={10} >
+                                        <Typography className={classes.publicationTextStyle}>
+                                            {bow_obj.firstAuthor.group}
+                                        </Typography>
+                                    </Grid>
+                                </Fragment>
+                            )}
+
+                            {(bow_obj.lastAuthor && bow_obj.lastAuthor.firstName
+                                && bow_obj.lastAuthor.lastName) && (
+                                    <Fragment>
+                                        <Grid item xs={2}>
+                                            <Typography variant="h6" className={classes.publicationTextStyle}>
+                                                Last Author:
+                                            </Typography>
+                                        </Grid>
+                                        < Grid item xs={10} >
+                                            <Typography className={classes.publicationTextStyle}>
+                                                {bow_obj.lastAuthor.firstName} &nbsp;
+                                                {bow_obj.lastAuthor.lastName}
+                                            </Typography>
+                                        </Grid>
+                                    </Fragment>
+                                )}
+
+                            {(bow_obj.lastAuthor && bow_obj.lastAuthor.group) && (
+                                <Fragment>
+                                    <Grid item xs={2}>
+                                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                                            Last Author:
+                                        </Typography>
+                                    </Grid>
+                                    < Grid item xs={10} >
+                                        <Typography className={classes.publicationTextStyle}>
+                                            {bow_obj.lastAuthor.group}
+                                        </Typography>
+                                    </Grid>
+                                </Fragment>
+                            )}
+
+                            <Grid item xs={2}>
+                                <Typography variant="h6" className={classes.publicationTextStyle}>
+                                    Corresponding Author(s):
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={10} >
+                                {(bow_obj.correspondingAuthors) && (
+                                    bow_obj.correspondingAuthors.map((corrAuthor, index) => (
+                                        <Typography key={index} className={classes.publicationTextStyle}>
+                                            {corrAuthor.firstName}  &nbsp;
+                                            {corrAuthor.lastName} &nbsp;
+                                            <a href={"mailto:" + corrAuthor.email}>{corrAuthor.email}</a>
+                                        </Typography>
+                                    )))}
+                            </Grid>
+
+                            {(bow_obj.journal) && (
+                                <Fragment>
+                                    <Grid item xs={2}>
+                                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                                            Submitted to:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={10}>
+                                        <Typography className={classes.publicationTextStyle} >
+                                            {bow_obj.journal}
+                                        </Typography>
+
+                                        {(bow_obj.url) && (
+                                            <Typography>
+                                                <a href={bow_obj.url} target="_blank" rel="noopener noreferrer">{bow_obj.url}</a>
+                                            </Typography>
+                                        )}
+
+                                        {pmidDisplay}
+                                    </Grid>
+                                </Fragment>
+                            )}
+
+                            {(bow_obj.prePrintServer) && (
+                                <Fragment>
+                                    <Grid item xs={2}>
+                                        <Typography variant="h6" className={classes.publicationTextStyle}>
+                                            PrePrint available in:
+                                            </Typography>
+                                    </Grid>
+                                    <Grid item xs={10}>
+                                        <Typography className={classes.publicationTextStyle}>
+                                            {bow_obj.prePrintServer} &nbsp;
+
+                                            <a href={bow_obj.preprintServerDOI} target="_blank" rel="noopener noreferrer">{bow_obj.preprintServerDOI}</a>
+                                        </Typography>
+                                    </Grid>
+                                </Fragment>
+                            )}
+
+                            {(bow_obj.embargoDate || bow_obj.embargoUntilPublished) && (
+                                <Fragment>
+                                    <Grid item xs={2}>
+                                        <Typography className={classes.publicationTextStyle}>
+                                            Embargo until:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={10}>
+                                        <Typography className={classes.publicationTextStyle}>
+                                            {bow_obj.embargoUntilPublished
+                                                ? 'date of publication' : `${bow_obj.embargoDate}`}
+                                        </Typography>
+                                    </Grid>
+                                </Fragment>
+                            )}
                         </Grid>
                     </Fragment>
             }
         }
+        if (provenanceType === publicationProvenanceType) {
+            if (publication_obj) {
+                submissionDetailsPanel =
+                    <Fragment>
+                        <Grid container direction='row'>
+                            <Grid item xs={10} className={classes.pageHeader}>
+                                <Typography variant="h5" className={classes.headerTextStyle}>
+                                    Publication details for PMID: {publication_obj.pmid}
+                                </Typography>
+                            </Grid>
+
+                            <Grid container item xs={2} justify="flex-end">
+                                {(submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) && (
+                                    <DownloadGcstButton
+                                        submissionId={this.SUBMISSION_ID}
+                                        token={localStorage.getItem('id_token')} />
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Typography variant="h6" className={classes.publicationTitleTextStyle}>
+                                {publication_obj.title}
+                            </Typography>
+                        </Grid>
+
+                        <Grid container item>
+                            <Typography className={classes.publicationTextStyle} >
+                                {publication_obj.firstAuthor} et al.
+                        </Typography>
+                            <Typography className={classes.publicationTextStyle} >
+                                {publication_obj.publicationDate}
+                            </Typography>
+                            <Typography className={classes.publicationTextStyle} >
+                                {publication_obj.journal}
+                            </Typography>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Typography className={classes.publicationCatalogStatusTextStyle}>
+                                {userActionPublicationStatus}
+                            </Typography>
+                        </Grid>
+                    </Fragment>
+            }
+        }
+
+
+        /**
+         * For provenanceType PUBLICATION,
+         * Display Submission statistics section if a file has been uploaded
+         * and the file Dropzone component is not being displayed
+         */
+        if (provenanceType === publicationProvenanceType) {
+            if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) {
+                if (displaySummaryStatsSection && publicationStatus !== 'UNDER_SUMMARY_STATS_SUBMISSION') {
+                    submission_stats_section =
+                        <Fragment>
+                            <Grid item container xs={12}>
+                                <Grid item xs={2}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        Submission Stats:
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={10}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.study_count}
+                                        {this.state.submission_data.study_count === 1 ? " study" : " studies"}
+                                    </Typography>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.association_count} total associations
+                                    </Typography>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.sample_count} sample groups
+                                </Typography>
+                                </Grid>
+                            </Grid>
+                        </Fragment>
+                } else {
+                    submission_stats_section =
+                        <Fragment>
+                            <Grid item container xs={12}>
+                                <Grid item xs={2}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        Submission Stats:
+                                </Typography>
+                                </Grid>
+                                <Grid item xs={10}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.study_count}
+                                        {this.state.submission_data.study_count === 1 ? " study" : " studies"}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </Fragment>
+                }
+            }
+        }
+
+        /**
+         * For provenanceType BODY_OF_WORK,
+         * Display Submission statistics section if a file has been uploaded
+         * and the file Dropzone component is not being displayed
+         */
+        if (provenanceType === bowProvenanceType) {
+            if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) {
+                if (displaySummaryStatsSection) {
+                    submission_stats_section =
+                        <Fragment>
+                            <Grid item container xs={12}>
+                                <Grid item xs={2}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        Submission Stats:
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={10}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.study_count}
+                                        {this.state.submission_data.study_count === 1 ? " study" : " studies"}
+                                    </Typography>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.association_count} total associations
+                                    </Typography>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.sample_count} sample groups
+                                </Typography>
+                                </Grid>
+                            </Grid>
+                        </Fragment>
+                } else {
+                    submission_stats_section =
+                        <Fragment>
+                            <Grid item container xs={12}>
+                                <Grid item xs={2}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        Submission Stats:
+                                </Typography>
+                                </Grid>
+                                <Grid item xs={10}>
+                                    <Typography variant="h6" className={classes.submissionTextStyle}>
+                                        {this.state.submission_data.study_count}
+                                        {this.state.submission_data.study_count === 1 ? " study" : " studies"}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </Fragment>
+                }
+            }
+        }
+
 
 
         /**
@@ -840,18 +1160,31 @@ class SubmissionDetails extends Component {
          * the metadata template. 
          */
         if (submissionStatus === 'STARTED') {
-            if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
-                download_template =
-                    <Fragment>
-                        <Button onClick={this.downloadSummaryStatsTemplate} fullWidth className={classes.button}>
-                            Download submission form
+            if (provenanceType === publicationProvenanceType) {
+                if (publicationStatus === 'UNDER_SUMMARY_STATS_SUBMISSION') {
+                    download_template =
+                        <Fragment>
+                            <Button onClick={this.downloadSummaryStatsTemplate} fullWidth className={classes.button}>
+                                Download submission form
                         </Button>
-                        <Typography variant="body2" gutterBottom className={classes.errorText}>
-                            {this.state.downloadSummaryStatsFileError}
-                        </Typography>
-                    </Fragment>
+                            <Typography variant="body2" gutterBottom className={classes.errorText}>
+                                {this.state.downloadSummaryStatsFileError}
+                            </Typography>
+                        </Fragment>
+                }
+                if (publicationStatus === 'UNDER_SUBMISSION') {
+                    download_template =
+                        <Fragment>
+                            <Button onClick={this.downloadMetadataTemplate} fullWidth className={classes.button}>
+                                Download submission form
+                        </Button>
+                            <Typography variant="body2" gutterBottom className={classes.inputCenter}>
+                                {this.state.downloadSummaryStatsFileError}
+                            </Typography>
+                        </Fragment>
+                }
             }
-            if (publicationStatus === 'UNDER_SUBMISSION') {
+            if (provenanceType === bowProvenanceType) {
                 download_template =
                     <Fragment>
                         <Button onClick={this.downloadMetadataTemplate} fullWidth className={classes.button}>
@@ -976,7 +1309,7 @@ class SubmissionDetails extends Component {
                 </Typography>
             </Grid>
 
-        if (publicationStatus === "UNDER_SUBMISSION") {
+        if (publicationStatus === "UNDER_SUBMISSION" || bowStatus === "UNDER_SUBMISSION") {
             if (metadataStatus === 'VALID') {
                 metadata_status_section =
                     <Fragment>
@@ -1070,7 +1403,7 @@ class SubmissionDetails extends Component {
                     </Grid>
                 </Fragment>
         }
-        else if (submissionStatus === VALIDATING && publicationStatus === 'UNDER_SUBMISSION') {
+        else if (submissionStatus === VALIDATING && (publicationStatus === 'UNDER_SUBMISSION' || bowStatus === "UNDER_SUBMISSION")) {
             summary_statistics_status_icon =
                 <Fragment>
                     <Grid item xs={4}>
@@ -1184,33 +1517,8 @@ class SubmissionDetails extends Component {
                         spacing={4}
                     >
                         <Paper className={classes.paper}>
-                            <Grid item xs={12} className={classes.pageHeader}>
-                                <Typography variant="h5" className={classes.headerTextStyle}>
-                                    Publication details for PMID: {this.state.publication_obj.pmid}
-                                </Typography>
-                            </Grid>
                             <Grid item xs={12}>
-                                <Typography variant="h6" className={classes.publicationTitleTextStyle}>
-                                    {this.state.publication_obj.title}
-                                </Typography>
-                            </Grid>
-
-                            <Grid container item>
-                                <Typography className={classes.publicationTextStyle} >
-                                    {this.state.publication_obj.firstAuthor} et al.
-                                    </Typography>
-                                <Typography className={classes.publicationTextStyle} >
-                                    {this.state.publication_obj.publicationDate}
-                                </Typography>
-                                <Typography className={classes.publicationTextStyle} >
-                                    {this.state.publication_obj.journal}
-                                </Typography>
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Typography className={classes.publicationCatalogStatusTextStyle}>
-                                    {userActionPublicationStatus}
-                                </Typography>
+                                {submissionDetailsPanel}
                             </Grid>
                         </Paper>
                     </Grid>

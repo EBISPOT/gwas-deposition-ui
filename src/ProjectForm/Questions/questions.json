@@ -1,0 +1,81 @@
+{
+    "questions": [
+        {
+            "id": 0,
+            "question": "Are these GWAS described in a published manuscript?",
+            "answer": [
+                "Yes",
+                "No"
+            ],
+            "next_question_id": {
+                "Yes": 1,
+                "No": 2
+            },
+            "previous_question_id": 0
+        },
+        {
+            "id": 1,
+            "question": "Is the manuscript indexed in PubMed, i.e. has a PMID?",
+            "answer": [
+                "Yes",
+                "No"
+            ],
+            "next_question_id": {
+                "Yes": 5,
+                "No": 5
+            },
+            "previous_question_id": 0
+        },
+        {
+            "id": 2,
+            "question": "Are these GWAS described in a manuscript submitted or accepted for publication?",
+            "answer": [
+                "Yes",
+                "No"
+            ],
+            "next_question_id": {
+                "Yes": 5,
+                "No": 3
+            },
+            "previous_question_id": 0
+        },
+        {
+            "id": 3,
+            "question": "Are these GWAS described in a manuscript hosted on a pre-print server?",
+            "answer": [
+                "Yes",
+                "No"
+            ],
+            "next_question_id": {
+                "Yes": 5,
+                "No": 4
+            },
+            "previous_question_id": 0
+        },
+        {
+            "id": 4,
+            "question": "Are these GWAS described in a draft manuscript (not submitted anywhere)?",
+            "answer": [
+                "Yes",
+                "No"
+            ],
+            "next_question_id": {
+                "Yes": 5,
+                "No": 5
+            },
+            "previous_question_id": 0
+        },
+        {
+            "id": 5,
+            "question": "All questions answered",
+            "answer": [
+                "All Done!"
+            ],
+            "next_question_id": {
+                "Yes": 5,
+                "No": 5
+            },
+            "previous_question_id": 0
+        }
+    ]
+}

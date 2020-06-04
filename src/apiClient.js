@@ -111,6 +111,21 @@ class APIClient {
 
 
     /**
+     * Get details for Body of Work by GCP ID
+     * @param {*} bowId
+     * @param {} token
+     */
+    getBodyOfWork(bowId, token) {
+        return this.perform('get', '/bodyofwork/' + bowId,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                }
+            })
+    }
+
+
+    /**
      * Get Submission by Id
      * @param {} submissionId
      */
@@ -163,6 +178,24 @@ class APIClient {
 
 
     /**
+     * Create a submission for a Body of Work entity.
+     * @param {*} bowId
+     * @param {String} globusIdentityEmail Email to link to Globus
+     */
+    createSubmissionFromBodyOfWork(bowId, globusIdentityEmail) {
+        let bow_data = { bodyOfWork: { bodyOfWorkId: bowId }, globusIdentity: globusIdentityEmail };
+
+        return axios.post(BASE_URI + 'submissions', bow_data,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                }
+            }
+        )
+    }
+
+
+    /**
      * Get Submission ID from PMID
      * @param {*} pmid
      * @param {*} token
@@ -177,6 +210,24 @@ class APIClient {
                 headers: {
                     'Authorization': 'Bearer ' + authToken,
                     // 'Authorization': 'Bearer ' + this.accessToken,
+                }
+            })
+    }
+
+    /**
+     *
+     * @param {*} bowId
+     * @param {*} token
+     */
+    getSubmissionIdByBowId(bowId, token) {
+        // Get token to pass to call
+        let authToken;
+        this.accessToken === null ? authToken = token : authToken = this.accessToken;
+
+        return axios.get(BASE_URI + 'submissions?bowId=' + bowId,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + authToken,
                 }
             })
     }

@@ -50,7 +50,7 @@ class ErrorPage extends React.Component {
                         <Grid item xs={9}>
                             <Typography gutterBottom variant="body1">
                                 The page you are trying to access does not exist. If you believe this is an error, please
-                                contact <a href="mailto:gwas-info@ebi.ac.uk?subject=Deposition error">gwas-info@ebi.ac.uk</a>
+                                contact <a href="mailto:gwas-subs@ebi.ac.uk?subject=Deposition error">gwas-subs@ebi.ac.uk</a>
                             </Typography>
                         </Grid>
                     </Grid>
@@ -77,7 +77,7 @@ class ErrorPage extends React.Component {
                             <Typography gutterBottom variant="body1">
                                 This page can only be accessed by authorized users. Please login and try again.
                                 If you believe this is an error, please
-                                contact <a href="mailto:gwas-info@ebi.ac.uk?subject=Deposition error">gwas-info@ebi.ac.uk</a>
+                                contact <a href="mailto:gwas-subs@ebi.ac.uk?subject=Deposition error">gwas-subs@ebi.ac.uk</a>
                             </Typography>
                         </Grid>
                     </Grid>

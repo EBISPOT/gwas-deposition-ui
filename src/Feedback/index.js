@@ -32,7 +32,7 @@ export default function Feedback() {
     return (
         <div className={classes.feedback}>
             <button target="_blank" className={classes.feedbackButton}>
-                <a href="mailto:gwas-info@ebi.ac.uk" className={classes.link}>feedback</a>
+                <a href="mailto:gwas-subs@ebi.ac.uk" className={classes.link}>feedback</a>
             </button>
         </div>
     );
