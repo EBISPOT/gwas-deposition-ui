@@ -16,6 +16,7 @@ import history from "../history";
 
 import axios from 'axios';
 import ElixirAuthService from '../ElixirAuthService';
+import jwt_decode from 'jwt-decode';
 
 const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
 
@@ -147,6 +148,7 @@ class SubmissionDetails extends Component {
             submission_data: [],
             globusOriginId: null,
             userName: null,
+            isCurator: false,
             submissionCreatedDate: null,
             provenanceType: null,
             publication_obj: null,
@@ -309,6 +311,8 @@ class SubmissionDetails extends Component {
                                 this.setState({ ...this.state, fileValidationErrorMessage: metadataFileMetadata.metadata_errors });
                             }
                         }
+                        // Check if the logged in user is in the "Curator" AAP Domain
+                        this.isCurator();
                     }
                 }).catch(error => {
                     console.log("Error: ", error);
@@ -662,11 +666,22 @@ class SubmissionDetails extends Component {
         }
     }
 
+    /**
+     * Check if the user is in the "Curator" AAP Domain
+     */
+    isCurator = () => {
+        let decoded_token = jwt_decode(localStorage.getItem('id_token'));
+
+        if (decoded_token.domains.includes("self.GWAS_Curator")) {
+            this.setState({ isCurator: true });
+        }
+    }
 
     render() {
         const { classes } = this.props;
         const { provenanceType } = this.state;
 
+        const { isCurator } = this.state;
         // const OVERALL_STATUS_STARTED = 'STARTED';
         const VALID_SUBMISSION = 'VALID';
         const VALIDATING = 'VALIDATING';
@@ -1468,8 +1483,16 @@ class SubmissionDetails extends Component {
          * Manage display of Submission Steps Overview instructions
          * to upload files to Globus. The Globus link should not
          * be displayed when the status is SUBMITTED.
+         * It should be displayed at all times if the user is a Curator.
          */
-        if (submissionStatus === 'SUBMITTED' || submissionStatus === 'COMPLETE'
+        if (isCurator) {
+            upload_files_to_globus_step =
+                <Grid item container xs={12}>
+                    <Typography className={classes.stepTextStyle} >
+                        1 - Upload summary statistics file(s) <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer"> to your Globus submission folder</a>
+                    </Typography>
+                </Grid>
+        } else if (submissionStatus === 'SUBMITTED' || submissionStatus === 'COMPLETE'
             || submissionStatus === 'CURATION_COMPLETE' || submissionStatus === 'NA'
             || submissionStatus === '') {
             upload_files_to_globus_step =
@@ -1478,7 +1501,8 @@ class SubmissionDetails extends Component {
                         1 - Upload summary statistics file(s)
                     </Typography>
                 </Grid>
-        } else {
+        }
+        else {
             upload_files_to_globus_step =
                 <Grid item container xs={12}>
                     <Typography className={classes.stepTextStyle} >
