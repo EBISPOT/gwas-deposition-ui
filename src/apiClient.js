@@ -154,6 +154,20 @@ class APIClient {
 
 
     /**
+     * Delete Submission
+     * @param {*} submissionId
+     */
+    deleteSubmission(submissionId, fileId) {
+        return axios.delete(BASE_URI + 'submissions/' + submissionId,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                }
+            })
+    }
+
+
+    /**
      * API call to backend app to create a submission
      *  @param {String} pmid PubMedId
      * @param {String} globusIdentityEmail Email to link to Globus

@@ -11,7 +11,7 @@ import ReactSVG from 'react-svg'
 import { AuthConsumer } from '../auth-context';
 
 import API_CLIENT from '../apiClient';
-import { DownloadGcstButton } from './submission_details_components';
+import { DownloadGcstButton, DeleteSubmissionButton } from './submission_details_components';
 import history from "../history";
 
 import axios from 'axios';
@@ -944,6 +944,15 @@ class SubmissionDetails extends Component {
                                 </Fragment>
                             )}
                         </Grid>
+
+                        <Grid container direction='row'>
+                            <Grid item xs={2}>
+                                <DeleteSubmissionButton
+                                    submissionId={this.SUBMISSION_ID}
+                                    token={localStorage.getItem('id_token')}
+                                    submissionStatus={submissionStatus} />
+                            </Grid>
+                        </Grid>
                     </Fragment>
             }
         }
@@ -976,7 +985,7 @@ class SubmissionDetails extends Component {
                         <Grid container item>
                             <Typography className={classes.publicationTextStyle} >
                                 {publication_obj.firstAuthor} et al.
-                        </Typography>
+                            </Typography>
                             <Typography className={classes.publicationTextStyle} >
                                 {publication_obj.publicationDate}
                             </Typography>
@@ -989,6 +998,15 @@ class SubmissionDetails extends Component {
                             <Typography className={classes.publicationCatalogStatusTextStyle}>
                                 {userActionPublicationStatus}
                             </Typography>
+                        </Grid>
+
+                        <Grid container direction='row'>
+                            <Grid item xs={2}>
+                                <DeleteSubmissionButton
+                                    submissionId={this.SUBMISSION_ID}
+                                    token={localStorage.getItem('id_token')}
+                                    submissionStatus={submissionStatus} />
+                            </Grid>
                         </Grid>
                     </Fragment>
             }
@@ -1532,7 +1550,7 @@ class SubmissionDetails extends Component {
 
         return (
             <Fragment>
-                <div className={classes.root}>
+                <div className={classes.root} id="top-level">
                     <Grid
                         container
                         direction="column"
