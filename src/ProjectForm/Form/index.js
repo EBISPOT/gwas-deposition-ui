@@ -91,6 +91,7 @@ const MyForm = props => {
         handleSubmit,
         handleReset,
         dirty,
+        errors,
     } = props;
     return (
         <div>
@@ -172,7 +173,7 @@ const MyForm = props => {
 
                 <Button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || Object.keys(errors).length !== 0}
                     className={classes.button}
                     // onClick={checkUserAuthStatus}
                     onClick={() => checkUserAuthStatus(props)}
@@ -490,6 +491,9 @@ const MyEnhancedForm = withFormik({
                 }
                 if (values.embargoDate && isNaN(Date.parse(values.embargoDate))) {
                     errors.embargoDate = "Valid date format YYYY/MM/DD required."
+                }
+                if (new Date(values.embargoDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)) {
+                    errors.embargoDate = "Embargo date can not be set earlier than today's date"
                 }
             }
         }
