@@ -495,6 +495,9 @@ const MyEnhancedForm = withFormik({
                 if (new Date(values.embargoDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)) {
                     errors.embargoDate = "Embargo date can not be set earlier than today's date"
                 }
+                if (new Date(values.embargoDate).setHours(0, 0, 0, 0) > new Date(new Date().getFullYear() + 2, new Date().getMonth(), new Date().getDate()).setHours(0, 0, 0, 0)) {
+                    errors.embargoDate = "Embargo date can not be set more than 2 years from today's date"
+                }
             }
         }
 
