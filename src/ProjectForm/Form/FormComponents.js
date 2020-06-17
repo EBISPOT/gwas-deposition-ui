@@ -1130,7 +1130,7 @@ export const EmbargoDate = (props) => {
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <InputLabel shrink required htmlFor="embargoDate" className={classes.margin}>
                                 Embargo Date (Year/Month/Day)
-                        </InputLabel>
+                            </InputLabel>
 
                             <CustomKeyboardDatePicker
                                 {...field}
@@ -1144,6 +1144,7 @@ export const EmbargoDate = (props) => {
                                 invalidDateMessage="" // Use Formik "errors"
                                 error={errors.embargoDate && touched.embargoDate}
                                 minDate={new Date()}
+                                minDateMessage="" // Use Formik "errors"
                                 maxDate={maxDate}
                                 selected={(field.value && new Date(field.value)) || null}
                                 // InputAdornmentProps={{ position: "start" }}
