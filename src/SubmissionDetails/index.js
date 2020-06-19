@@ -1222,20 +1222,20 @@ class SubmissionDetails extends Component {
 
 
         /**
-         * Manage display of "Upload submission form" template file button
+         * Manage display of "Upload submission form" now "Submit submission form" template file button
          */
         if (submissionStatus === 'STARTED') {
             select_upload_file_button =
                 <Fragment>
                     <Button fullWidth onClick={this.displayUploadComponent} className={classes.button} variant="outlined">
-                        Upload submission form
+                        Submit submission form
                     </Button>
                 </Fragment>
         } else {
             select_upload_file_button =
                 <Fragment>
                     <Button fullWidth disabled size="small" className={classes.button} variant="outlined">
-                        Upload submisson form
+                        Submit submission form
                     </Button>
                 </Fragment>
         }
