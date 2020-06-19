@@ -776,7 +776,7 @@ class SubmissionDetails extends Component {
                             </Grid>
 
                             <Grid container item xs={2} justify="flex-end">
-                                {(submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) && (
+                                {(submissionStatus === SUBMITTED) && (
                                     <DownloadGcstButton
                                         submissionId={this.SUBMISSION_ID}
                                         token={localStorage.getItem('id_token')} />
@@ -959,7 +959,7 @@ class SubmissionDetails extends Component {
                             </Grid>
 
                             <Grid container item xs={2} justify="flex-end">
-                                {(submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) && (
+                                {(submissionStatus === SUBMITTED) && (
                                     <DownloadGcstButton
                                         submissionId={this.SUBMISSION_ID}
                                         token={localStorage.getItem('id_token')} />
