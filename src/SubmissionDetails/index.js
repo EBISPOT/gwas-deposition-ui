@@ -1582,19 +1582,13 @@ class SubmissionDetails extends Component {
 
                             <Grid item container xs={12}>
                                 <Typography className={classes.stepTextStyle} >
-                                    4 - Upload submission form
+                                    4 - Submit submission form
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
                                 <Typography className={classes.stepTextStyle} >
-                                    5 - After successful validation of your submission form, click "Submit".
-                                </Typography>
-                            </Grid>
-
-                            <Grid item container xs={12}>
-                                <Typography className={classes.stepTextStyle} >
-                                    6 - To remove the current submission form, click "Reset". Use "Review submission" to download the current submission form.
+                                    To remove the current submission form, click "Reset". Use "Review submission" to download the current submission form.
                                 </Typography>
                             </Grid>
                         </Paper>
