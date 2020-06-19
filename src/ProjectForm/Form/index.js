@@ -173,7 +173,7 @@ const MyForm = props => {
 
                 <Button
                     type="submit"
-                    disabled={isSubmitting || Object.keys(errors).length !== 0}
+                    disabled={isSubmitting}
                     className={classes.button}
                     // onClick={checkUserAuthStatus}
                     onClick={() => checkUserAuthStatus(props)}
