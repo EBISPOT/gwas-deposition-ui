@@ -686,6 +686,7 @@ class SubmissionDetails extends Component {
         const VALID_SUBMISSION = 'VALID';
         const VALIDATING = 'VALIDATING';
         const SUBMITTED = 'SUBMITTED';
+        const CURATION_COMPLETE = 'CURATION_COMPLETE';
         const publicationProvenanceType = "PUBLICATION";
         const bowProvenanceType = "BODY_OF_WORK";
         const { publication_obj } = this.state;
@@ -776,7 +777,7 @@ class SubmissionDetails extends Component {
                             </Grid>
 
                             <Grid container item xs={2} justify="flex-end">
-                                {(submissionStatus === SUBMITTED) && (
+                                {(submissionStatus === SUBMITTED || submissionStatus === CURATION_COMPLETE) && (
                                     <DownloadGcstButton
                                         submissionId={this.SUBMISSION_ID}
                                         token={localStorage.getItem('id_token')} />
@@ -959,7 +960,7 @@ class SubmissionDetails extends Component {
                             </Grid>
 
                             <Grid container item xs={2} justify="flex-end">
-                                {(submissionStatus === SUBMITTED) && (
+                                {(submissionStatus === SUBMITTED || submissionStatus === CURATION_COMPLETE) && (
                                     <DownloadGcstButton
                                         submissionId={this.SUBMISSION_ID}
                                         token={localStorage.getItem('id_token')} />
