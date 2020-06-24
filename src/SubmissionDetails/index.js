@@ -1583,7 +1583,13 @@ class SubmissionDetails extends Component {
 
                             <Grid item container xs={12}>
                                 <Typography className={classes.stepTextStyle} >
-                                    4 - Submit submission form
+                                    4 - Wait to receive an email confirmation from Globus that all summary statistics files have successfully been transferred
+                                </Typography>
+                            </Grid>
+
+                            <Grid item container xs={12}>
+                                <Typography className={classes.stepTextStyle} >
+                                    5 - Submit submission form
                                 </Typography>
                             </Grid>
 
