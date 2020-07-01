@@ -157,7 +157,6 @@ class SubmissionDetails extends Component {
             bowStatus: null,
             file_upload_error: null,
             isNotValid: true,
-            submitDataError: null,
             deleteFileError: null,
             reviewLatestFileError: null,
             downloadSummaryStatsFileError: null,
@@ -174,7 +173,6 @@ class SubmissionDetails extends Component {
         this.downloadMetadataTemplate = this.downloadMetadataTemplate.bind(this);
         this.downloadDataFile = this.downloadDataFile.bind(this);
         this.downloadSummaryStatsTemplate = this.downloadSummaryStatsTemplate.bind(this);
-        this.submitData = this.submitData.bind(this);
         this.deleteData = this.deleteData.bind(this);
         this.displayUploadComponent = this.displayUploadComponent.bind(this);
         this.hideUploadComponent = this.hideUploadComponent.bind(this);
@@ -642,31 +640,6 @@ class SubmissionDetails extends Component {
 
 
     /**
-     * Submit data 
-     */
-    submitData() {
-        let submissionId = this.SUBMISSION_ID;
-        let token = localStorage.getItem('id_token');
-
-        // Check if token is valid
-        if (this.ElixirAuthService.isTokenExpired(token)) {
-            alert("Your session has expired, redirecting to login.")
-            setTimeout(() => {
-                history.push(`${process.env.PUBLIC_URL}/login`);
-            }, 1000);
-        }
-        else {
-            this.API_CLIENT.submitSubmission(submissionId).then(response => {
-                // Redirect to My Submissions page, NOTE: If using redirect, can't set state here
-                history.push(`${process.env.PUBLIC_URL}/submissions`);
-            })
-                .catch(error => {
-                    this.setState(() => ({ submitDataError: "Error: " + error.message }));
-                })
-        }
-    }
-
-    /**
      * Check if the user is in the "Curator" AAP Domain
      */
     isCurator = () => {
@@ -686,6 +659,7 @@ class SubmissionDetails extends Component {
         const VALID_SUBMISSION = 'VALID';
         const VALIDATING = 'VALIDATING';
         const SUBMITTED = 'SUBMITTED';
+        const CURATION_COMPLETE = 'CURATION_COMPLETE';
         const publicationProvenanceType = "PUBLICATION";
         const bowProvenanceType = "BODY_OF_WORK";
         const { publication_obj } = this.state;
@@ -733,7 +707,6 @@ class SubmissionDetails extends Component {
         let download_template;
         let select_upload_file_button;
         let upload_component;
-        let submit_data_button;
         let delete_file_button;
         let download_data_file_button;
         let upload_files_to_globus_step;
@@ -776,7 +749,7 @@ class SubmissionDetails extends Component {
                             </Grid>
 
                             <Grid container item xs={2} justify="flex-end">
-                                {(submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) && (
+                                {(submissionStatus === SUBMITTED || submissionStatus === CURATION_COMPLETE) && (
                                     <DownloadGcstButton
                                         submissionId={this.SUBMISSION_ID}
                                         token={localStorage.getItem('id_token')} />
@@ -959,7 +932,7 @@ class SubmissionDetails extends Component {
                             </Grid>
 
                             <Grid container item xs={2} justify="flex-end">
-                                {(submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) && (
+                                {(submissionStatus === SUBMITTED || submissionStatus === CURATION_COMPLETE) && (
                                     <DownloadGcstButton
                                         submissionId={this.SUBMISSION_ID}
                                         token={localStorage.getItem('id_token')} />
@@ -1222,44 +1195,21 @@ class SubmissionDetails extends Component {
 
 
         /**
-         * Manage display of "Upload submission form" template file button
+         * Manage display of "Upload submission form" now "Submit submission form" template file button
          */
         if (submissionStatus === 'STARTED') {
             select_upload_file_button =
                 <Fragment>
                     <Button fullWidth onClick={this.displayUploadComponent} className={classes.button} variant="outlined">
-                        Upload submission form
+                        Submit submission form
                     </Button>
                 </Fragment>
         } else {
             select_upload_file_button =
                 <Fragment>
                     <Button fullWidth disabled size="small" className={classes.button} variant="outlined">
-                        Upload submisson form
+                        Submit submission form
                     </Button>
-                </Fragment>
-        }
-
-
-        /**
-        * Manage display of "Submit" button
-        */
-        if (submissionStatus !== 'VALID') {
-            submit_data_button =
-                <Fragment>
-                    <Button disabled fullWidth className={classes.button} variant="outlined">
-                        Submit
-                    </Button>
-                </Fragment>
-        } else {
-            submit_data_button =
-                <Fragment>
-                    <Button onClick={this.submitData} fullWidth className={classes.button}>
-                        Submit
-                    </Button>
-                    <Typography variant="body2" gutterBottom className={classes.inputCenter}>
-                        {this.state.submitDataError}
-                    </Typography>
                 </Fragment>
         }
 
@@ -1582,19 +1532,19 @@ class SubmissionDetails extends Component {
 
                             <Grid item container xs={12}>
                                 <Typography className={classes.stepTextStyle} >
-                                    4 - Upload submission form
+                                    4 - Wait to receive an email confirmation from Globus that all summary statistics files have successfully been transferred
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
                                 <Typography className={classes.stepTextStyle} >
-                                    5 - After successful validation of your submission form, click "Submit".
+                                    5 - Submit submission form
                                 </Typography>
                             </Grid>
 
                             <Grid item container xs={12}>
                                 <Typography className={classes.stepTextStyle} >
-                                    6 - To remove the current submission form, click "Reset". Use "Review submission" to download the current submission form.
+                                    To remove the current submission form, click "Reset". Use "Review submission" to download the current submission form.
                                 </Typography>
                             </Grid>
                         </Paper>
@@ -1626,10 +1576,6 @@ class SubmissionDetails extends Component {
 
                             <Grid item container xs={12}>
                                 {select_upload_file_button}
-                            </Grid>
-
-                            <Grid item container xs={12}>
-                                {submit_data_button}
                             </Grid>
 
                             <Grid item container xs={12}>
