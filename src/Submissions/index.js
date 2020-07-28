@@ -147,9 +147,9 @@ class Submissions extends Component {
     }
 
     transformDateFormat(timestamp) {
-        let createdTimestamp = new Date(timestamp);
-        createdTimestamp = createdTimestamp.getFullYear() + "-" + (createdTimestamp.getMonth() + 1) + "-" + createdTimestamp.getDate()
-        return createdTimestamp
+        let formattedTimestamp = new Date(timestamp);
+        formattedTimestamp = formattedTimestamp.getFullYear() + "-" + (formattedTimestamp.getMonth() + 1) + "-" + formattedTimestamp.getDate()
+        return formattedTimestamp
     }
 
     transformStatusLabel(status) {
@@ -237,6 +237,13 @@ class Submissions extends Component {
                             field: 'summary_statistics_status', sorting: true
                         },
                         { title: 'Submitter', field: 'created.user.name', sorting: true },
+                        {
+                            title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>
+                                Date submission last updated
+                                <span className="tooltiptext">YYYY-MM-DD</span></div>,
+                            field: 'lastUpdated.timestamp', sorting: true, defaultSort: 'desc',
+                            render: rowData => (this.transformDateFormat(rowData.lastUpdated.timestamp))
+                        },
                         {
                             title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>
                                 Date submission started
