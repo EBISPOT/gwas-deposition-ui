@@ -22,14 +22,14 @@ Additional libraries used in the application include:
 * Formik https://formik.org/docs/overview
 * Elixir AAP https://aai.ebi.ac.uk/home
 
-These will be installed as node modules. 
+These will be installed as node modules.<br>
 Run `npm list --depth 0` to see the full list of Node modules used in the application.
 
 
 ### Getting Started
 * Install Node and npm (see link above)
 * Clone the application from https://github.com/ebispot/gwas-deposition-ui
-* Install the npm modules used by the application by running `npm install`
+* Run `npm install` to install the npm modules used by the application 
     * Manually manage any npm install conflicts following instructions from the npm error messages
     * To install a specific version of a NPM module see [NPM: How to Install Specific Version of a Module](https://60devs.com/npm-install-specific-version.html)
 * Run `npm start` to launch the application
@@ -43,18 +43,18 @@ Run `npm list --depth 0` to see the full list of Node modules used in the applic
 * The branch `documentation` can be used to add banner text to alert about outages or other information. This branch should be merged into `develop` and be maintained up-to-date with the `develop` branch prior to deploying a new update similar to how the GWAS Search UI `documentation` branch is maintained.
 
 #### Add a new feature or fix a bug
-* From you Terminal, switch to the `master` branch as: 
+* From you Terminal, switch to the `master` branch as: <br>
     `git checkout master`
-* Update your local repo as: 
+* Update your local repo as: <br>
     `git pull origin master`
-* Switch to the development branch as: 
+* Switch to the development branch as: <br>
     `git checkout develop`
-* Update the development branch as: 
+* Update the development branch as: <br>
     `git pull origin develop`
-* Create a new branch to add the bug or feature as: 
+* Create a new branch to add the bug or feature as: <br>
     `git checkout -b issREPO-ISSUE-NUMBER_brief_description_of_issue`
 * Do the work to fix the issue or add a new feature and commit updates as appropriate
-* Push local changes to the remote as: 
+* Push local changes to the remote as: <br>
     `git push origin issREPO-ISSUE-NUMBER_brief_description_of_issue`
 * Create a Pull Request to merge the updates in the feature branch into `develop`
 * Once the changes are merged into `develop` the Gitlab plan will automatically deploy these changes to the sandbox exvironment where User Acceptance Testing can be done
