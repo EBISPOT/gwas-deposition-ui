@@ -22,7 +22,7 @@ Additional libraries used in the application include:
 * Formik https://formik.org/docs/overview
 * Elixir AAP https://aai.ebi.ac.uk/home
 
-These will be installed as node modules.
+These will be installed as node modules. 
 Run `npm list --depth 0` to see the full list of Node modules used in the application.
 
 
@@ -43,18 +43,18 @@ Run `npm list --depth 0` to see the full list of Node modules used in the applic
 * The branch `documentation` can be used to add banner text to alert about outages or other information. This branch should be merged into `develop` and be maintained up-to-date with the `develop` branch prior to deploying a new update similar to how the GWAS Search UI `documentation` branch is maintained.
 
 #### Add a new feature or fix a bug
-* From you Terminal, switch to the `master` branch as:
+* From you Terminal, switch to the `master` branch as: 
     `git checkout master`
-* Update your local repo as:
+* Update your local repo as: 
     `git pull origin master`
-* Switch to the development branch as:
+* Switch to the development branch as: 
     `git checkout develop`
-* Update the development branch as:
+* Update the development branch as: 
     `git pull origin develop`
-* Create a new branch to add the bug or feature as:
+* Create a new branch to add the bug or feature as: 
     `git checkout -b issREPO-ISSUE-NUMBER_brief_description_of_issue`
 * Do the work to fix the issue or add a new feature and commit updates as appropriate
-* Push local changes to the remote as:
+* Push local changes to the remote as: 
     `git push origin issREPO-ISSUE-NUMBER_brief_description_of_issue`
 * Create a Pull Request to merge the updates in the feature branch into `develop`
 * Once the changes are merged into `develop` the Gitlab plan will automatically deploy these changes to the sandbox exvironment where User Acceptance Testing can be done
@@ -63,7 +63,7 @@ Run `npm list --depth 0` to see the full list of Node modules used in the applic
 
 #### Deploy Updates to Production
 The Gitlab plan for the Deposition UI is configured to deploy new tags to the production environment. 
-* Create a new tag using `git tag` from your local repo (Remember to update `master` before tagging) or using the GitHub interface to create a Tag
+* Create a new tag using `git tag` from your local repo (Remember to update `master` before tagging) or using the GitHub interface to create a tag
 * Once the [Gitlab plan](https://gitlab.ebi.ac.uk/gwas/gwas-deposition-ui/-/pipelines) notices the tag, the updates will be deployed to production
 
 
