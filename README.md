@@ -34,6 +34,7 @@ Run `npm list --depth 0` to see the full list of Node modules used in the applic
     * To install a specific version of a NPM module see [NPM: How to Install Specific Version of a Module](https://60devs.com/npm-install-specific-version.html)
 * Run `npm start` to launch the application
     * Your browser should automatically open and display the application running on localhost on the specified port found in the package.json file under scripts.start (in this case 8080)
+    * NOTE: You MUST be on the EBI VPN to access the web services from the GWAS Deposition Backend Sandbox environment
 * Develop new features!
     * NOTE: The application will automatically reload in the browser anytime a file is saved without needing to specifically configure hot reloading.
 
