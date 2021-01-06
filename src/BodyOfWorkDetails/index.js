@@ -259,7 +259,7 @@ class ProjectDetails extends Component {
             this.setState({
                 ...this.state,
                 globusIdentity: email,
-                globusIdentityHelperText: 'Add valid email to link to Globus',
+                globusIdentityHelperText: 'Add valid Globus identity',
                 globusIdentityFormatError: true,
                 linkElixir2Globus: false
             })
@@ -437,14 +437,14 @@ class ProjectDetails extends Component {
 
                             <FormControlLabel
                                 control={<BlueCheckbox checked={linkElixir2Globus} onChange={this.handleChange('linkElixir2Globus')} value="linkElixir2Globus" />}
-                                label={<Typography>Enter your registered Globus email (required to submit summary statistics)</Typography>}
+                                label={<Typography>Enter your Globus account primary identity (required to submit summary statistics)</Typography>}
                             />
                             <TextField
                                 id="globusIdentity"
-                                label="Globus email"
+                                label="Globus identity (usually an email address)"
                                 required
                                 key={authEmail} // Set key to state value to force component to re-render
-                                defaultValue={authEmail}
+                                defaultValue={''}
                                 onChange={this.validateGlobusIdentity}
                                 error={globusIdentityFormatError}
                                 helperText={globusIdentityHelperText}
