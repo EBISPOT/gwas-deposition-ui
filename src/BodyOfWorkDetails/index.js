@@ -246,7 +246,7 @@ class ProjectDetails extends Component {
         const email = event.target.value;
 
         // Regex to check for valid email formatted text
-        let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let re = /^[^]+\@[a-zA-Z0-9\.\-]+\.[a-zA-z0-9]{2,4}$/;
         if (re.test(String(email).toLowerCase())) {
             this.setState({
                 ...this.state,
