@@ -220,7 +220,7 @@ class ProjectDetails extends Component {
         // or an invalid globusIdentity value is present, prevent check and show helper text error.
         if (name === 'linkElixir2Globus' && (this.state.globusIdentity === null || this.state.globusIdentityFormatError)) {
             // Set helper error text based on error type condition
-            let errorHelperText = this.state.globusIdentityFormatError ? 'Add valid email to link to Globus' : 'Add email to link to Globus'
+            let errorHelperText = this.state.globusIdentityFormatError ? 'Add valid Globus identity' : 'Add Globus identity to link to Globus'
 
             this.setState({
                 ...this.state,
@@ -246,7 +246,7 @@ class ProjectDetails extends Component {
         const email = event.target.value;
 
         // Regex to check for valid email formatted text
-        let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let re = /^[^]+\@[a-zA-Z0-9\.\-]+\.[a-zA-z0-9]{2,4}$/;
         if (re.test(String(email).toLowerCase())) {
             this.setState({
                 ...this.state,
