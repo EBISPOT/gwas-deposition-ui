@@ -220,7 +220,7 @@ class ProjectDetails extends Component {
         // or an invalid globusIdentity value is present, prevent check and show helper text error.
         if (name === 'linkElixir2Globus' && (this.state.globusIdentity === null || this.state.globusIdentityFormatError)) {
             // Set helper error text based on error type condition
-            let errorHelperText = this.state.globusIdentityFormatError ? 'Add valid email to link to Globus' : 'Add email to link to Globus'
+            let errorHelperText = this.state.globusIdentityFormatError ? 'Add valid Globus identity' : 'Add Globus identity to link to Globus'
 
             this.setState({
                 ...this.state,

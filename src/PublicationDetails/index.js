@@ -211,7 +211,7 @@ class PublicationDetails extends Component {
         // or an invalid globusIdentity value is present, prevent check and show helper text error.
         if (name === 'linkElixir2Globus' && (this.state.globusIdentity === null || this.state.globusIdentityFormatError)) {
             // Set helper error text based on error type condition
-            let errorHelperText = this.state.globusIdentityFormatError ? 'Add valid email to link to Globus' : 'Add email to link to Globus'
+            let errorHelperText = this.state.globusIdentityFormatError ? 'Add valid Globus identity' : 'Add Globus identity to link to Globus'
 
             this.setState({
                 ...this.state,
@@ -237,7 +237,7 @@ class PublicationDetails extends Component {
         const email = event.target.value;
 
         // Regex to check for valid email formatted text
-        let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let re = /^[^]+\@[a-zA-Z0-9\.\-]+\.[a-zA-z0-9]{2,4}$/;
         if (re.test(String(email).toLowerCase())) {
             this.setState({
                 ...this.state,
@@ -250,7 +250,7 @@ class PublicationDetails extends Component {
             this.setState({
                 ...this.state,
                 globusIdentity: email,
-                globusIdentityHelperText: 'Add valid email to link to Globus',
+                globusIdentityHelperText: 'Add valid Globus identity',
                 globusIdentityFormatError: true,
                 linkElixir2Globus: false
             })
@@ -421,14 +421,14 @@ class PublicationDetails extends Component {
 
                             <FormControlLabel
                                 control={<BlueCheckbox checked={linkElixir2Globus} onChange={this.handleChange('linkElixir2Globus')} value="linkElixir2Globus" />}
-                                label={<Typography>Enter your registered Globus email (required to submit summary statistics)</Typography>}
+                                label={<Typography>Enter your Globus account primary identity (required to submit summary statistics)</Typography>}
                             />
                             <TextField
                                 id="globusIdentity"
-                                label="Globus email"
+                                label="Globus identity (usually an email address)"
                                 required
                                 key={authEmail} // Set key to state value to force component to re-render
-                                defaultValue={authEmail}
+                                defaultValue={''}
                                 onChange={this.validateGlobusIdentity}
                                 error={globusIdentityFormatError}
                                 helperText={globusIdentityHelperText}
