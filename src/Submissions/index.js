@@ -213,8 +213,9 @@ class Submissions extends Component {
                         {
                             title: 'First author', field: 'publication.firstAuthor', sorting: true,
                             render: rowData => {
-                                if (!rowData.publication) { return 'NA' }
-                                else { return rowData.publication.firstAuthor }
+                                if (rowData.publication) return rowData.publication.firstAuthor
+                                else if (rowData.bodyOfWork) return rowData.bodyOfWork.firstAuthor.lastName + ' ' + rowData.bodyOfWork.firstAuthor.firstName.charAt(0)
+                                else return 'NA'
                             }
                         },
                         {
