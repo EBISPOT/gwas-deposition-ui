@@ -211,12 +211,8 @@ class Submissions extends Component {
                             }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
                         },
                         {
-                            title: 'First author', field: 'publication.firstAuthor', sorting: true,
-                            render: rowData => {
-                                if (rowData.publication) return rowData.publication.firstAuthor
-                                else if (rowData.bodyOfWork) return rowData.bodyOfWork.firstAuthor.lastName + ' ' + rowData.bodyOfWork.firstAuthor.firstName.charAt(0)
-                                else return 'NA'
-                            }
+                            title: 'First author', field: 'firstAuthor', sorting: true,
+                            render: rowData => (rowData.firstAuthor)
                         },
                         {
                             title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>
@@ -348,6 +344,14 @@ class Submissions extends Component {
                                     .then(response => response.json())
                                     .then(result => {
                                         if (this._isMounted) {
+                                            // added specific firstAuthor field for submissions JSON that encapsulates
+                                            // firstAuthors from Pub and BoW objects to enable sorting
+                                            result._embedded.submissions.forEach(item => {
+                                                if (item.publication) item.firstAuthor = item.publication.firstAuthor
+                                                // noticed that some BoWs do not have first author
+                                                else if (item.bodyOfWork.firstAuthor) item.firstAuthor = item.bodyOfWork.firstAuthor.lastName + ' ' + item.bodyOfWork.firstAuthor.firstName.charAt(0)
+                                                else item.firstAuthor = 'NA'
+                                            })
                                             resolve({
                                                 data: result._embedded.submissions,
                                                 page: result.page.number,
