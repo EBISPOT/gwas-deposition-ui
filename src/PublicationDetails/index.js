@@ -149,8 +149,6 @@ class PublicationDetails extends Component {
             globusIdentityFormatError: false,
             globusIdentityHelperText: null,
             validateSummaryStats: false,
-            agreeToCc0: false,
-            isCurator: false
         })
         this.handleChange = this.handleChange.bind(this);
         this.validateGlobusIdentity = this.validateGlobusIdentity.bind(this);
@@ -171,7 +169,6 @@ class PublicationDetails extends Component {
             this.setState({ ...this.state, publicationStatus: data.status })
             this.setState({ ...this.state, transformedPublicationStatus: this.getUserFriendlyStatusLabels(data.status) })
             this.setState({ ...this.state, authEmail: this.getToken().authEmail, auth: this.getToken().auth, globusIdentity: this.getToken().authEmail })
-            this.setState({ ...this.state, isCurator: this.isCurator()})
         });
     }
 
@@ -187,17 +184,6 @@ class PublicationDetails extends Component {
             userEmail = jwt_decode(token).email;
         }
         return { authEmail: userEmail, auth: token };
-    }
-
-    /**
-     * Checks if user is a curator
-     */
-    isCurator() {
-        let decoded_token = jwt_decode(this.state.auth);
-        if (decoded_token.domains.includes("self.GWAS_Curator")) {
-            return true
-        }
-        return false
     }
 
     /**
@@ -279,7 +265,6 @@ class PublicationDetails extends Component {
         let pmid = this.PUBMED_ID;
         let token = this.state.auth;
         let globusIdentityEmail = this.state.globusIdentity;
-        let agreedToCc0 = this.state.agreeToCc0;
         let gdprAccepted = JSON.parse(localStorage.getItem('gdpr-accepted'));
 
         this.setState(() => ({
@@ -288,7 +273,7 @@ class PublicationDetails extends Component {
 
         // Check if user is logged in and if token is still valid and if GDPR accepted
         if (token && !this.ElixirAuthService.isTokenExpired(token) && gdprAccepted) {
-            this.API_CLIENT.createSubmission(pmid, globusIdentityEmail, agreedToCc0).then(response => {
+            this.API_CLIENT.createSubmission(pmid, globusIdentityEmail).then(response => {
                 this.setState(() => ({ createSubmissionError: false }));
 
                 this.redirectToSubmissionDetails();
@@ -384,17 +369,16 @@ class PublicationDetails extends Component {
 
         const { authEmail } = this.state;
         const { globusIdentityHelperText } = this.state;
-        const { isCurator } = this.state;
 
         let submission_checklist;
         let elixirRegistrationLink = <a href="https://elixir-europe.org/register" target="_blank" rel="noopener noreferrer">Elixir ID</a>
         let globusLink = <a href="https://www.globus.org/globus-connect-personal" target="_blank" rel="noopener noreferrer">Globus Connect Personal</a>
         let summaryStatsFormattingLink = <a href="https://www.ebi.ac.uk/gwas/docs/summary-statistics-format" target="_blank" rel="noopener noreferrer">Format and validate</a>
-        let cc0Link = <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer"> CC0 </a>
         const sumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics`;
         const metadataAndSumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics-plus-metadata`;
-        const { elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats, agreeToCc0 } = this.state;
-        const checklistCompleteError = [elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats, agreeToCc0 || isCurator].filter(v => v).length !== 5;
+        const { elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats } = this.state;
+        const checklistCompleteError = [elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats].filter(v => v).length !== 4;
+
         let create_submission_button;
         let showSubmissionDetailsButton;
         const gwasSubsEmail = <a href="mailto:gwas-subs@ebi.ac.uk">gwas-subs@ebi.ac.uk</a>;
@@ -453,11 +437,6 @@ class PublicationDetails extends Component {
                             <FormControlLabel
                                 control={<BlueCheckbox checked={validateSummaryStats} onChange={this.handleChange('validateSummaryStats')} value="validateSummaryStats" />}
                                 label={<Typography>{summaryStatsFormattingLink} your summary statistics data (required to submit summary statistics)</Typography>}
-                            />
-
-                            <FormControlLabel
-                                control={<BlueCheckbox checked={agreeToCc0} onChange={this.handleChange('agreeToCc0')} value="agreeToCc0" />}
-                                label={<Typography>I agree to my data being made freely available under the terms of {cc0Link}</Typography>}
                             />
                         </FormGroup>
                         {/* <FormHelperText>Check all steps to activate the "Create Submission" button</FormHelperText> */}
