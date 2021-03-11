@@ -279,6 +279,7 @@ class PublicationDetails extends Component {
         let pmid = this.PUBMED_ID;
         let token = this.state.auth;
         let globusIdentityEmail = this.state.globusIdentity;
+        let agreedToCc0 = this.state.agreeToCc0;
         let gdprAccepted = JSON.parse(localStorage.getItem('gdpr-accepted'));
 
         this.setState(() => ({
@@ -287,7 +288,7 @@ class PublicationDetails extends Component {
 
         // Check if user is logged in and if token is still valid and if GDPR accepted
         if (token && !this.ElixirAuthService.isTokenExpired(token) && gdprAccepted) {
-            this.API_CLIENT.createSubmission(pmid, globusIdentityEmail).then(response => {
+            this.API_CLIENT.createSubmission(pmid, globusIdentityEmail, agreedToCc0).then(response => {
                 this.setState(() => ({ createSubmissionError: false }));
 
                 this.redirectToSubmissionDetails();
