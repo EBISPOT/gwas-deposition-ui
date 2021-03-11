@@ -157,9 +157,10 @@ class APIClient {
      * API call to backend app to create a submission
      *  @param {String} pmid PubMedId
      * @param {String} globusIdentityEmail Email to link to Globus
+     * @param {String} agreedToCc0 submitter has agreed to CC0
      */
-    createSubmission(pmid, globusIdentityEmail) {
-        let pmid_data = { publication: { pmid: pmid }, globusIdentity: globusIdentityEmail };
+    createSubmission(pmid, globusIdentityEmail, agreedToCc0) {
+        let pmid_data = { publication: { pmid: pmid }, globusIdentity: globusIdentityEmail, agreedToCc0: agreedToCc0 };
 
         return axios.post(BASE_URI + 'submissions', pmid_data,
             {
@@ -181,9 +182,10 @@ class APIClient {
      * Create a submission for a Body of Work entity.
      * @param {*} bowId
      * @param {String} globusIdentityEmail Email to link to Globus
+     * @param {String} agreedToCc0 submitter has agreed to CC0
      */
-    createSubmissionFromBodyOfWork(bowId, globusIdentityEmail) {
-        let bow_data = { bodyOfWork: { bodyOfWorkId: bowId }, globusIdentity: globusIdentityEmail };
+    createSubmissionFromBodyOfWork(bowId, globusIdentityEmail, agreedToCc0) {
+        let bow_data = { bodyOfWork: { bodyOfWorkId: bowId }, globusIdentity: globusIdentityEmail, agreedToCc0: agreedToCc0 };
 
         return axios.post(BASE_URI + 'submissions', bow_data,
             {
