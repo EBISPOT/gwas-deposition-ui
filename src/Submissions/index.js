@@ -161,6 +161,17 @@ class Submissions extends Component {
         }
     }
 
+    handleFirstAuthor(submissions) {
+        // added specific firstAuthor field for submissions JSON that encapsulates
+        // firstAuthors from Pub and BoW objects to enable sorting
+        submissions.forEach(item => {
+            if (item.publication) item.firstAuthor = item.publication.firstAuthor
+            // noticed that some BoWs do not have first author
+            else if (item.bodyOfWork.firstAuthor) item.firstAuthor = item.bodyOfWork.firstAuthor.lastName + ' ' + item.bodyOfWork.firstAuthor.firstName.charAt(0)
+            else item.firstAuthor = 'NA'
+        })
+    }
+
     componentWillUnmount() {
         this._isMounted = false;
     }
@@ -211,11 +222,8 @@ class Submissions extends Component {
                             }} style={{ textDecoration: 'none' }}>{rowData.submissionId}</Link>)
                         },
                         {
-                            title: 'First author', field: 'publication.firstAuthor', sorting: true,
-                            render: rowData => {
-                                if (!rowData.publication) { return 'NA' }
-                                else { return rowData.publication.firstAuthor }
-                            }
+                            title: 'First author', field: 'firstAuthor', sorting: true,
+                            render: rowData => (rowData.firstAuthor)
                         },
                         {
                             title: <div className="tooltip" style={{ borderBottom: tableHeaderStyle }}>
@@ -282,6 +290,7 @@ class Submissions extends Component {
                                         .then(response => response.json())
                                         .then(result => {
                                             if (this._isMounted) {
+                                                this.handleFirstAuthor(result._embedded.submissions)
                                                 resolve({
                                                     data: result._embedded.submissions,
                                                     page: result.page.number,
@@ -301,6 +310,7 @@ class Submissions extends Component {
                                         .then(response => response.json())
                                         .then(result => {
                                             if (this._isMounted) {
+                                                this.handleFirstAuthor(result._embedded.submissions)
                                                 resolve({
                                                     data: result._embedded.submissions,
                                                     page: result.page.number,
@@ -319,6 +329,9 @@ class Submissions extends Component {
                                         .then(response => response.json())
                                         .then(result => {
                                             if (this._isMounted) {
+                                                if (result.publication) result.firstAuthor = result.publication.firstAuthor
+                                                else if (result.bodyOfWork.firstAuthor) result.firstAuthor = result.bodyOfWork.firstAuthor.lastName + ' ' + result.bodyOfWork.firstAuthor.firstName.charAt(0)
+                                                else result.firstAuthor = 'NA'
                                                 resolve({
                                                     data: [result],
                                                     page: 0,
@@ -347,6 +360,7 @@ class Submissions extends Component {
                                     .then(response => response.json())
                                     .then(result => {
                                         if (this._isMounted) {
+                                            this.handleFirstAuthor(result._embedded.submissions)
                                             resolve({
                                                 data: result._embedded.submissions,
                                                 page: result.page.number,
