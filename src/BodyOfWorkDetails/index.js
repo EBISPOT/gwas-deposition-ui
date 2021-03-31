@@ -415,7 +415,8 @@ class ProjectDetails extends Component {
         let elixirRegistrationLink = <a href="https://elixir-europe.org/register" target="_blank" rel="noopener noreferrer">Elixir ID</a>
         let globusLink = <a href="https://www.globus.org/globus-connect-personal" target="_blank" rel="noopener noreferrer">Globus Connect Personal</a>
         let summaryStatsFormattingLink = <a href="https://www.ebi.ac.uk/gwas/docs/summary-statistics-format" target="_blank" rel="noopener noreferrer">Format and validate</a>
-        let cc0Link = <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer"> CC0 </a>
+        let cc0Link = <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0</a>
+        let cc0moreInfoLink = <a href="https://www.ebi.ac.uk/gwas/docs/submission#link-9" target="_blank" rel="noopener noreferrer">Learn more</a>
 
         const { elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats, agreeToCc0 } = this.state;
         const checklistCompleteError = [elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats, agreeToCc0 || isCurator].filter(v => v).length !== 5;
@@ -474,7 +475,7 @@ class ProjectDetails extends Component {
 
                             <FormControlLabel
                                 control={<BlueCheckbox checked={agreeToCc0} onChange={this.handleChange('agreeToCc0')} value="agreeToCc0"/>}
-                                label={<Typography>I agree to my data being made freely available under the terms of {cc0Link}</Typography>}
+                                label={<Typography>I agree to my data being made freely available under the terms of {cc0Link} - {cc0moreInfoLink}.</Typography>}
                             />
                         </FormGroup>
                     </FormControl>
