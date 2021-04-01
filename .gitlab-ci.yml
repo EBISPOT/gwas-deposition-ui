@@ -3,7 +3,8 @@ services:
   - docker:dind
 
 stages:
-  - build
+  - build-prod
+  - build-sandbox
   - docker
   - docker-release
   - deploy
@@ -14,20 +15,36 @@ variables:
   CI_REGISTRY_IMAGE: ebispot/gwas-deposition-ui
   UI_SERVICE_NAME: gwas-deposition-ui
 
-npm-build:
+prod-build:
   image: node:10.15.3
-  stage: build
+  stage: build-prod
   script:
     - npm -v
     - node -v
     - rm -rf node_modules
     - npm install
-    - CI=false npm run build
+    - CI=false npm run build:prod
   artifacts:
     paths:
       - build/*
   except:
     - tags
+    - develop
+
+sandbox-build:
+  image: node:10.15.3
+  stage: build-sandbox
+  script:
+    - npm -v
+    - node -v
+    - rm -rf node_modules
+    - npm install
+    - CI=false npm run build:sandbox
+  artifacts:
+    paths:
+      - build/*
+  only:
+    - develop
 
 docker:
   stage: docker
