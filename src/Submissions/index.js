@@ -167,7 +167,9 @@ class Submissions extends Component {
         submissions.forEach(item => {
             if (item.publication) item.firstAuthor = item.publication.firstAuthor
             // noticed that some BoWs do not have first author
-            else if (item.bodyOfWork.firstAuthor) item.firstAuthor = item.bodyOfWork.firstAuthor.lastName + ' ' + item.bodyOfWork.firstAuthor.firstName.charAt(0)
+            else if (item.bodyOfWork.firstAuthor.firstName && item.bodyOfWork.firstAuthor.lastName) {
+                item.firstAuthor = item.bodyOfWork.firstAuthor.lastName + ' ' + item.bodyOfWork.firstAuthor.firstName.charAt(0)
+            }
             else item.firstAuthor = 'NA'
         })
     }
