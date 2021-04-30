@@ -394,6 +394,7 @@ class PublicationDetails extends Component {
         let cc0moreInfoLink = <a href="https://www.ebi.ac.uk/gwas/docs/submission#link-9" target="_blank" rel="noopener noreferrer">Learn more</a>
         const sumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics`;
         const metadataAndSumStatsDocs = `https://www.ebi.ac.uk/gwas/docs/submission-summary-statistics-plus-metadata`;
+        const globusIdLink = <a href="https://app.globus.org/account/identities\" target="_blank"> Globus account primary identity</a>;
         const { elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats, agreeToCc0 } = this.state;
         const checklistCompleteError = [elixirRegistration, installGlobus, linkElixir2Globus, validateSummaryStats, agreeToCc0 || isCurator].filter(v => v).length !== 5;
         let create_submission_button;
@@ -438,7 +439,7 @@ class PublicationDetails extends Component {
 
                             <FormControlLabel
                                 control={<BlueCheckbox checked={linkElixir2Globus} onChange={this.handleChange('linkElixir2Globus')} value="linkElixir2Globus" />}
-                                label={<Typography>Enter your Globus account primary identity (required to submit summary statistics)</Typography>}
+                                label={<Typography>Enter your {globusIdLink} (required to submit summary statistics)</Typography>}
                             />
                             <TextField
                                 id="globusIdentity"
