@@ -1368,7 +1368,7 @@ class SubmissionDetails extends Component {
                     </Grid>
                 </Fragment>
         }
-        else if (submissionStatus === VALIDATING && (publicationStatus === 'UNDER_SUBMISSION' || bowStatus === "UNDER_SUBMISSION")) {
+        /*else if (submissionStatus === VALIDATING && (publicationStatus === 'UNDER_SUBMISSION' || bowStatus === "UNDER_SUBMISSION")) {
             summary_statistics_status_icon =
                 <Fragment>
                     <Grid item xs={4}>
@@ -1380,7 +1380,7 @@ class SubmissionDetails extends Component {
                         <CircularProgress className={classes.progress} size={24} />
                     </Grid>
                 </Fragment>
-        }
+        }*/
         else if (submissionStatus === null) {
             summary_statistics_status_icon =
                 <Fragment>
