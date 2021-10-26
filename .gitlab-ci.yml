@@ -30,6 +30,7 @@ prod-build:
   except:
     - tags
     - develop
+    - uidepo-477-Sandbox-Migration
 
 sandbox-build:
   image: node:10.15.3
@@ -45,6 +46,21 @@ sandbox-build:
       - build/*
   only:
     - develop
+
+sandbox-migration-build:
+  image: node:10.15.3
+  stage: build-sandbox-migration
+  script:
+    - npm -v
+    - node -v
+    - rm -rf node_modules
+    - npm install
+    - CI=false npm run build:sandbox-migration
+  artifacts:
+    paths:
+      - build/*
+  only:
+    - uidepo-477-Sandbox-Migration
 
 docker:
   stage: docker
