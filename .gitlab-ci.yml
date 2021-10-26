@@ -5,6 +5,7 @@ services:
 stages:
   - build-prod
   - build-sandbox
+  - build-sandbox-migration
   - docker
   - docker-release
   - deploy
