@@ -4,7 +4,6 @@ services:
 
 stages:
   - build-prod
-  - build-sandbox
   - build-sandbox-migration
   - docker
   - docker-release
@@ -46,7 +45,7 @@ sandbox-build:
     paths:
       - build/*
   only:
-    - develop
+    - uidepo-477-Sandbox-Migration
 
 sandbox-migration-build:
   image: node:10.15.3
@@ -61,7 +60,7 @@ sandbox-migration-build:
     paths:
       - build/*
   only:
-    - uidepo-477-Sandbox-Migration
+    - develop
 
 docker:
   stage: docker
@@ -102,7 +101,7 @@ deploy-sandbox:
   environment:
     name: sandbox
   only:
-    - develop
+    - uidepo-477-Sandbox-Migration
 
 deploy-sandbox-migration:
   image: dtzar/helm-kubectl:2.13.1
@@ -117,7 +116,7 @@ deploy-sandbox-migration:
   environment:
     name: sandbox-migration
   only:
-    - uidepo-477-Sandbox-Migration
+    - develop
 
 deploy-fallback:
   image: dtzar/helm-kubectl:2.13.1
