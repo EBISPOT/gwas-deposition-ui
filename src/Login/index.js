@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import lsri_login_button from '../img.png';
+import lsri_login_button from '../LS.png';
 
 import Grid from '@material-ui/core/Grid';
 import ElixirAuthService from '../ElixirAuthService';
