@@ -412,7 +412,7 @@ class ProjectDetails extends Component {
         const { isCurator } = this.state;
 
         let submission_checklist;
-        let elixirRegistrationLink = <a href="https://elixir-europe.org/register" target="_blank" rel="noopener noreferrer">Elixir ID</a>
+        let lifeScienceRegistrationLink = <a href="https://signup.aai.lifescience-ri.eu/fed/registrar/?vo=lifescience" target="_blank" rel="noopener noreferrer">LifeScience ID</a>
         let globusLink = <a href="https://www.globus.org/globus-connect-personal" target="_blank" rel="noopener noreferrer">Globus Connect Personal</a>
         let summaryStatsFormattingLink = <a href="https://www.ebi.ac.uk/gwas/docs/summary-statistics-format" target="_blank" rel="noopener noreferrer">Format and validate</a>
         let cc0Link = <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0</a>
@@ -446,7 +446,7 @@ class ProjectDetails extends Component {
                         <FormGroup>
                             <FormControlLabel
                                 control={<BlueCheckbox checked={elixirRegistration} onChange={this.handleChange('elixirRegistration')} color="secondary" value="elixirRegistration" />}
-                                label={<Typography>Create an {elixirRegistrationLink} to login to this application</Typography>}
+                                label={<Typography>Create an {lifeScienceRegistrationLink} to login to this application</Typography>}
                             />
 
                             <FormControlLabel
