@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import elixir_login_button from '../elixir_logo.png';
+import lsri_login_button from '../LS.png';
 
 import Grid from '@material-ui/core/Grid';
 import ElixirAuthService from '../ElixirAuthService';
@@ -16,9 +16,9 @@ import { withStyles } from '@material-ui/core/styles';
 
 const AAP_URL = process.env.REACT_APP_AAPURL;
 
-const elixirRegisterationLink = "https://elixir-europe.org/register";
+const LSRegistrationLink = "https://signup.aai.lifescience-ri.eu/fed/registrar/?vo=lifescience";
 
-const elixirLoginContact = <a href="mailto:aai-contact@elixir-europe.org">aai-contact@elixir-europe.org</a>;
+const LSLoginContact = <a href="mailto:support@aai.lifescience-ri.eu">support@aai.lifescience-ri.eu</a>;
 
 const styles = theme => ({
     linkColor: {
@@ -66,7 +66,7 @@ class Login extends Component {
 
 
     handleLogin = (event) => {
-        this.ElixirAuthService.login();
+        // this.ElixirAuthService.login();
 
         if (!this.messageIsAcceptable(event)) {
             return;
@@ -132,14 +132,14 @@ class Login extends Component {
                 spacing={3}>
                 <Grid item xs={12} sm={6}>
                     <Typography>
-                        Single Sign On using your ELIXIR identity!
+                        Single Sign On using your LS Login identity!
                     </Typography>
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <button onClick={this.handleLogin} className={classes.button}>
+                    <button onClick={this.ElixirAuthService.login} className={classes.button}>
                         < span >
-                            <img src={elixir_login_button} alt="login" style={{ height: '2em', verticalAlign: 'middle', paddingRight: '4px' }} />
+                            <img src={lsri_login_button} alt="login" style={{ height: '1.7em', width: '3em', verticalAlign: 'middle', paddingRight: '2px' }} />
                             LOGIN
                         </span>
                     </button>
@@ -147,16 +147,16 @@ class Login extends Component {
 
                 <Grid item xs={12} sm={6}>
                     <Typography>
-                        You can use the ELIXIR identity service and other ELIXIR services with the freely available
-                        ELIXIR identity, which integrates with Google, ORCID and most academic institutions.
+                        You can use the Life Science Login identity service and other Life Science services with the freely available
+                        LS Login identity, which integrates with Google, ORCID and most academic institutions.
 
-                        Obtain your ELIXIR identity <Link href={elixirRegisterationLink} className={classes.linkColor}>here</Link>.
+                        Obtain your LS Login identity <Link href={LSRegistrationLink} className={classes.linkColor}>here</Link>.
                     </Typography>
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
                     <Typography>
-                        If you have problems logging in please contact {elixirLoginContact}.
+                        If you have problems logging in please contact {LSLoginContact}.
                     </Typography>
                 </Grid>
             </Grid >
