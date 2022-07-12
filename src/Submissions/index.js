@@ -156,6 +156,9 @@ class Submissions extends Component {
         if (status === 'CURATION_COMPLETE') {
             return 'SUBMITTED'
         }
+        else if(status === 'DEPOSITION_COMPLETE') {
+            return 'SUBMISSION COMPLETE'
+        }
         else {
             return status
         }
