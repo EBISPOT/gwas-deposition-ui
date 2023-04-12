@@ -20,8 +20,8 @@ const Banner = (props) => {
         <div>
             {data.map(message => (
                 Date.parse(message.display_start_time) < Date.now() && Date.parse(message.display_end_time) > Date.now() && (
-                    <Typography key={message.id} gutterBottom variant="h5" className={classes.banner}>
-                        {message.message}
+                    <Typography key={message.id} gutterBottom variant="h5" className={classes.banner} dangerouslySetInnerHTML={{__html: message.message}}>
+
                     </Typography>
 
                 )
