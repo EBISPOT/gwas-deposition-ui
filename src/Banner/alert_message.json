@@ -1,14 +1,8 @@
 [
     {
         "id": 1,
-        "display_start_time": "11 Mar 2020 00:00:00 GMT",
-        "display_end_time": "27 Mar 2020 00:00:00 GMT",
-        "message": "Access to the submission page will be unavailable from March 11-27 due to the EMBL-EBI data centre migration. Please contact gwas-subs@ebi.ac.uk if you have any further questions."
-    },
-    {
-        "id": 2,
-        "display_start_time": "20 Mar 2020 00:00:00 GMT",
-        "display_end_time": "27 Mar 2020 00:00:00 GMT",
-        "message": "Test Message -- GCP Deploy"
+        "display_start_time": "12 Apr 2023 00:00:00 GMT",
+        "display_end_time": "12 Jul 2023 00:00:00 GMT",
+        "message": "<center>NEWS!!<br/>GWAS Catalog submission requirements are changing from 12th April 2023!<br/>Read all about it in our <strong><a target=\"_blank\" href=\"https://ebispot.github.io/gwas-blog/gwas-ssf-release/\">blog post</a></strong>.</center>"
     }
 ]
