@@ -202,7 +202,8 @@ class SubmissionDetails extends Component {
                 || this.state.submissionStatus === 'CURATION_COMPLETE'
                 || this.state.submissionStatus === 'COMPLETE'
                 || this.state.submissionStatus === 'STARTED'
-                || this.state.submissionStatus === 'SUBMITTED') {
+                || this.state.submissionStatus === 'SUBMITTED'
+                || this.state.submissionStatus === 'DEPOSITION_COMPLETE') {
                 clearInterval(this.timer);
             } else {
                 // console.log("** Timer values for - isMounted: ", this._isMounted, " Timer: ", this.timer);
@@ -977,7 +978,7 @@ class SubmissionDetails extends Component {
          * and the file Dropzone component is not being displayed
          */
         if (provenanceType === publicationProvenanceType) {
-            if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) {
+            if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED || submissionStatus === DEPOSITION_COMPLETE) {
                 if (displaySummaryStatsSection && publicationStatus !== 'UNDER_SUMMARY_STATS_SUBMISSION') {
                     submission_stats_section =
                         <Fragment>
@@ -1028,7 +1029,7 @@ class SubmissionDetails extends Component {
          * and the file Dropzone component is not being displayed
          */
         if (provenanceType === bowProvenanceType) {
-            if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) {
+            if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED || submissionStatus === DEPOSITION_COMPLETE) {
                 if (displaySummaryStatsSection) {
                     submission_stats_section =
                         <Fragment>
@@ -1088,7 +1089,10 @@ class SubmissionDetails extends Component {
         }
         else if (submissionStatus === 'COMPLETE' || submissionStatus === 'CURATION_COMPLETE') {
             currentStatus = 'SUBMITTED'
-        } else {
+        } else if (submissionStatus === 'DEPOSITION_COMPLETE') {
+            currentStatus = 'SUBMISSION COMPLETE'
+        }
+        else {
             currentStatus = submissionStatus;
         }
 
@@ -1221,7 +1225,7 @@ class SubmissionDetails extends Component {
         * Manage display of "Review submission" (previously "Review latest file") button
         * This downloads the user provided data file.
         */
-        if (submissionStatus === 'VALID' || submissionStatus === 'INVALID' || submissionStatus === 'SUBMITTED') {
+        if (submissionStatus === 'VALID' || submissionStatus === 'INVALID' || submissionStatus === 'SUBMITTED' || submissionStatus === 'DEPOSITION_COMPLETE') {
             download_data_file_button =
                 <Fragment>
                     <Button onClick={this.downloadDataFile} fullWidth className={classes.button}>
@@ -1422,7 +1426,7 @@ class SubmissionDetails extends Component {
          * Manage display of final thank you message after valid file
          * processing status.
          */
-        if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED) {
+        if (submissionStatus === VALID_SUBMISSION || submissionStatus === SUBMITTED || submissionStatus === DEPOSITION_COMPLETE) {
             final_thank_you_message =
                 <Grid item container xs={12}>
                     <Typography variant="body1" className={classes.thankYouSubmissionTextStyle}>
@@ -1447,7 +1451,7 @@ class SubmissionDetails extends Component {
                 </Grid>
         } else if (submissionStatus === 'SUBMITTED' || submissionStatus === 'COMPLETE'
             || submissionStatus === 'CURATION_COMPLETE' || submissionStatus === 'NA'
-            || submissionStatus === '') {
+            || submissionStatus === '' || submissionStatus === 'DEPOSITION_COMPLETE') {
             upload_files_to_globus_step =
                 <Grid item container xs={12}>
                     <Typography className={classes.stepTextStyle} >
