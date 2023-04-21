@@ -1471,7 +1471,7 @@ class SubmissionDetails extends Component {
             upload_files_to_globus_step =
                 <Grid item container xs={12}>
                     <Typography className={classes.stepTextStyle} style={{color: 'red'}} >
-                        1 - <strong>Error encountered when creating contacting Globus. Contact gwas-subs@ebi.ac.uk to create a Globus and FTP directory.</strong>
+                        1 - <strong>Error encountered when creating Globus Folder. Contact gwas-subs@ebi.ac.uk to create a Globus and FTP directory.</strong>
                     </Typography>
                 </Grid>
         }
