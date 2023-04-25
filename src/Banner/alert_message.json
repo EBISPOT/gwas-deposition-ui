@@ -9,6 +9,6 @@
         "id": 2,
         "display_start_time": "20 Apr 2023 00:00:00 GMT",
         "display_end_time": "30 Apr 2023 00:00:00 GMT",
-        "message": "<center>We're aware of intermittent issues affecting the creation of submissions and are working on on a fix. If you encounter this, please retry or contact us at gwas-subs@ebi.ac.uk</center>"
+        "message": "<center>We are currently experiencing issues with file transfer via Globus and are awaiting a fix. If you are affected by this, please first retry, and if unsuccessful contact us at gwas-subs@ebi.ac.uk</center>"
     }
 ]
