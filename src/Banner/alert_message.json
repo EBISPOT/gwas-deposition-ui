@@ -8,7 +8,7 @@
     {
         "id": 2,
         "display_start_time": "20 Apr 2023 00:00:00 GMT",
-        "display_end_time": "30 Apr 2023 00:00:00 GMT",
+        "display_end_time": "30 Jul 2023 00:00:00 GMT",
         "message": "<center>We are currently experiencing issues with file transfer via Globus and are awaiting a fix. If you are affected by this, please first retry, and if unsuccessful contact us at gwas-subs@ebi.ac.uk</center>"
     }
 ]
