@@ -3,12 +3,6 @@
         "id": 1,
         "display_start_time": "12 Apr 2023 00:00:00 GMT",
         "display_end_time": "12 Jul 2023 00:00:00 GMT",
-        "message": "<center>NEWS!!<br/>GWAS Catalog submission requirements are changing from 12th April 2023!<br/>Read all about it in our <strong><a target=\"_blank\" href=\"https://ebispot.github.io/gwas-blog/gwas-ssf-release/\">blog post</a></strong>.</center>"
-    },
-    {
-        "id": 2,
-        "display_start_time": "20 Apr 2023 00:00:00 GMT",
-        "display_end_time": "30 Jul 2023 00:00:00 GMT",
-        "message": "<center>We are currently experiencing issues with file transfer via Globus and are awaiting a fix. If you are affected by this, please first retry, and if unsuccessful contact us at gwas-subs@ebi.ac.uk</center>"
+        "message": "<center>NEWS!!<br/>GWAS Catalog submission requirements changed from 12th April 2023!<br/>Read all about it in our <strong><a target=\"_blank\" href=\"https://ebispot.github.io/gwas-blog/gwas-ssf-release/\">blog post</a></strong>.</center>"
     }
 ]
