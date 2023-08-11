@@ -4,5 +4,11 @@
         "display_start_time": "12 Apr 2023 00:00:00 GMT",
         "display_end_time": "12 Jul 2023 00:00:00 GMT",
         "message": "<center>NEWS!!<br/>GWAS Catalog submission requirements changed from 12th April 2023!<br/>Read all about it in our <strong><a target=\"_blank\" href=\"https://ebispot.github.io/gwas-blog/gwas-ssf-release/\">blog post</a></strong>.</center>"
+    },
+    {
+        "id": 2,
+        "display_start_time": "10 Aug 2023 00:00:00 GMT",
+        "display_end_time": "19 Aug 2023 00:00:00 GMT",
+        "message": "<center>The submission system will be down undergoing scheduled maintenance from the 16th to 18th of August. We apologize for any inconvenience.</center>"
     }
 ]
