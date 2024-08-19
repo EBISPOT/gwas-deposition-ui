@@ -1130,7 +1130,7 @@ class SubmissionDetails extends Component {
         if (submissionStatus === 'STARTED') {
             upload_sumstats_button =
                 <Fragment>
-                    <Button href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer" fullWidth className={classes.button}>
+                    <Button disabled href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer" fullWidth className={classes.button}>
                         Upload summary statistics
                     </Button>
                     {/* Handle case when globusSumStatsFolder is not returned */}
@@ -1446,7 +1446,7 @@ class SubmissionDetails extends Component {
             upload_files_to_globus_step =
                 <Grid item container xs={12}>
                     <Typography className={classes.stepTextStyle} >
-                        1 - Upload summary statistics file(s) <a href={globusSumStatsFolder} target="_blank" rel="noopener noreferrer"> to your Globus submission folder</a>
+                        1 - Upload summary statistics file(s) <a target="_blank" rel="noopener noreferrer"> to your Globus submission folder</a>
                     </Typography>
                 </Grid>
         } else if (submissionStatus === 'SUBMITTED' || submissionStatus === 'COMPLETE'
