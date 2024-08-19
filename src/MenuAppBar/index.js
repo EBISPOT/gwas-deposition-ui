@@ -17,6 +17,7 @@ import ElixirAuthService from '../ElixirAuthService';
 import jwt_decode from 'jwt-decode';
 
 import { AuthConsumer, AuthContext } from '../auth-context';
+import {Alert} from "@material-ui/lab";
 
 
 const useStyles = makeStyles(theme => ({
@@ -247,6 +248,10 @@ function MenuAppBar() {
             <div style={{ backgroundColor: '#FFDFC2', height: '4px' }}></div>
             <div style={{ backgroundColor: '#398A96', height: '8px' }}></div>
             <div style={{ backgroundColor: '#B0DFE6', height: '8px' }}></div>
+            <Alert severity="warning">Our infrastructure is currently undergoing maintenance,
+                so <b>summary statistics uploads are temporarily disabled</b>.
+                Feel free to use the rest of the GWAS submission system as usual. Thank you for your patience!
+            </Alert>
         </div>
     );
 }
