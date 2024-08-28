@@ -17,8 +17,6 @@ import ElixirAuthService from '../ElixirAuthService';
 import jwt_decode from 'jwt-decode';
 
 import { AuthConsumer, AuthContext } from '../auth-context';
-import {Alert} from "@material-ui/lab";
-
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -248,10 +246,6 @@ function MenuAppBar() {
             <div style={{ backgroundColor: '#FFDFC2', height: '4px' }}></div>
             <div style={{ backgroundColor: '#398A96', height: '8px' }}></div>
             <div style={{ backgroundColor: '#B0DFE6', height: '8px' }}></div>
-            <Alert severity="warning">Due to essential server maintenance, <b> validation & processing
-                of summary statistics will be disabled between 20 and 22nd August 2024.</b> If
-                you have many files to submit, we advise waiting till after the 22nd to submit your data. Thank you for your patience!
-            </Alert>
         </div>
     );
 }
