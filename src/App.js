@@ -70,7 +70,7 @@ const App = ({ classes }) => (
               {/* <Route path={`${process.env.PUBLIC_URL}/submission_questions`} component={TextMobileStepper}></Route> */}
               <Route path={`${process.env.PUBLIC_URL}/form`} component={Form}></Route>
               <Route path={`${process.env.PUBLIC_URL}/bodyofwork/:gcp_id`} exact render={props => <BodyOfWorkDetails {...props} />} />
-              <Route path={`${process.env.PUBLIC_URL}/update-bodyofwork`} exact render={props => <UpdateBodyOfWork {...props} />} />
+              {/*<Route path={`${process.env.PUBLIC_URL}/update-bodyofwork`} exact render={props => <UpdateBodyOfWork {...props} />} />*/}
               <Route path={`${process.env.PUBLIC_URL}/error`} component={ErrorPage} />
             </main>
           </div>
