@@ -741,14 +741,9 @@ class ProjectDetails extends Component {
                                     </Fragment>
                                 )}
 
-                                <Link
-                                    component="button"
-                                    onClick={this.navigateToUpdateBOW}
-                                    underline="none"
-                                    className={classes.link}
-                                >
-                                    Add PMID
-                                </Link>
+                                <Grid className={classes.publicationTextStyle} style={{fontStyle: 'italic'}}>
+                                    To add PubMedID: please contact <a href="mailto:gwas-subs@ebi.ac.uk?subject=Request to add PMID to Body of Work"> gwas-subs@ebi.ac.uk</a>
+                                </Grid>
 
                                 <Grid item xs={12}>
                                     {submission_checklist}
