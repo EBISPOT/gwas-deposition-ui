@@ -742,11 +742,11 @@ class ProjectDetails extends Component {
                                 )}
 
                                 <Grid className={classes.publicationTextStyle} style={{fontStyle: 'italic'}}>
-                                    To add PubMedID: please contact <a href="mailto:gwas-subs@ebi.ac.uk?subject=Request to add PMID to Body of Work"> gwas-subs@ebi.ac.uk</a>
+                                    To associate this submission with a journal publication, contact <a href={`mailto:gwas-subs@ebi.ac.uk?subject=Request to add PMID to ${this.bodyOfWorkId}`}>gwas-subs@ebi.ac.uk</a> and quote the PubMed ID.
                                 </Grid>
 
                                 <Grid item xs={12}>
-                                    {submission_checklist}
+                                {submission_checklist}
                                 </Grid>
 
                                 <Grid item xs={12}>
