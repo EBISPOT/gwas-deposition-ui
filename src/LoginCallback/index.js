@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+// This was written to mimic the behaviour of AAP which used to post message events, I used storage events
+// As message events didn't work after a redirect to the idp, as it fails to reference the opener (null)
 const PopupCallback = () => {
     useEffect(() => {
         // Function to parse URL hash parameters

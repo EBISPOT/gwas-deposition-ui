@@ -12,8 +12,6 @@ import Link from '@material-ui/core/Link';
 
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import {userManager} from "../oidc-config";
-
 
 
 const AAP_URL = process.env.REACT_APP_AAPURL;

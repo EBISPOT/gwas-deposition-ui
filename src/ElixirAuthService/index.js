@@ -60,7 +60,7 @@ export default class ElixirAuthService {
     */
     getSSOURL() {
         const keycloakBaseUrl = "https://www.ebi.ac.uk/mi/keycloak";
-        const realm = "gwas"; // Replace with your Keycloak realm
+        const realm = "gwas";
         const clientId = "deposition";
         const redirectUri = window.location.origin + "/gwas/deposition/popup-callback";
         const responseType = "token";
