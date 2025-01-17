@@ -17,7 +17,7 @@ variables:
   UI_SERVICE_NAME: gwas-deposition-ui
 
 prod-build:
-  image: node:10.15.3
+  image: node:12.10.0
   stage: build-prod
   script:
     - npm -v
@@ -34,7 +34,7 @@ prod-build:
     - uidepo-477-Sandbox-Migration
 
 sandbox-build:
-  image: node:10.15.3
+  image: node:12.10.0
   stage: build-sandbox
   script:
     - npm -v
