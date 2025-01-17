@@ -49,7 +49,7 @@ sandbox-build:
     - uidepo-477-Sandbox-Migration
 
 sandbox-migration-build:
-  image: node:10.15.3
+  image: node:12.10.0
   stage: build-sandbox-migration
   script:
     - npm -v
