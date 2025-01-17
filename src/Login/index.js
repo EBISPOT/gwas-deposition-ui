@@ -73,7 +73,9 @@ class Login extends Component {
         }
 
         // Store JWT in local storage
-        const token = event.data;
+        const token = event.newValue;
+        localStorage.removeItem("tokenEvent");
+
         this.ElixirAuthService.setToken(token);
 
         // Set Auth Context 
@@ -106,11 +108,11 @@ class Login extends Component {
     }
 
     componentDidMount() {
-        window.addEventListener("message", this.handleLogin);
+        window.addEventListener('storage', this.handleLogin);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('message', this.handleLogin);
+        window.removeEventListener('storage', this.handleLogin);
     }
 
     /**
@@ -118,7 +120,7 @@ class Login extends Component {
     * the SSO URL, otherwise it's iffy and shouldn't trust it.
     */
     messageIsAcceptable(event) {
-        return event.origin === AAP_URL;
+        return event.key === 'tokenEvent' && event.newValue;
     }
 
     render() {
