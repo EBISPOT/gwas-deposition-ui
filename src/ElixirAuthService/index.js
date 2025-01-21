@@ -44,7 +44,7 @@ export default class ElixirAuthService {
             'toolbar=no'
         ];
 
-        const loginWindow = window.open(this.getSSOURL(), 'Sign in to Elixir', windowOptions.join(','));
+        const loginWindow = window.open(this.getSSOURL(), 'Sign in GWAS', windowOptions.join(','));
 
         if (loginWindow) {
             loginWindow.focus();
@@ -59,10 +59,20 @@ export default class ElixirAuthService {
     * @returns The SSO URL.
     */
     getSSOURL() {
-        const fragments = this._formatFragments({
-            'from': this._domain,
-        });
-        return `${this._appURL}/sso${fragments}&ttl=180`;
+        const keycloakBaseUrl = "https://www.ebi.ac.uk/mi/keycloak";
+        const realm = "gwas";
+        const clientId = "deposition";
+        const redirectUri = window.location.origin + "/gwas/deposition/popup-callback";
+        const responseType = "token";
+        const scope = "profile email";
+        const nonce = "random";
+
+        return `${keycloakBaseUrl}/realms/${realm}/protocol/openid-connect/auth?` +
+            `client_id=${clientId}&` +
+            `redirect_uri=${redirectUri}&` +
+            `response_type=${responseType}&` +
+            `scope=${scope}&` +
+            `nonce=${nonce}`;
     }
 
 

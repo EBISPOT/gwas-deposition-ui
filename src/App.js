@@ -30,6 +30,7 @@ import history from "./history";
 import BodyOfWorkDetails from './BodyOfWorkDetails';
 import UpdateBodyOfWork from './UpdateBodyOfWork';
 import PublicationsMatTable from './PublicationsMatTable';
+import LoginCallback from "./LoginCallback";
 
 ReactGA.initialize('UA-60195133-1');
 //Initialize google analytics page view tracking
@@ -72,6 +73,7 @@ const App = ({ classes }) => (
               <Route path={`${process.env.PUBLIC_URL}/bodyofwork/:gcp_id`} exact render={props => <BodyOfWorkDetails {...props} />} />
               {/*<Route path={`${process.env.PUBLIC_URL}/update-bodyofwork`} exact render={props => <UpdateBodyOfWork {...props} />} />*/}
               <Route path={`${process.env.PUBLIC_URL}/error`} component={ErrorPage} />
+              <Route path={`${process.env.PUBLIC_URL}/popup-callback`} component={LoginCallback} />
             </main>
           </div>
         </div>

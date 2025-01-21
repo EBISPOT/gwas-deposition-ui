@@ -17,6 +17,7 @@ import ElixirAuthService from '../ElixirAuthService';
 import jwt_decode from 'jwt-decode';
 
 import { AuthConsumer, AuthContext } from '../auth-context';
+import {ExitToApp} from "@material-ui/icons";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -218,8 +219,14 @@ function MenuAppBar() {
                                     open={open}
                                     onClose={handleMenuClose}
                                 >
-                                    {/* <MenuItem onClick={showMySubmissions}>My Submissions</MenuItem> */}
-                                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                    <MenuItem>
+                                        <AccountCircle></AccountCircle>
+                                        {<span>{jwt_decode(eas.getToken()).email}</span>}
+                                    </MenuItem>
+                                    <MenuItem onClick={handleLogout}>
+                                        <ExitToApp></ExitToApp>
+                                        Logout
+                                    </MenuItem>
                                 </Menu>
                             </div>
                         </div>)}
