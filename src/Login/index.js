@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import lsri_login_button from '../LS.png';
 
 import Grid from '@material-ui/core/Grid';
 import ElixirAuthService from '../ElixirAuthService';
@@ -8,17 +7,11 @@ import { AuthConsumer } from '../auth-context';
 
 import history from "../history";
 import { Typography } from '@material-ui/core';
-import Link from '@material-ui/core/Link';
 
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-
-const AAP_URL = process.env.REACT_APP_AAPURL;
-
-const LSRegistrationLink = "https://signup.aai.lifescience-ri.eu/fed/registrar/?vo=lifescience";
-
-const LSLoginContact = <a href="mailto:support@aai.lifescience-ri.eu">support@aai.lifescience-ri.eu</a>;
+const gwasContact = <a href="mailto:gwas-subs@ebi.ac.uk">gwas-info@ebi.ac.uk</a>;
 
 const styles = theme => ({
     linkColor: {
@@ -134,31 +127,37 @@ class Login extends Component {
                 spacing={3}>
                 <Grid item xs={12} sm={6}>
                     <Typography>
-                        Single Sign On using your LS Login identity!
+                        Log in using your institution!
                     </Typography>
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <button onClick={this.ElixirAuthService.login} className={classes.button}>
-                        < span >
-                            <img src={lsri_login_button} alt="login" style={{ height: '1.7em', width: '3em', verticalAlign: 'middle', paddingRight: '2px' }} />
-                            LOGIN
-                        </span>
-                    </button>
+                    <div
+                        style={{
+                            display: 'inline-block',
+                            boxShadow: '3px 5px 3px rgba(0, 0, 0, 0.2)',
+                            overflow: 'hidden', transition: 'transform 0.3s, box-shadow 0.3s'
+                        }}
+                    >
+                        <img onClick={this.ElixirAuthService.login} alt="CILogon"
+                             src="https://cilogon.org/images/cilogon-ci-32-g.png" style={{
+                            cursor: 'pointer', width: '100%',
+                            height: '100%',
+                            display: 'block',
+                        }}/>
+                    </div>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={8}>
                     <Typography>
-                        You can use the Life Science Login identity service and other Life Science services with the freely available
-                        LS Login identity, which integrates with Google, ORCID and most academic institutions.
-
-                        Obtain your LS Login identity <Link href={LSRegistrationLink} className={classes.linkColor}>here</Link>.
+                        The GWAS Submission system uses CILogon to allow you to log in, which integrates with Google,
+                        ORCID and most academic institutions.
                     </Typography>
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
                     <Typography>
-                        If you have problems logging in please contact {LSLoginContact}.
+                        If you have problems logging in please contact {gwasContact}.
                     </Typography>
                 </Grid>
             </Grid >
