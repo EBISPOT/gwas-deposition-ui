@@ -646,7 +646,7 @@ class SubmissionDetails extends Component {
     isCurator = () => {
         let decoded_token = jwt_decode(localStorage.getItem('id_token'));
 
-        if (decoded_token.domains.includes("self.GWAS_Curator")) {
+        if (decoded_token.domains?.includes("self.GWAS_Curator")) {
             this.setState({ isCurator: true });
         }
     }

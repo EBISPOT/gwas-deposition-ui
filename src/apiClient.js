@@ -30,7 +30,7 @@ class APIClient {
             // Check if user in GWAS_Curator domain
             let decoded_token = jwt_decode(token);
 
-            if (decoded_token.domains.includes(curator_domain)) {
+            if (decoded_token.domains?.includes(curator_domain)) {
                 payload = JSON.stringify({ "curator": true });
             } else {
                 payload = JSON.stringify({ "curator": false });

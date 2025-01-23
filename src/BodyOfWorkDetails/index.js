@@ -219,7 +219,7 @@ class ProjectDetails extends Component {
      */
     isCurator() {
         let decoded_token = jwt_decode(this.state.auth);
-        if (decoded_token.domains.includes("self.GWAS_Curator")) {
+        if (decoded_token.domains?.includes("self.GWAS_Curator")) {
             return true
         }
         return false
