@@ -1192,7 +1192,6 @@ class SubmissionDetails extends Component {
             }
         }
         else {
-            console.log(submissionStatus)
             download_template =
                 <Fragment>
                     <Button disabled fullWidth className={classes.button} variant="outlined">
