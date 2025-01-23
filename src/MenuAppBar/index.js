@@ -17,6 +17,7 @@ import ElixirAuthService from '../ElixirAuthService';
 import jwt_decode from 'jwt-decode';
 
 import { AuthConsumer, AuthContext } from '../auth-context';
+import {Alert} from "@material-ui/lab";
 import {ExitToApp} from "@material-ui/icons";
 
 const useStyles = makeStyles(theme => ({
@@ -171,6 +172,7 @@ function MenuAppBar() {
                 /> */}
             </FormGroup>
             <AppBar position="static" elevation={0}>
+                <Alert severity="warning">We've recently updated our authentication system. If you encounter any issues please reach out to us on gwas-subs@ebi.ac.uk</Alert>
                 <Toolbar>
                     <Button target="_blank" href="https://www.ebi.ac.uk/gwas" className={classes.logoButton}>
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/GWAS_Catalog_banner_logo_34x40.svg'} className={classes.logo} />
