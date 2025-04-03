@@ -1431,6 +1431,9 @@ class SubmissionDetails extends Component {
                 <Grid item container xs={12}>
                     <Typography variant="body1" className={classes.thankYouSubmissionTextStyle}>
                         Thank you for submitting your data. Contact <a href={gwasSubsEmailLink}>gwas-subs@ebi.ac.uk</a> if changes are needed.
+                        <p>
+                            Please help us curate your paper faster! You can now submit the top associations from your manuscript. <a href="https://docs.google.com/forms/d/e/1FAIpQLScwmeauPN5Vn7dp4wu_yMA-USKXeVVsd2R8qyE42G9_a05Mxg/viewform">Click here</a> for more details
+                        </p>
                     </Typography>
                 </Grid>
         }
