@@ -2,80 +2,201 @@
     "questions": [
         {
             "id": 0,
-            "question": "Are these GWAS described in a published manuscript?",
-            "answer": [
-                "Yes",
-                "No"
-            ],
-            "next_question_id": {
-                "Yes": 1,
-                "No": 2
-            },
-            "previous_question_id": 0
-        },
+            "question": "What do you want to submit?",
+            "answers": [
+                {
+                    "label": "I want to submit only PGS data",
+                    "next": { "type": "question", "id": 11 }
+                },
+                {
+                    "label": "I want to submit both GWAS and PGS data",
+                    "next": { "type": "question", "id": 101 }
+                },
+                {
+                    "label": "I want to submit only GWAS data",
+                    "next": { "type": "question", "id": 1 }
+                }
+            ]},
         {
             "id": 1,
-            "question": "Is the manuscript indexed in PubMed, i.e. has a PMID?",
-            "answer": [
-                "Yes",
-                "No"
-            ],
-            "next_question_id": {
-                "Yes": 5,
-                "No": 5
-            },
-            "previous_question_id": 0
+            "prevId": 0,
+            "question": "Are these GWAS described in a published manuscript?",
+            "answers": [
+                {
+                    "label": "Yes",
+                    "next": { "type": "question", "id": 2 }
+                },
+                {
+                    "label": "No",
+                    "next": { "type": "question", "id": 3 }
+                }
+            ]
         },
         {
             "id": 2,
-            "question": "Are these GWAS described in a manuscript submitted or accepted for publication?",
-            "answer": [
-                "Yes",
-                "No"
-            ],
-            "next_question_id": {
-                "Yes": 5,
-                "No": 3
-            },
-            "previous_question_id": 0
+            "prevId": 1,
+            "question": "Is the manuscript indexed in PubMed, i.e. has a PMID?",
+            "answers": [
+                {
+                    "label": "Yes",
+                    "next": { "type": "route", "path": "curation_queue" }
+                },
+                {
+                    "label": "No",
+                    "next": { "type": "route", "path": "form", "formType": 1, "formAnswer":  "No"}
+                }
+            ]
         },
         {
             "id": 3,
-            "question": "Are these GWAS described in a manuscript hosted on a pre-print server?",
-            "answer": [
-                "Yes",
-                "No"
-            ],
-            "next_question_id": {
-                "Yes": 5,
-                "No": 4
-            },
-            "previous_question_id": 0
+            "prevId": 1,
+            "question": "Are these GWAS described in a manuscript submitted or accepted for publication?",
+            "answers": [
+                {
+                    "label": "Yes",
+                    "next": { "type": "route", "path": "form", "formType": 2, "formAnswer":  "Yes"}
+                },
+                {
+                    "label": "No",
+                    "next": { "type": "question", "id": 4 }
+                }
+            ]
         },
         {
             "id": 4,
-            "question": "Are these GWAS described in a draft manuscript (not submitted anywhere)?",
-            "answer": [
-                "Yes",
-                "No"
-            ],
-            "next_question_id": {
-                "Yes": 5,
-                "No": 5
-            },
-            "previous_question_id": 0
+            "prevId": 3,
+            "question": "Are these GWAS described in a manuscript hosted on a pre-print server?",
+            "answers": [
+                {
+                    "label": "Yes",
+                    "next": { "type": "route", "path": "form", "formType": 3, "formAnswer":  "Yes"}
+                },
+                {
+                    "label": "No",
+                    "next": { "type": "question", "id": 5 }
+                }
+            ]
         },
         {
             "id": 5,
+            "prevId": 4,
+            "question": "Are these GWAS described in a draft manuscript (not submitted anywhere)?",
+            "answers": [
+                {
+                    "label": "Yes",
+                    "next": { "type": "route", "path": "form", "formType": 4, "formAnswer":  "Yes"}
+                },
+                {
+                    "label": "No",
+                    "next": { "type": "route", "path": "form", "formType": 4, "formAnswer":  "No"}
+                }
+            ]
+        },
+
+
+        {
+            "id": 11,
+            "prevId": 0,
+            "question": "Is the PGS published in a manuscript?",
+            "answers": [
+                {
+                    "label": "Yes",
+                    "next": { "type": "question", "id": 12}
+                },
+                {
+                    "label": "No",
+                    "next": { "type": "route", "path": "form", "formType": 2, "formAnswer":  "Yes"}
+                }
+            ]
+        },
+        {
+            "id": 12,
+            "prevId": 11,
+            "question": "Does it have a PMID?",
+            "answers": [
+                {
+                    "label": "Yes",
+                    "next": { "type": "route", "path": "curation_queue"}
+                },
+                {
+                    "label": "No",
+                    "next": { "type": "route", "path": "form", "formType": 1, "formAnswer":  "No"}
+                }
+            ]
+        },
+
+
+        {
+            "id": 101,
+            "prevId": 0,
+            "question": "Are the GWAS and PGS described in the same publication, preprint or manuscript?",
+            "answers": [
+                {
+                    "label": "Yes",
+                    "next": { "type": "question", "id": 102 }
+                },
+                {
+                    "label": "No",
+                    "next": { "type": "alert", "message": "Please make separate submissions for the GWAS and PGS" }
+                }
+            ]
+        },
+        {
+            "id": 102,
+            "prevId": 101,
+            "question": "Have you already made a GWAS submission for the same preprint or publication?",
+            "answers": [
+                {
+                    "label": "Yes",
+                    "next": { "type": "question", "id": 103 }
+                },
+                {
+                    "label": "No",
+                    "next": { "type": "alert", "message": "Please make a GWAS-only submission first" }
+                }
+            ]
+        },
+        {
+            "id": 103,
+            "prevId": 102,
+            "question": "Do you know your GWAS Catalog Accession ID - GCST?",
+            "answers": [
+                {
+                    "label": "Yes",
+                    "next": { "type": "question", "id": 104 }
+                },
+                {
+                    "label": "No",
+                    "next": { "type": "alert", "message": "Please find your GCSTs in the GWAS Catalog" }
+                }
+            ]
+        },
+        {
+            "id": 104,
+            "prevId": 103,
+            "question": "Is your submission a preprint or Publication?",
+            "answers": [
+                {
+                    "label": "Preprint/manuscript",
+                    "next": { "type": "alert", "message": "REDIRECT TO THE FORM FOR WHERE USER IS PROMPTED TO ENTER PCP" }
+                },
+                {
+                    "label": "Publication",
+                    "next": { "type": "alert", "message": "REDIRECT TO THE FORM FOR WHERE USER IS PROMPTED TO ENTER PCP" }
+                }
+            ]
+        },
+
+
+        {
+            "id": 999,
             "question": "All questions answered",
-            "answer": [
-                "All Done!"
-            ],
-            "next_question_id": {
-                "Yes": 5,
-                "No": 5
-            },
-            "previous_question_id": 0
+            "answers": [
+                {
+                    "label": "All Done!",
+                    "next": { "type": "question", "id": 0 }
+                }
+            ]
         }
     ]
 }
