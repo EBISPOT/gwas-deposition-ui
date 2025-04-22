@@ -96,6 +96,11 @@ export default function TextMobileStepper() {
         } else if (next.type === 'alert') {
             alert(next.message);
         }
+        else if (next.type === 'jump') {
+            setActiveStep(next.jumpTo);
+            setValue(next.selectedOnJump);
+            if (next.message) alert(next.message);
+        }
         else{
             console.warn("Unknown navigation type:", next.type);
         }
@@ -106,10 +111,6 @@ export default function TextMobileStepper() {
         setActiveStep(prevQuestion.id);
         setValue(prevQuestion.answers.find(a => a?.next?.id === activeStep)?.label);
     };
-
-    useEffect(() => {
-        console.log("Updated activeStep:", activeStep);
-    }, [activeStep]);
 
     const currentQuestion = allQuestions.find(q => q.id === activeStep);
 
