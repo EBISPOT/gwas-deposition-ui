@@ -167,7 +167,8 @@
                 },
                 {
                     "label": "No",
-                    "next": { "type": "alert", "message": "Please find your GCSTs in the GWAS Catalog" }
+                    "next": { "type": "jump", "message": "Please find your GCSTs in the GWAS Catalog","jumpTo": 0,
+                        "selectedOnJump": "I want to submit only GWAS data" }
                 }
             ]
         },
