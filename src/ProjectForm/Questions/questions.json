@@ -152,7 +152,10 @@
                 },
                 {
                     "label": "No",
-                    "next": { "type": "alert", "message": "Please make a GWAS-only submission first" }
+                    "next": { "type": "jump", "message": "Please make a GWAS-only submission first",
+                        "jumpTo": 0,
+                        "selectedOnJump": "I want to submit only GWAS data"
+                    }
                 }
             ]
         },
@@ -167,8 +170,7 @@
                 },
                 {
                     "label": "No",
-                    "next": { "type": "jump", "message": "Please find your GCSTs in the GWAS Catalog","jumpTo": 0,
-                        "selectedOnJump": "I want to submit only GWAS data" }
+                    "next": { "type": "alert", "message": "Please find your GCSTs in the GWAS Catalog" }
                 }
             ]
         },
