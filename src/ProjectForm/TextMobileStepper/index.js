@@ -157,10 +157,10 @@ export default function TextMobileStepper() {
 
                 <Grid item xs={12} className={classes.root}>
                     <MobileStepper
-                        steps={allQuestions.length}
+                        steps={6}
                         position="static"
                         variant="progress"
-                        activeStep={activeStep}
+                        activeStep={activeStep%10}
                         nextButton={
                             <Button size="small" onClick={handleNext}>
                                 Next
