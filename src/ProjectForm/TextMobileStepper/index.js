@@ -1,7 +1,16 @@
 import React, {Fragment, useEffect} from 'react';
 import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
 import MobileStepper from '@material-ui/core/MobileStepper';
-import { Grid, Paper, Typography, Button } from '@material-ui/core';
+import {
+    Grid,
+    Paper,
+    Typography,
+    Button,
+    Dialog,
+    DialogContent,
+    DialogContentText,
+    DialogActions
+} from '@material-ui/core';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 
@@ -63,6 +72,14 @@ export default function TextMobileStepper() {
 
     const [activeStep, setActiveStep] = React.useState(0);
     const [value, setValue] = React.useState('-- clear --');
+    const [openDialog, setOpenDialog] = React.useState(false);
+    const [dialogText, setDialogText] = React.useState('');
+
+    const handleOpenDialog = (text) => {
+        setDialogText(text);
+        setOpenDialog(true);
+    };
+
 
     const handleNext = () => {
         const currentQuestion = allQuestions.find(q => q.id === activeStep);
@@ -94,12 +111,12 @@ export default function TextMobileStepper() {
                 }
             });
         } else if (next.type === 'alert') {
-            alert(next.message);
+            handleOpenDialog(next.message);
         }
         else if (next.type === 'jump') {
+            if (next.message) handleOpenDialog(next.message);
             setActiveStep(next.jumpTo);
             setValue(next.selectedOnJump);
-            if (next.message) alert(next.message);
         }
         else{
             console.warn("Unknown navigation type:", next.type);
@@ -120,6 +137,18 @@ export default function TextMobileStepper() {
 
     return (
         <Fragment>
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                <DialogContent>
+                    <DialogContentText>
+                        {dialogText}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDialog(false)}>
+                        Continue
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <Grid container
                   direction="column"
                   justify="center"

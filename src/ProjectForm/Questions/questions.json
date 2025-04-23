@@ -5,16 +5,16 @@
             "question": "What do you want to submit?",
             "answers": [
                 {
-                    "label": "I want to submit only PGS data",
-                    "next": { "type": "question", "id": 11 }
+                    "label": "I want to submit GWAS data",
+                    "next": { "type": "question", "id": 1 }
                 },
                 {
                     "label": "I want to submit both GWAS and PGS data",
                     "next": { "type": "question", "id": 101 }
                 },
                 {
-                    "label": "I want to submit only GWAS data",
-                    "next": { "type": "question", "id": 1 }
+                    "label": "I want to submit only PGS data",
+                    "next": { "type": "question", "id": 11 }
                 }
             ]},
         {
@@ -144,7 +144,7 @@
         {
             "id": 102,
             "prevId": 101,
-            "question": "Have you already made a GWAS submission for the same preprint or publication?",
+            "question": "Have you already made a GWAS submission for this preprint/publication?",
             "answers": [
                 {
                     "label": "Yes",
@@ -152,9 +152,9 @@
                 },
                 {
                     "label": "No",
-                    "next": { "type": "jump", "message": "Please make a GWAS-only submission first",
+                    "next": { "type": "jump", "message": "Please make your GWAS submission first",
                         "jumpTo": 0,
-                        "selectedOnJump": "I want to submit only GWAS data"
+                        "selectedOnJump": "I want to submit GWAS data"
                     }
                 }
             ]
@@ -162,7 +162,7 @@
         {
             "id": 103,
             "prevId": 102,
-            "question": "Do you know your GWAS Catalog Accession ID - GCST?",
+            "question": "Do you know your GWAS Catalog Study Accession ID(s) - beginning GCST?",
             "answers": [
                 {
                     "label": "Yes",
@@ -170,7 +170,7 @@
                 },
                 {
                     "label": "No",
-                    "next": { "type": "alert", "message": "Please find your GCSTs in the GWAS Catalog" }
+                    "next": { "type": "alert", "message": "You can download a list of study accessions for your completed submission from the submission page:  https://www.ebi.ac.uk/gwas/deposition/submission/<your submission id>, using the “Download Study Accession” button in the top right corner." }
                 }
             ]
         },
@@ -181,11 +181,11 @@
             "answers": [
                 {
                     "label": "Preprint/manuscript",
-                    "next": { "type": "alert", "message": "REDIRECT TO THE FORM FOR WHERE USER IS PROMPTED TO ENTER PCP" }
+                    "next": { "type": "route", "path": "form", "formType": 2, "formAnswer":  "Yes" }
                 },
                 {
                     "label": "Publication",
-                    "next": { "type": "alert", "message": "REDIRECT TO THE FORM FOR WHERE USER IS PROMPTED TO ENTER PCP" }
+                    "next": { "type": "route", "path": "curation_queue"}
                 }
             ]
         },
