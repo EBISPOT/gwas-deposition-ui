@@ -154,7 +154,7 @@
                     "label": "No",
                     "next": { "type": "jump", "message": "Please make your GWAS submission first",
                         "jumpTo": 0,
-                        "selectedOnJump": "I want to submit only GWAS data"
+                        "selectedOnJump": "I want to submit GWAS data"
                     }
                 }
             ]
