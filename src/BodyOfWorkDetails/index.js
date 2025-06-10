@@ -630,7 +630,7 @@ class ProjectDetails extends Component {
                             >
                                 <Grid item xs={8} className={classes.pageHeader}>
                                     <Typography variant="h5" className={classes.headerTextStyle}>
-                                        Details for GCP ID: {this.bodyOfWorkId}
+                                        Details for {this.bodyOfWorkId.substring(0, 3)} ID: {this.bodyOfWorkId}
                                     </Typography>
                                     <Grid><Typography>&nbsp;</Typography></Grid>
                                 </Grid>

@@ -43,7 +43,7 @@
                 },
                 {
                     "label": "No",
-                    "next": { "type": "route", "path": "form", "formType": 1, "formAnswer":  "No"}
+                    "next": { "type": "route", "path": "form", "formType": 1, "formAnswer":  "No", "bowType": "GCP"}
                 }
             ]
         },
@@ -54,7 +54,7 @@
             "answers": [
                 {
                     "label": "Yes",
-                    "next": { "type": "route", "path": "form", "formType": 2, "formAnswer":  "Yes"}
+                    "next": { "type": "route", "path": "form", "formType": 2, "formAnswer":  "Yes", "bowType": "GCP"}
                 },
                 {
                     "label": "No",
@@ -69,7 +69,7 @@
             "answers": [
                 {
                     "label": "Yes",
-                    "next": { "type": "route", "path": "form", "formType": 3, "formAnswer":  "Yes"}
+                    "next": { "type": "route", "path": "form", "formType": 3, "formAnswer":  "Yes", "bowType": "GCP"}
                 },
                 {
                     "label": "No",
@@ -84,11 +84,11 @@
             "answers": [
                 {
                     "label": "Yes",
-                    "next": { "type": "route", "path": "form", "formType": 4, "formAnswer":  "Yes"}
+                    "next": { "type": "route", "path": "form", "formType": 4, "formAnswer":  "Yes", "bowType": "GCP"}
                 },
                 {
                     "label": "No",
-                    "next": { "type": "route", "path": "form", "formType": 4, "formAnswer":  "No"}
+                    "next": { "type": "route", "path": "form", "formType": 4, "formAnswer":  "No", "bowType": "GCP"}
                 }
             ]
         },
@@ -105,7 +105,7 @@
                 },
                 {
                     "label": "No",
-                    "next": { "type": "route", "path": "form", "formType": 2, "formAnswer":  "Yes"}
+                    "next": { "type": "route", "path": "form", "formType": 2, "formAnswer":  "Yes", "bowType": "PCP" }
                 }
             ]
         },
@@ -120,7 +120,7 @@
                 },
                 {
                     "label": "No",
-                    "next": { "type": "route", "path": "form", "formType": 1, "formAnswer":  "No"}
+                    "next": { "type": "route", "path": "form", "formType": 1, "formAnswer":  "No", "bowType": "PCP"}
                 }
             ]
         },
@@ -181,7 +181,7 @@
             "answers": [
                 {
                     "label": "Preprint/manuscript",
-                    "next": { "type": "route", "path": "form", "formType": 2, "formAnswer":  "Yes" }
+                    "next": { "type": "route", "path": "form", "formType": 2, "formAnswer":  "Yes", "bowType": "GCP" }
                 },
                 {
                     "label": "Publication",

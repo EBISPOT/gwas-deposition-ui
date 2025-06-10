@@ -107,7 +107,8 @@ export default function TextMobileStepper() {
                 pathname: `${process.env.PUBLIC_URL}/${next.path}`,
                 state: {
                     id: next.formType,
-                    answer: next.formAnswer
+                    answer: next.formAnswer,
+                    bowType: next.bowType
                 }
             });
         } else if (next.type === 'alert') {
