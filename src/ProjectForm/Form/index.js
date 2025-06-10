@@ -202,6 +202,7 @@ const MyEnhancedForm = withFormik({
         let errors = {};
         let answerPropsId = JSON.parse(props.answer).answerId
         let answerPropsValue = JSON.parse(props.answer).answerValue
+        let bowType = JSON.parse(props.answer).bowType
 
         /**
          * Title
@@ -567,6 +568,7 @@ const checkUserAuthStatus = (props) => {
  * @param {*} processedValues 
  */
 const createBodyOfWork = async (processedValues) => {
+
     const token = getToken().auth;
     const BASE_URI = process.env.REACT_APP_LOCAL_BASE_URI;
     const header = { headers: { 'Authorization': 'Bearer ' + token } }
@@ -634,6 +636,10 @@ const processValues = (formValues, props) => {
         delete formValues.lastAuthor
     }
 
+    if (JSON.parse(props.answer).bowType) {
+        formValues.bodyOfWorkType = JSON.parse(props.answer).bowType;
+    }
+
     // Remove any properties with an empty string value
     removeEmpty(formValues)
 
@@ -690,10 +696,15 @@ const getToken = () => {
 
 const MaterialSyncValidationForm = (props) => {
     let answerProps;
-    let answerObj
+    let answerObj;
 
     if (props.location.state && props.location.state.id && props.location.state.answer) {
-        answerObj = { answerId: props.location.state.id, answerValue: props.location.state.answer }
+        if (props.location.state.bowType) {
+            answerObj = { answerId: props.location.state.id, answerValue: props.location.state.answer, bowType: props.location.state.bowType }
+        }
+        else {
+            answerObj = { answerId: props.location.state.id, answerValue: props.location.state.answer }
+        }
         answerProps = JSON.stringify(answerObj)
     }
 

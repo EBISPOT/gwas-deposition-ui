@@ -62,7 +62,7 @@ export default class ElixirAuthService {
         const keycloakBaseUrl = "https://www.ebi.ac.uk/mi/keycloak";
         const realm = "gwas";
         const clientId = "deposition";
-        const redirectUri = window.location.origin + "/gwas/deposition/popup-callback";
+        const redirectUri =  "http://localhost:8081/gwas/deposition/popup-callback";
         const responseType = "token";
         const scope = "profile email";
         const nonce = "random";
