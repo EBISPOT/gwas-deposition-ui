@@ -172,7 +172,7 @@ function MenuAppBar() {
                 /> */}
             </FormGroup>
             <AppBar position="static" elevation={0}>
-                <Alert severity="warning">We've recently updated our authentication system. If you encounter any issues please reach out to us on gwas-subs@ebi.ac.uk</Alert>
+            <Alert severity="warning">10-Jul-2025 We are currently experiencing external technical issues which are preventing new submissions from being created. Please contact gwas-subs@ebi.ac.uk for support</Alert>  
                 <Toolbar>
                     <Button target="_blank" href="https://www.ebi.ac.uk/gwas" className={classes.logoButton}>
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/GWAS_Catalog_banner_logo_34x40.svg'} className={classes.logo} />
