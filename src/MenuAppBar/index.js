@@ -172,7 +172,7 @@ function MenuAppBar() {
                 /> */}
             </FormGroup>
             <AppBar position="static" elevation={0}>
-            // <Alert severity="warning">14 Jul 2025 - previous technical issues are now resolved, system working as normal.</Alert>  
+            /* <Alert severity="warning">14 Jul 2025 - previous technical issues are now resolved, system working as normal.</Alert>  */
                 <Toolbar>
                     <Button target="_blank" href="https://www.ebi.ac.uk/gwas" className={classes.logoButton}>
                         <ReactSVG src={process.env.PUBLIC_URL + '/images/GWAS_Catalog_banner_logo_34x40.svg'} className={classes.logo} />
