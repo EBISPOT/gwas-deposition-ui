@@ -1483,11 +1483,15 @@ class SubmissionDetails extends Component {
         /** 
          * Upload component display
          */
+        const bodyOfWorkId = this.state?.bow_obj?.bodyOfWorkId;
+        const uploadDataType = bodyOfWorkId && bodyOfWorkId.startsWith('PCP') ? 'PGS' : undefined;
         upload_component =
             <Fragment>
                 <Grid item xs={12}>
                     {this.state.showComponent ?
-                        <Upload submission_id={this.SUBMISSION_ID} displayUploadComponent={this.displayUploadComponent} /> : null}
+                        <Upload submission_id={this.SUBMISSION_ID}
+                                    displayUploadComponent={this.displayUploadComponent}
+                                    dataType={uploadDataType} /> : null}
                 </Grid>
                 <Grid item xs={12}>
                     {this.state.showComponent ?

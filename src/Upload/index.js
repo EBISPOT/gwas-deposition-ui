@@ -189,66 +189,83 @@ class Upload extends Component {
 
 
     sendRequest(file) {
-        this._isMounted = true;
-        const formData = new FormData();
-        formData.append("file", file);
-
-        let token = localStorage.getItem('id_token');
-
-        var config = {
-            onUploadProgress: progressEvent => {
-                if (progressEvent.lengthComputable) {
-                    var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-
-                    if (progressEvent.lengthComputable) {
-                        const copy = { ...this.state.uploadProgress };
-                        copy[file.name] = {
-                            state: "pending",
-                            percentage: percentCompleted
-                        };
-                        this.setState({ uploadProgress: copy });
-
-                        if (percentCompleted === 100) {
-                            this.setState({ extraFileProcessing: true });
-                        }
-                    }
-                }
-            },
-            headers: {
-                'Authorization': 'Bearer ' + token,
+      this._isMounted = true;
+      const formData = new FormData();
+      formData.append('file', file);
+      let token = localStorage.getItem('id_token');
+      const config = {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.lengthComputable) {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            const copy = { ...this.state.uploadProgress };
+            copy[file.name] = { state: 'pending', percentage: percentCompleted };
+            this.setState({ uploadProgress: copy });
+            if (percentCompleted === 100) {
+              this.setState({ extraFileProcessing: true });
             }
-        };
+          }
+        },
+        headers: { Authorization: 'Bearer ' + token },
+      };
 
-        // Post file to GWAS Backend app
-        let file_upload_url = UPLOAD_TEMPLATE_URL_BASE + "submissions/" + this.state.SUBMISSION_ID + "/uploads";
+      // Build the POST URL
+      const file_upload_url =
+        UPLOAD_TEMPLATE_URL_BASE +
+        'submissions/' +
+        this.state.SUBMISSION_ID +
+        '/uploads';
 
-        if (this._isMounted) {
-            // Check if user is logged in and if token is still valid
-            if (token && !this.ElixirAuthService.isTokenExpired(token)) {
-                axios.post(file_upload_url, formData, config
-                )
-                    .then(response => {
-                        if (response.status === 201) {
-                            // Update file upload status on successful upload after response status 201 is returned
-                            this._updateState();
-                        }
+      // Only perform the upload if mounted and token valid
+      if (this._isMounted && token && !this.ElixirAuthService.isTokenExpired(token)) {
+        // Optionally include dataType in query params; include both
+        // camelCase and kebab-case keys for backend compatibility.
+        const params = this.props.dataType
+          ? {
+              'data-type': this.props.dataType,
+            }
+          : undefined;
+        const requestConfig = params ? { ...config, params } : config;
 
-                    })
-                    .catch(err => {
-                        console.log("** Error: ", err);
-                    });
-            };
-        }
-        // Check if token is expired
-        else if (token && this.ElixirAuthService.isTokenExpired(token)) {
-            alert("Your session has expired, please login again.")
-            history.push(`${process.env.PUBLIC_URL}/login`);
-        }
-        else {
-            alert("Please login to create a submission.")
-            history.push(`${process.env.PUBLIC_URL}/login`);
-        }
+        return axios
+          .post(file_upload_url, formData, requestConfig)
+          .then((response) => {
+            if (response.status === 201) {
+              // Parse PGS validation info if present
+              const pgsInfo = response.data?.pgsValidationInfo;
+              if (pgsInfo) {
+                let message = '';
+                if (pgsInfo.validationStatus) {
+                  message += `PGS validation status: ${pgsInfo.validationStatus}`;
+                }
+                if (pgsInfo.pcstIds?.length > 0) {
+                  const ids = pgsInfo.pcstIds.join(', ');
+                  message += (message ? '. ' : '') + `PCST IDs: ${ids}`;
+                }
+                if (message) {
+                  this.setState({
+                    extraFileProcessingMessage: message,
+                    extraFileProcessing: false,
+                  });
+                }
+              }
+              // Mark upload as successful
+              this._updateState();
+            }
+          })
+          .catch((err) => {
+            console.log('** Error: ', err);
+          });
+      } else if (token && this.ElixirAuthService.isTokenExpired(token)) {
+        alert('Your session has expired, please login again.');
+        history.push(`${process.env.PUBLIC_URL}/login`);
+      } else {
+        alert('Please login to create a submission.');
+        history.push(`${process.env.PUBLIC_URL}/login`);
+      }
     }
+
 
     /**
      * Update file upload status on successful upload.
